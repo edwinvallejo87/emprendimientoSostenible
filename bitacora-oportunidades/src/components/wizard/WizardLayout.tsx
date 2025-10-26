@@ -183,6 +183,14 @@ export default function WizardLayout() {
             {ActiveStepComponent && (
               activeStep === 1 ? (
                 <Step1Means onNext={handleNextStep} />
+              ) : activeStep === 2 ? (
+                <Step2Problem onNext={handleNextStep} />
+              ) : activeStep === 3 ? (
+                <Step3Trends onNext={handleNextStep} />
+              ) : activeStep === 4 ? (
+                <Step4Ideation onNext={handleNextStep} />
+              ) : activeStep === 5 ? (
+                <Step5UserValue onNext={handleNextStep} />
               ) : (
                 <ActiveStepComponent />
               )

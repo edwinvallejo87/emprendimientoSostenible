@@ -1,48 +1,51 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useJournalStore } from '../../store/journal'
 import { step2ProblemSchema, type Step2ProblemData } from '../../lib/validators/step2'
-import { debounce } from '../../lib/utils'
-import { AlertTriangle, Save, CheckCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react'
 
-export default function Step2Problem() {
+interface Step2ProblemProps {
+  onNext?: () => void
+}
+
+export default function Step2Problem({ onNext }: Step2ProblemProps) {
   const {
     currentJournal,
     step2Data,
     saveStep2Data,
-    saving,
   } = useJournalStore()
 
-  const [localSaving, setLocalSaving] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const {
     control,
+    handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<Step2ProblemData>({
     resolver: zodResolver(step2ProblemSchema),
     defaultValues: step2Data || {},
+    mode: 'onChange'
   })
 
   const watchedValues = watch()
 
-  const debouncedSave = debounce(async (data: Partial<Step2ProblemData>) => {
+  const onSubmit = async (data: Step2ProblemData) => {
     if (!currentJournal) return
     
-    setLocalSaving(true)
+    setSaving(true)
     try {
       await saveStep2Data(currentJournal.id, data)
+      if (onNext) {
+        onNext()
+      }
     } catch (error) {
       console.error('Error saving step 2 data:', error)
     } finally {
-      setLocalSaving(false)
+      setSaving(false)
     }
-  }, 600)
-
-  useEffect(() => {
-    debouncedSave(watchedValues)
-  }, [watchedValues, debouncedSave])
+  }
 
   if (!currentJournal) {
     return <div>No hay bitácora seleccionada</div>
@@ -67,29 +70,37 @@ export default function Step2Problem() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Paso 2: Problema o Necesidad</h2>
-        <p className="mt-2 text-gray-600">
-          Identifica un problema específico o necesidad en el mercado que podría convertirse en una oportunidad de negocio.
-        </p>
-      </div>
-
-      {(saving || localSaving) && (
-        <div className="flex items-center space-x-2 text-blue-600 bg-blue-50 p-3 rounded-lg">
-          <Save className="h-4 w-4 animate-pulse" />
-          <span className="text-sm">Guardando automáticamente...</span>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-xl shadow-card p-8 mb-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full mb-4">
+            <AlertTriangle className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
+            Paso 2: Problema o Necesidad
+          </h2>
+          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            Identifica un problema específico o necesidad en el mercado que podría convertirse en una oportunidad de negocio sostenible.
+          </p>
         </div>
-      )}
 
-      <div className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {saving && (
+          <div className="flex items-center space-x-2 text-primary-600 bg-primary-50 p-3 rounded-lg animate-fade-in mb-6">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+            <span className="text-sm font-medium">Guardando...</span>
+          </div>
+        )}
+
+        <div className="space-y-8">
         {/* Title Field */}
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <div className="flex items-center space-x-3 mb-4">
             {getFieldIcon(getFieldStatus('title'))}
-            <label className="block text-sm font-medium text-gray-700">
-              Título del problema o necesidad *
+            <label className="text-lg font-semibold text-gray-900">
+              Título del problema o necesidad
             </label>
+            <span className="text-red-500">*</span>
           </div>
           <Controller
             name="title"
@@ -99,26 +110,27 @@ export default function Step2Problem() {
                 {...field}
                 value={field.value || ''}
                 type="text"
-                className="input"
+                className="input text-lg"
                 placeholder="Ej: Dificultad para encontrar espacios de trabajo colaborativo en zonas residenciales"
               />
             )}
           />
           {errors.title && (
-            <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+            <p className="mt-2 text-sm text-error-600 font-medium">{errors.title.message}</p>
           )}
         </div>
 
         {/* Description Field */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
               {getFieldIcon(getFieldStatus('description'))}
-              <label className="block text-sm font-medium text-gray-700">
-                Descripción detallada del problema *
+              <label className="text-lg font-semibold text-gray-900">
+                Descripción detallada del problema
               </label>
+              <span className="text-red-500">*</span>
             </div>
-            <span className="text-xs text-gray-500">
+            <span className="text-sm text-gray-500 font-medium bg-white px-3 py-1 rounded-full">
               {watchedValues.description?.length || 0}/200 min
             </span>
           </div>
@@ -136,7 +148,7 @@ export default function Step2Problem() {
             )}
           />
           {errors.description && (
-            <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+            <p className="mt-2 text-sm text-error-600 font-medium">{errors.description.message}</p>
           )}
         </div>
 
@@ -233,26 +245,87 @@ export default function Step2Problem() {
           )}
         </div>
 
-        <div className="mt-6 p-4 bg-orange-50 rounded-lg">
-          <h4 className="font-medium text-orange-900 mb-2">📋 Criterios de validación:</h4>
-          <ul className="text-sm text-orange-800 space-y-1">
-            <li>• Título claro y específico</li>
-            <li>• Descripción, afectados, relevancia y vínculo con medios: mínimo 200 caracteres cada uno</li>
-            <li>• El problema debe estar conectado con tus medios personales</li>
-            <li>• Debe ser un problema real y verificable</li>
-          </ul>
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold">✓</span>
+              </div>
+              <h4 className="font-bold text-orange-900">Criterios de validación</h4>
+            </div>
+            <ul className="text-sm text-orange-800 space-y-2">
+              <li className="flex items-start space-x-2">
+                <span className="text-orange-500 mt-1">•</span>
+                <span>Título claro y específico</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-orange-500 mt-1">•</span>
+                <span>Descripción, afectados, relevancia y vínculo: mín. 200 caracteres</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-orange-500 mt-1">•</span>
+                <span>Conectado con tus medios personales</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-orange-500 mt-1">•</span>
+                <span>Problema real y verificable</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-gradient-to-br from-primary-50 to-primary-100 p-6 rounded-xl border border-primary-200">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold">💡</span>
+              </div>
+              <h4 className="font-bold text-primary-900">Consejos para identificar problemas</h4>
+            </div>
+            <ul className="text-sm text-primary-800 space-y-2">
+              <li className="flex items-start space-x-2">
+                <span className="text-primary-500 mt-1">•</span>
+                <span>Observa frustraciones recurrentes</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-primary-500 mt-1">•</span>
+                <span>Identifica ineficiencias en procesos</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-primary-500 mt-1">•</span>
+                <span>Necesidades no cubiertas o mal cubiertas</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-primary-500 mt-1">•</span>
+                <span>Problemas que tú mismo has experimentado</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-primary-500 mt-1">•</span>
+                <span>Cambios sociales, tecnológicos o regulatorios</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">💡 Consejos para identificar problemas:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Observa frustraciones recurrentes en tu entorno</li>
-            <li>• Identifica ineficiencias en procesos existentes</li>
-            <li>• Considera necesidades no cubiertas o mal cubiertas</li>
-            <li>• Piensa en problemas que tú mismo has experimentado</li>
-            <li>• Busca oportunidades en cambios sociales, tecnológicos o regulatorios</li>
-          </ul>
+        {/* Submit Button */}
+        <div className="flex justify-center pt-8 mt-8 border-t border-gray-200">
+          <button
+            type="submit"
+            disabled={!isValid || saving}
+            className="btn btn-primary btn-lg px-8 py-4 text-lg font-semibold flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            {saving ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <span>Guardando paso 2...</span>
+              </>
+            ) : (
+              <>
+                <span>Continuar al Paso 3</span>
+                <ArrowRight className="h-5 w-5" />
+              </>
+            )}
+          </button>
         </div>
+      </form>
       </div>
     </div>
   )
