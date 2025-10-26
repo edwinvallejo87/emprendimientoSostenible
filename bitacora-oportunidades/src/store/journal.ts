@@ -147,9 +147,15 @@ export const useJournalStore = create<JournalState>()(
       },
 
       createTeam: async (name: string) => {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('Usuario no autenticado')
+        
         const { data, error } = await supabase
           .from('teams')
-          .insert({ name })
+          .insert({ 
+            name, 
+            created_by: user.id 
+          })
           .select()
           .single()
 

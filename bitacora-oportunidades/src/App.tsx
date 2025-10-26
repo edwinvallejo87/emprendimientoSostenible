@@ -1,4 +1,4 @@
-import { useJournalStore } from './store/journal-demo'
+import { useJournalStore } from './store/journal'
 import AuthGuard from './components/auth/AuthGuard'
 import Header from './components/layout/Header'
 import HomePage from './components/home/HomePage'
@@ -9,9 +9,9 @@ function App() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
         <Header />
-        <main>
+        <main className="relative">
           {currentJournal ? <WizardLayout /> : <HomePage />}
         </main>
       </div>
