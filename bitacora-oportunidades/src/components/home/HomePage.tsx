@@ -53,8 +53,8 @@ export default function HomePage() {
     if (!journalTitle.trim() || !currentTeam) return
 
     try {
-      const newJournal = await createJournal(currentTeam.id, journalTitle)
-      setCurrentJournal(newJournal)
+      await createJournal(currentTeam.id, journalTitle)
+      // createJournal already sets currentJournal
       setJournalTitle('')
       setShowCreateJournal(false)
     } catch (error) {

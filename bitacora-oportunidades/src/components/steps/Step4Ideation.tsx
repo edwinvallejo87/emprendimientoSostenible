@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useJournalStore } from '../../store/journal-demo'
+import { useJournalStore } from '../../store/journal'
 import { 
   step4IdeaSchema, 
   innovationLevels, 

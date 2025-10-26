@@ -82,37 +82,14 @@ export const useJournalStore = create<JournalState>()(
       loadTeams: async () => {
         set({ loading: true })
         try {
-          // First, get teams where user is owner
-          const { data: ownedTeams, error: ownedError } = await supabase
+          // For development: get all teams without auth
+          const { data, error } = await supabase
             .from('teams')
             .select('*')
-            .eq('created_by', (await supabase.auth.getUser()).data.user?.id)
             .order('created_at', { ascending: false })
 
-          if (ownedError) throw ownedError
-
-          // Then, get teams where user is member
-          const { data: memberTeams, error: memberError } = await supabase
-            .from('team_members')
-            .select(`
-              teams(*)
-            `)
-            .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
-
-          if (memberError) throw memberError
-
-          // Combine and deduplicate teams
-          const allTeams = [
-            ...(ownedTeams || []),
-            ...(memberTeams?.map(m => m.teams).filter(Boolean) || [])
-          ]
-          
-          // Remove duplicates by id
-          const uniqueTeams = allTeams.filter((team, index, self) => 
-            index === self.findIndex(t => t.id === team.id)
-          )
-
-          set({ teams: uniqueTeams, loading: false })
+          if (error) throw error
+          set({ teams: data || [], loading: false })
         } catch (error) {
           console.error('Error loading teams:', error)
           set({ teams: [], loading: false })
@@ -164,33 +141,16 @@ export const useJournalStore = create<JournalState>()(
       },
 
       createTeam: async (name: string) => {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error('Usuario no autenticado')
-        
         const { data, error } = await supabase
           .from('teams')
           .insert({ 
-            name, 
-            created_by: user.id 
+            name 
+            // Skip created_by for now
           })
           .select()
           .single()
 
         if (error) throw error
-
-        // Add current user as owner in team_members
-        const { error: memberError } = await supabase
-          .from('team_members')
-          .insert({
-            team_id: data.id,
-            user_id: user.id,
-            role: 'owner'
-          })
-        
-        if (memberError) {
-          console.error('Error adding team member:', memberError)
-          // Don't throw here, team was created successfully
-        }
 
         await get().loadTeams()
         return data
@@ -204,18 +164,27 @@ export const useJournalStore = create<JournalState>()(
           .single()
 
         if (error) throw error
+        
+        // Set the new journal as current
+        set({ currentJournal: data })
+        
+        // Reload journals to update the list
         await get().loadJournals(teamId)
+        
         return data
       },
 
       saveStep1Data: async (journalId: string, memberId: string, data: Partial<Step1Data>) => {
         set({ saving: true })
         try {
+          // Use demo user ID for development
+          const demoUserId = '00000000-0000-0000-0000-000000000000'
+          
           const { error } = await supabase
             .from('step1_means')
             .upsert({
               journal_id: journalId,
-              member_id: memberId,
+              member_id: demoUserId,
               ...data
             })
 

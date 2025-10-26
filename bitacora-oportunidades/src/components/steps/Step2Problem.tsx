@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useJournalStore } from '../../store/journal-demo'
+import { useJournalStore } from '../../store/journal'
 import { step2ProblemSchema, type Step2ProblemData } from '../../lib/validators/step2'
 import { debounce } from '../../lib/utils'
 import { AlertTriangle, Save, CheckCircle } from 'lucide-react'

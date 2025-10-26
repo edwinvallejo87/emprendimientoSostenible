@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useJournalStore } from '../../store/journal-demo'
+import { useJournalStore } from '../../store/journal'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 import GuardedTab from './GuardedTab'
 import ProgressBadge from './ProgressBadge'
