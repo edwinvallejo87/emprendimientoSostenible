@@ -20,36 +20,31 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
 
   const [saving, setSaving] = useState(false)
 
-  const currentUserData = step1Data.find(data => data.member_id === user?.id) || {}
+  // Use demo user ID for development
+  const demoUserId = '00000000-0000-0000-0000-000000000000'
+  const currentUserData = step1Data.find(data => data.member_id === demoUserId) || {}
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    reset,
+    formState: { errors, isValid },
   } = useForm<Step1MeansData>({
     resolver: zodResolver(step1MeansSchema),
     defaultValues: {
-      who_i_am: '',
-      what_i_know: '',
-      who_i_know: '',
-      what_i_have: '',
+      who_i_am: currentUserData.who_i_am || '',
+      what_i_know: currentUserData.what_i_know || '',
+      who_i_know: currentUserData.who_i_know || '',
+      what_i_have: currentUserData.what_i_have || '',
     },
+    mode: 'onChange'
   })
 
-  // Reset form when data changes
-  useEffect(() => {
-    if (currentUserData && Object.keys(currentUserData).length > 0) {
-      reset(currentUserData)
-    }
-  }, [currentUserData, reset])
-
   const onSubmit = async (data: Step1MeansData) => {
-    if (!currentJournal || !user) return
+    if (!currentJournal) return
     
     setSaving(true)
     try {
-      await saveStep1Data(currentJournal.id, user.id, data)
+      await saveStep1Data(currentJournal.id, demoUserId, data)
       if (onNext) {
         onNext()
       }
@@ -65,32 +60,43 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Paso 1: Medios Personales</h2>
-        <p className="mt-2 text-gray-600">
-          Según la Teoría Efectual, antes de identificar oportunidades debemos conocer nuestros medios personales.
-          Completa la información sobre ti mismo.
-        </p>
-      </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-xl shadow-card p-8 mb-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mb-4">
+            <User className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
+            Paso 1: Medios Personales
+          </h2>
+          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            Según la Teoría Efectual, antes de identificar oportunidades debemos conocer nuestros medios personales.
+          </p>
+        </div>
 
-
-      <div className="bg-white">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full">
-            <User className="h-5 w-5 text-primary-600" />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {saving && (
+          <div className="flex items-center space-x-2 text-primary-600 bg-primary-50 p-3 rounded-lg animate-fade-in mb-6">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+            <span className="text-sm font-medium">Guardando...</span>
+          </div>
+        )}
+        <div className="flex items-center space-x-3 mb-8 p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
+          <div className="flex items-center justify-center w-12 h-12 bg-primary-500 rounded-full">
+            <User className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{user?.email}</h3>
-            <p className="text-sm text-gray-500">Completa tu información personal</p>
+            <h3 className="font-semibold text-gray-900">Usuario Demo</h3>
+            <p className="text-sm text-primary-700">Completa tu información personal para el análisis efectual</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ¿Quién soy? (Identidad, formación, experiencia)
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <label className="text-lg font-semibold text-gray-900 mb-4 block">
+              ¿Quién soy?
             </label>
+            <p className="text-sm text-gray-600 mb-4">Identidad, formación, experiencia</p>
             <Controller
               name="who_i_am"
               control={control}
@@ -105,7 +111,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
               )}
             />
             {errors.who_i_am && (
-              <p className="mt-1 text-sm text-red-600">{errors.who_i_am.message}</p>
+              <p className="mt-2 text-sm text-error-600 font-medium">{errors.who_i_am.message}</p>
             )}
           </div>
 
@@ -192,7 +198,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
             <h4 className="font-medium text-gray-900 mb-4">Otros miembros del equipo:</h4>
             <div className="space-y-4">
               {step1Data
-                .filter(data => data.member_id !== user?.id)
+                .filter(data => data.member_id !== demoUserId)
                 .map(data => (
                   <div key={data.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-3">
@@ -231,27 +237,27 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
           </div>
         )}
 
-        {/* Next button */}
-        <div className="mt-8 flex justify-end">
+        {/* Submit Button */}
+        <div className="flex justify-center pt-8 mt-8 border-t border-gray-200">
           <button
             type="submit"
-            onClick={handleSubmit(onSubmit)}
-            disabled={saving}
-            className="btn btn-primary flex items-center space-x-2"
+            disabled={!isValid || saving}
+            className="btn btn-primary btn-lg px-8 py-4 text-lg font-semibold flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {saving ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Guardando...</span>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <span>Guardando paso 1...</span>
               </>
             ) : (
               <>
-                <span>Siguiente</span>
-                <ArrowRight className="h-4 w-4" />
+                <span>Continuar al Paso 2</span>
+                <ArrowRight className="h-5 w-5" />
               </>
             )}
           </button>
         </div>
+      </form>
       </div>
     </div>
   )
