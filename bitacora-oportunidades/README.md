@@ -1,16 +1,118 @@
-# Bitácora de Oportunidades - EAN
+# Bitácora de Oportunidades - Análisis Efectual
 
-Una aplicación web completa para crear y colaborar en bitácoras de oportunidades del curso "Herramientas básicas de innovación" de la Universidad EAN.
+Una aplicación web para analizar oportunidades de negocio usando **metodología efectual**, desarrollada con React, TypeScript y Supabase.
 
-## 🎯 Objetivo
+## 🎯 ¿Qué es la Metodología Efectual?
 
-Guiar a equipos a través de un proceso secuencial de 5 pasos obligatorios para identificar y desarrollar oportunidades de innovación:
+La **efectuación** es una lógica de razonamiento empresarial desarrollada por Saras Sarasvathy que estudia cómo los emprendedores expertos toman decisiones bajo incertidumbre. A diferencia del enfoque tradicional (causal) que parte de un objetivo y busca los medios, la efectuación parte de los medios disponibles y explora qué objetivos se pueden alcanzar.
 
-1. **Medios Personales** (Teoría Efectual)
-2. **Problema o Necesidad**
-3. **Tendencias** (exactamente 5, con fuentes APA)
-4. **Ideación** (≥5 ideas), clasificar y seleccionar 1
-5. **Usuario y Propuesta de Valor** (Buyer Persona + Canvas)
+### Principios Fundamentales:
+
+1. **Medios vs Objetivos**: Partir de lo que tienes, no de lo que quieres
+2. **Pérdida aceptable**: Determinar cuánto puedes permitirte perder
+3. **Aprovechamiento de contingencias**: Convertir sorpresas en oportunidades
+4. **Alianzas estratégicas**: Crear el futuro con otros stakeholders
+5. **Control del futuro**: Crear el mercado en lugar de predecirlo
+
+## 📋 Los 5 Pasos del Análisis
+
+### Paso 1: Medios Personales 🧑‍💼
+
+**Propósito**: Inventariar los recursos actuales del equipo emprendedor.
+
+**Metodología Efectual**: En lugar de partir de una idea preconcebida, comenzamos identificando:
+- **Quién soy**: Identidad, experiencia, habilidades personales
+- **Qué sé**: Conocimientos técnicos, industrias, dominios de expertise  
+- **A quién conozco**: Red de contactos, mentores, clientes potenciales
+- **Qué tengo**: Recursos financieros, tecnológicos, físicos disponibles
+
+**¿Por qué es importante?**: Los emprendedores efectuales exitosos construyen sobre sus medios existentes en lugar de adquirir recursos externos. Esto reduce riesgo y aumenta velocidad de ejecución.
+
+**Criterios de completitud**: Al menos 2 miembros del equipo han documentado sus medios personales.
+
+---
+
+### Paso 2: Problema o Necesidad 🎯
+
+**Propósito**: Identificar y validar un problema específico que conecte con los medios disponibles.
+
+**Metodología Efectual**: A diferencia del enfoque tradicional (encontrar un gran mercado), la efectuación busca problemas que:
+- **Se conecten directamente** con los medios identificados en el Paso 1
+- **Sean accesibles** con los recursos actuales del equipo
+- **Permitan acción inmediata** sin requerir recursos externos masivos
+
+**Elementos requeridos**:
+- **Título**: Descripción concisa del problema (min. 1 carácter)
+- **Descripción**: Explicación detallada del problema (min. 200 caracteres)
+- **Afectados**: Quiénes sufren este problema (min. 200 caracteres)  
+- **Relevancia**: Por qué es importante resolver esto ahora (min. 200 caracteres)
+- **Vínculo con medios**: Cómo se conecta con los recursos del Paso 1 (min. 200 caracteres)
+
+---
+
+### Paso 3: Tendencias 📈
+
+**Propósito**: Identificar fuerzas del entorno que pueden influir en el problema o crear nuevas oportunidades.
+
+**Metodología Efectual**: Los emprendedores efectuales son excelentes aprovechando contingencias. Las tendencias representan:
+- **Vientos de cola**: Fuerzas que pueden acelerar la solución
+- **Contingencias potenciales**: Cambios inesperados que pueden convertirse en oportunidades
+- **Contexto de decisión**: Información del entorno para decisiones más informadas
+
+**Tipos de tendencias**:
+- **Social**: Cambios en comportamientos y valores sociales
+- **Tecnológica**: Innovaciones y avances técnicos emergentes
+- **Ambiental**: Sostenibilidad y conciencia medioambiental
+- **Cultural**: Evolución de costumbres y tradiciones
+- **Consumo**: Nuevos patrones de compra y preferencias
+
+**Criterios de completitud**: Mínimo 3 tendencias válidas (nombre, tipo, descripción, ejemplo). La fuente es opcional pero recomendada.
+
+---
+
+### Paso 4: Ideación 💡
+
+**Propósito**: Generar múltiples alternativas de solución y seleccionar una usando criterios efectuales.
+
+**Metodología Efectual**: En lugar de buscar "la idea perfecta", generamos un portafolio de opciones y seleccionamos basándose en:
+- **Pérdida aceptable**: ¿Cuánto podemos permitirnos perder?
+- **Medios disponibles**: ¿Qué podemos hacer con lo que tenemos?
+- **Alianzas potenciales**: ¿Quién se sumaría a esta idea?
+
+**Elementos requeridos**:
+- **Mínimo 5 ideas** diferentes
+- **Clasificación**: Tipo de solución (producto, servicio, plataforma, etc.)
+- **Nivel de innovación**: Incremental vs Radical
+- **Factibilidad**: Alta, Media, Baja (basada en medios actuales)
+- **Selección**: Exactamente 1 idea seleccionada
+- **Justificación**: Explicación de por qué esta idea (min. 200 caracteres)
+
+---
+
+### Paso 5: Usuario y Propuesta de Valor 👥
+
+**Propósito**: Definir el primer cliente específico y la propuesta de valor mínima viable.
+
+**Metodología Efectual**: En lugar de definir "mercados objetivo" amplios, la efectuación se enfoca en:
+- **Primer cliente específico**: Una persona real con la que puedes hablar
+- **Co-creación**: Desarrollar la solución CON el cliente, no PARA el cliente
+- **Compromiso previo**: Buscar que el cliente se comprometa antes de construir
+
+#### 5A. Buyer Persona Específico
+- **Nombre**: Persona específica o arquetipo muy concreto
+- **Edad**: Rango etario específico
+- **Ocupación**: Trabajo o rol específico
+- **Motivaciones**: Qué lo mueve en relación al problema
+- **Frustraciones**: Dolores específicos que experimenta
+- **Necesidades**: Qué necesita para resolver su problema
+
+#### 5B. Value Proposition Canvas
+- **Trabajos del cliente**: Tareas funcionales, emocionales y sociales
+- **Dolores del cliente**: Obstáculos, riesgos, frustraciones
+- **Alegrías del cliente**: Beneficios esperados, deseos, necesidades
+- **Productos/Servicios**: Qué específicamente ofrecemos
+- **Aliviadores de dolor**: Cómo reducimos/eliminamos dolores
+- **Generadores de alegría**: Cómo creamos beneficios positivos
 
 ## 🚀 Características
 
@@ -145,7 +247,7 @@ src/
 ## 📏 Reglas de Validación
 
 ### Paso 1: Medios Personales
-- Cada miembro debe completar al menos un campo
+- Al menos 2 miembros del equipo deben completar al menos un campo
 - Campos: Quién soy, Qué sé, A quién conozco, Qué tengo
 
 ### Paso 2: Problema o Necesidad
@@ -153,8 +255,9 @@ src/
 - Descripción, afectados, relevancia y vínculo: mínimo 200 caracteres cada uno
 
 ### Paso 3: Tendencias
-- **Exactamente 5 tendencias** (ni más, ni menos)
-- Cada una con: nombre, tipo, descripción, ejemplo y fuente APA obligatoria
+- **Mínimo 3 tendencias** (puedes agregar más dinámicamente)
+- Cada una con: nombre, tipo, descripción y ejemplo obligatorios
+- Fuente opcional pero recomendada para credibilidad
 - Tipos: Social, Tecnológica, Ambiental, Cultural, Consumo
 
 ### Paso 4: Ideación
@@ -279,13 +382,34 @@ npm run type-check
 
 Este proyecto es propiedad de la Universidad EAN y está destinado exclusivamente para uso educativo en el curso "Herramientas básicas de innovación".
 
-## 📞 Soporte
+## 📚 Referencias Académicas
 
-Para soporte técnico o preguntas sobre el curso, contactar:
-- **Email**: soporte-innovacion@ean.edu.co
-- **Teams**: Canal "Bitácora de Oportunidades"
+### Metodología Efectual
+- Sarasvathy, S. (2001). **Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency**. Academy of Management Review, 26(2), 243-263.
+- Read, S., Sarasvathy, S., Dew, N., Wiltbank, R. (2016). **Effectual Entrepreneurship**. Routledge.
+- Sarasvathy, S. (2008). **Effectuation: Elements of Entrepreneurial Expertise**. Edward Elgar Publishing.
+
+### Value Proposition Canvas
+- Osterwalder, A., Pigneur, Y. (2010). **Business Model Generation**. John Wiley & Sons.
+- Osterwalder, A., Pigneur, Y., Bernarda, G., Smith, A. (2014). **Value Proposition Design**. John Wiley & Sons.
+
+### Buyer Persona
+- Cooper, A. (1999). **The Inmates Are Running the Asylum**. Macmillan.
+- Revella, A. (2015). **Buyer Personas: How to Gain Insight into your Customer's Expectations**. John Wiley & Sons.
+
+## 🤝 Contribuir
+
+1. Fork del proyecto
+2. Crear branch para feature (`git checkout -b feature/amazing-feature`)
+3. Commit cambios (`git commit -m 'Add amazing feature'`)
+4. Push al branch (`git push origin feature/amazing-feature`)
+5. Abrir Pull Request
+
+## 📄 Licencia
+
+Este proyecto está disponible bajo licencia MIT para uso educativo y de investigación.
 
 ---
 
-**Universidad EAN - Herramientas básicas de innovación**  
-*Desarrollado con ❤️ para el aprendizaje de la innovación*
+**Bitácora de Oportunidades - Análisis Efectual**  
+*Desarrollado con ❤️ usando metodología efectual*

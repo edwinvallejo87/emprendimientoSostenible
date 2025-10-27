@@ -1,27 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useJournalStore } from '../../store/journal'
 import { step3TrendSchema, trendTypes, type Step3TrendData, type TrendType } from '../../lib/validators/step3'
-import { debounce } from '../../lib/utils'
-import { TrendingUp, Plus, Trash2, Save, CheckCircle, AlertTriangle } from 'lucide-react'
+import { TrendingUp, ArrowRight, Plus, Trash2 } from 'lucide-react'
 
 const trendsFormSchema = z.object({
-  trends: z.array(step3TrendSchema).length(5, 'Debe tener exactamente 5 tendencias')
+  trends: z.array(step3TrendSchema).min(3, 'Debe tener al menos 3 tendencias')
 })
 
 type TrendsFormData = z.infer<typeof trendsFormSchema>
 
-export default function Step3Trends() {
+interface Step3TrendsProps {
+  onNext?: () => void
+}
+
+export default function Step3Trends({ onNext }: Step3TrendsProps) {
   const {
     currentJournal,
     step3Data,
     saveStep3Data,
-    saving,
   } = useJournalStore()
 
-  const [localSaving, setLocalSaving] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const initialTrends = step3Data.length > 0 
     ? step3Data.map(trend => ({
@@ -32,131 +34,102 @@ export default function Step3Trends() {
         source_apa: trend.source_apa || '',
         comment: trend.comment || '',
       }))
-    : Array.from({ length: 5 }, () => ({
-        name: '',
-        type: 'Social' as TrendType,
-        brief: '',
-        example: '',
-        source_apa: '',
-        comment: '',
-      }))
+    : [
+        {
+          name: '',
+          type: 'Social' as TrendType,
+          brief: '',
+          example: '',
+          source_apa: '',
+          comment: '',
+        }
+      ]
 
   const {
     control,
-    watch,
-    formState: { errors },
+    handleSubmit,
+    formState: { errors, isValid },
   } = useForm<TrendsFormData>({
     resolver: zodResolver(trendsFormSchema),
     defaultValues: {
       trends: initialTrends
     },
+    mode: 'onChange'
   })
 
-  const { fields } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'trends',
   })
 
-  const watchedValues = watch()
+  const addTrend = () => {
+    append({
+      name: '',
+      type: 'Social' as TrendType,
+      brief: '',
+      example: '',
+      source_apa: '',
+      comment: '',
+    })
+  }
 
-  const debouncedSave = debounce(async (data: TrendsFormData) => {
+  const removeTrend = (index: number) => {
+    if (fields.length > 1) {
+      remove(index)
+    }
+  }
+
+  const onSubmit = async (data: TrendsFormData) => {
     if (!currentJournal) return
     
-    setLocalSaving(true)
+    setSaving(true)
     try {
       await saveStep3Data(currentJournal.id, data.trends)
+      if (onNext) {
+        onNext()
+      }
     } catch (error) {
       console.error('Error saving step 3 data:', error)
     } finally {
-      setLocalSaving(false)
+      setSaving(false)
     }
-  }, 600)
-
-  useEffect(() => {
-    debouncedSave(watchedValues)
-  }, [watchedValues, debouncedSave])
+  }
 
   if (!currentJournal) {
     return <div>No hay bitácora seleccionada</div>
   }
 
-  const getTrendStatus = (trend: Partial<Step3TrendData>) => {
-    try {
-      step3TrendSchema.parse(trend)
-      return 'complete'
-    } catch {
-      const hasPartialData = trend.name || trend.brief || trend.example || trend.source_apa
-      return hasPartialData ? 'incomplete' : 'empty'
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'complete':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
-      case 'incomplete':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />
-      default:
-        return <div className="h-5 w-5 border border-gray-300 rounded-full" />
-    }
-  }
-
-  const completedTrends = watchedValues.trends.filter(trend => getTrendStatus(trend) === 'complete').length
-
   return (
-    <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Paso 3: Tendencias</h2>
-        <p className="mt-2 text-gray-600">
-          Identifica exactamente 5 tendencias que podrían influir en el problema identificado o crear nuevas oportunidades.
-        </p>
-        <div className="flex items-center space-x-4 mt-3">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="h-5 w-5 text-primary-500" />
-            <span className="text-sm font-medium">
-              Progreso: {completedTrends}/5 tendencias completas
-            </span>
-          </div>
-          {completedTrends === 5 && (
-            <div className="flex items-center space-x-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm">¡Paso completado!</span>
+    <div className="max-w-3xl mx-auto px-6">
+      <div className="mb-16">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl text-stone-900 mb-3">Tendencias</h1>
+          <p className="text-lg text-stone-600">
+            Identifica al menos 3 tendencias que podrían influir en el problema o crear nuevas oportunidades
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
+          {saving && (
+            <div className="text-center py-2 text-stone-500 text-sm">
+              Guardando...
             </div>
           )}
-        </div>
-      </div>
 
-      {(saving || localSaving) && (
-        <div className="flex items-center space-x-2 text-blue-600 bg-blue-50 p-3 rounded-lg">
-          <Save className="h-4 w-4 animate-pulse" />
-          <span className="text-sm">Guardando automáticamente...</span>
-        </div>
-      )}
-
-      <div className="space-y-6">
-        {fields.map((field, index) => {
-          const trendData = watchedValues.trends[index]
-          const status = getTrendStatus(trendData)
-          
-          return (
-            <div key={field.id} className="border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  {getStatusIcon(status)}
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Tendencia {index + 1}
-                  </h3>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    status === 'complete' ? 'bg-green-100 text-green-800' :
-                    status === 'incomplete' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {status === 'complete' ? 'Completa' : 
-                     status === 'incomplete' ? 'Incompleta' : 'Vacía'}
-                  </span>
-                </div>
+          {fields.map((field, index) => (
+            <div key={field.id} className="space-y-8 p-6 bg-white border border-stone-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl text-stone-900">Tendencia {index + 1}</h2>
+                {fields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeTrend(index)}
+                    className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Eliminar tendencia"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -253,7 +226,7 @@ export default function Step3Trends() {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Fuente APA *
+                    Fuente (opcional)
                   </label>
                   <Controller
                     name={`trends.${index}.source_apa`}
@@ -293,8 +266,19 @@ export default function Step3Trends() {
                 </div>
               </div>
             </div>
-          )
-        })}
+          ))}
+
+          {/* Add Trend Button */}
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={addTrend}
+              className="flex items-center space-x-2 px-6 py-3 border-2 border-dashed border-stone-300 text-stone-600 rounded-lg hover:border-stone-400 hover:text-stone-900 transition-colors"
+            >
+              <Plus size={20} />
+              <span>Agregar nueva tendencia</span>
+            </button>
+          </div>
 
         {errors.trends && (
           <div className="rounded-md bg-red-50 p-4">
@@ -304,13 +288,25 @@ export default function Step3Trends() {
           </div>
         )}
 
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            disabled={!isValid || saving}
+            className="btn btn-primary"
+          >
+            {saving ? 'Guardando...' : 'Siguiente'}
+          </button>
+        </div>
+
+        </form>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-4 bg-orange-50 rounded-lg">
             <h4 className="font-medium text-orange-900 mb-2">📋 Criterios de validación:</h4>
             <ul className="text-sm text-orange-800 space-y-1">
-              <li>• Exactamente 5 tendencias (ni más, ni menos)</li>
-              <li>• Cada tendencia debe tener nombre, tipo, descripción, ejemplo y fuente APA</li>
-              <li>• Las fuentes deben estar en formato APA</li>
+              <li>• Al menos 3 tendencias (puedes agregar más si necesitas)</li>
+              <li>• Cada tendencia debe tener nombre, tipo, descripción y ejemplo</li>
+              <li>• La fuente es opcional pero recomendada para mayor credibilidad</li>
               <li>• Deben ser tendencias actuales y relevantes</li>
             </ul>
           </div>

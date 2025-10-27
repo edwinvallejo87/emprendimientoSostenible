@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -11,8 +11,7 @@ import {
   type InnovationLevel, 
   type FeasibilityLevel 
 } from '../../lib/validators/step4'
-import { debounce } from '../../lib/utils'
-import { Lightbulb, Plus, Trash2, Save, CheckCircle, AlertTriangle, Star } from 'lucide-react'
+import { Lightbulb, Plus, Trash2, CheckCircle, AlertTriangle, Star } from 'lucide-react'
 
 const ideasFormSchema = z.object({
   ideas: z.array(step4IdeaSchema).min(5, 'Debe tener al menos 5 ideas')
@@ -20,15 +19,18 @@ const ideasFormSchema = z.object({
 
 type IdeasFormData = z.infer<typeof ideasFormSchema>
 
-export default function Step4Ideation() {
+interface Step4IdeationProps {
+  onNext?: () => void
+}
+
+export default function Step4Ideation({ onNext }: Step4IdeationProps) {
   const {
     currentJournal,
     step4Data,
     saveStep4Data,
-    saving,
   } = useJournalStore()
 
-  const [localSaving, setLocalSaving] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const initialIdeas = step4Data.length > 0 
     ? step4Data.map(idea => ({
@@ -52,12 +54,14 @@ export default function Step4Ideation() {
     control,
     watch,
     setValue,
-    formState: { errors },
+    handleSubmit,
+    formState: { errors, isValid },
   } = useForm<IdeasFormData>({
     resolver: zodResolver(ideasFormSchema),
     defaultValues: {
       ideas: initialIdeas
     },
+    mode: 'onChange'
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -67,22 +71,21 @@ export default function Step4Ideation() {
 
   const watchedValues = watch()
 
-  const debouncedSave = debounce(async (data: IdeasFormData) => {
+  const onSubmit = async (data: IdeasFormData) => {
     if (!currentJournal) return
     
-    setLocalSaving(true)
+    setSaving(true)
     try {
       await saveStep4Data(currentJournal.id, data.ideas)
+      if (onNext) {
+        onNext()
+      }
     } catch (error) {
       console.error('Error saving step 4 data:', error)
     } finally {
-      setLocalSaving(false)
+      setSaving(false)
     }
-  }, 600)
-
-  useEffect(() => {
-    debouncedSave(watchedValues)
-  }, [watchedValues, debouncedSave])
+  }
 
   const handleSelectIdea = (index: number) => {
     // Unselect all other ideas
@@ -139,42 +142,23 @@ export default function Step4Ideation() {
   const isStepComplete = validIdeas.length >= 5 && selectedIdeas.length === 1 && hasValidJustification
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Paso 4: Ideación</h2>
-        <p className="mt-2 text-gray-600">
-          Genera al menos 5 ideas de solución, clasifícalas y selecciona la más prometedora con su justificación.
-        </p>
-        <div className="flex items-center space-x-4 mt-3">
-          <div className="flex items-center space-x-2">
-            <Lightbulb className="h-5 w-5 text-primary-500" />
-            <span className="text-sm font-medium">
-              Ideas válidas: {validIdeas.length}/5 mínimo
-            </span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Star className="h-5 w-5 text-yellow-500" />
-            <span className="text-sm font-medium">
-              Seleccionadas: {selectedIdeas.length}/1
-            </span>
-          </div>
-          {isStepComplete && (
-            <div className="flex items-center space-x-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm">¡Paso completado!</span>
+    <div className="max-w-3xl mx-auto px-6">
+      <div className="mb-16">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl text-stone-900 mb-3">Ideación</h1>
+          <p className="text-lg text-stone-600">
+            Genera al menos 5 ideas de solución, clasifícalas y selecciona la más prometedora
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
+          {saving && (
+            <div className="text-center py-2 text-stone-500 text-sm">
+              Guardando...
             </div>
           )}
-        </div>
-      </div>
 
-      {(saving || localSaving) && (
-        <div className="flex items-center space-x-2 text-blue-600 bg-blue-50 p-3 rounded-lg">
-          <Save className="h-4 w-4 animate-pulse" />
-          <span className="text-sm">Guardando automáticamente...</span>
-        </div>
-      )}
-
-      <div className="space-y-4">
+          <div className="space-y-4">
         {fields.map((field, index) => {
           const ideaData = watchedValues.ideas[index]
           const status = getIdeaStatus(ideaData)
@@ -364,6 +348,20 @@ export default function Step4Ideation() {
             </p>
           </div>
         )}
+
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            disabled={!isValid || saving}
+            className="btn btn-primary"
+          >
+            {saving ? 'Guardando...' : 'Siguiente'}
+          </button>
+        </div>
+
+          </div>
+
+        </form>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-4 bg-orange-50 rounded-lg">

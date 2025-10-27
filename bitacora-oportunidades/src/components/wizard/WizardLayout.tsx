@@ -100,103 +100,114 @@ export default function WizardLayout() {
   const ActiveStepComponent = steps.find(step => step.id === activeStep)?.component
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header with overall progress */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      {/* Header */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{currentJournal.title}</h2>
-            <p className="text-gray-600">Progreso general: {overallProgress.totalProgress}%</p>
+            <h1 className="text-3xl text-stone-900 mb-2">{currentJournal.title}</h1>
+            <p className="text-stone-600">Análisis efectual de oportunidades</p>
           </div>
           
           <div className="flex items-center space-x-4">
             {saving && (
-              <div className="flex items-center space-x-2 text-gray-500">
-                <Save className="h-4 w-4 animate-pulse" />
-                <span className="text-sm">Guardando...</span>
-              </div>
+              <span className="text-stone-500 text-sm">Guardando...</span>
             )}
             
             <button
               onClick={handleGoHome}
-              className="btn btn-secondary flex items-center space-x-2"
+              className="btn btn-outline"
             >
-              <Home className="h-4 w-4" />
-              <span>Inicio</span>
-            </button>
-            
-            <button
-              className="btn btn-secondary flex items-center space-x-2"
-              disabled={overallProgress.totalProgress < 100}
-            >
-              <FileDown className="h-4 w-4" />
-              <span>Exportar PDF</span>
+              Inicio
             </button>
           </div>
         </div>
 
-        {/* Overall progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-3">
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-stone-200 rounded">
           <div
-            className="bg-primary-500 h-3 rounded-full transition-all duration-500"
+            className="h-2 bg-stone-600 rounded transition-all duration-500"
             style={{ width: `${overallProgress.totalProgress}%` }}
           />
         </div>
+        <p className="text-sm text-stone-600 mt-2">Progreso: {overallProgress.totalProgress}%</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left sidebar with step navigation */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8 space-y-4">
-            <h3 className="font-semibold text-gray-900 mb-4">Pasos</h3>
-            
-            {steps.map((step) => {
-              const stepProgress = overallProgress.steps.find(s => s.step === step.id)
-              if (!stepProgress) return null
+      {/* Navigation */}
+      <div className="flex justify-center mb-12">
+        <div className="flex space-x-2 bg-stone-100 p-2 rounded-lg">
+          {steps.map((step) => {
+            const stepProgress = overallProgress.steps.find(s => s.step === step.id)
+            if (!stepProgress) return null
 
-              return (
-                <GuardedTab
-                  key={step.id}
-                  stepProgress={stepProgress}
-                  isActive={activeStep === step.id}
-                  onClick={() => setActiveStep(step.id)}
-                  title={step.title}
-                />
-              )
-            })}
+            const getStepStyle = () => {
+              if (stepProgress.completed) {
+                return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
+              }
+              if (activeStep === step.id) {
+                return 'bg-blue-100 text-blue-800 border-blue-200 shadow-md'
+              }
+              if (!stepProgress.locked) {
+                return 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+              }
+              return 'bg-stone-50 text-stone-400 border-stone-200 cursor-not-allowed'
+            }
 
-            {/* Progress summary */}
-            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-3">Resumen de Progreso</h4>
-              <div className="space-y-2">
-                {overallProgress.steps.map((stepProgress) => (
-                  <ProgressBadge key={stepProgress.step} stepProgress={stepProgress} />
-                ))}
-              </div>
-            </div>
-          </div>
+            return (
+              <button
+                key={step.id}
+                onClick={() => !stepProgress.locked && setActiveStep(step.id)}
+                disabled={stepProgress.locked}
+                className={`px-4 py-3 text-sm rounded-lg border-2 transition-all duration-200 relative ${getStepStyle()}`}
+              >
+                <div className="flex items-center space-x-2">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                    stepProgress.completed 
+                      ? 'bg-green-500 text-white' 
+                      : activeStep === step.id
+                      ? 'bg-blue-500 text-white'
+                      : !stepProgress.locked
+                      ? 'bg-yellow-400 text-yellow-900'
+                      : 'bg-stone-300 text-stone-500'
+                  }`}>
+                    {stepProgress.completed ? '✓' : step.id}
+                  </span>
+                  <span className="font-medium">{step.title}</span>
+                </div>
+                {stepProgress.progress > 0 && (
+                  <div className="absolute bottom-1 left-1 right-1 h-1 bg-stone-200 rounded">
+                    <div 
+                      className={`h-1 rounded transition-all duration-300 ${
+                        stepProgress.completed ? 'bg-green-500' : 
+                        activeStep === step.id ? 'bg-blue-500' : 'bg-yellow-500'
+                      }`}
+                      style={{ width: `${stepProgress.progress}%` }}
+                    />
+                  </div>
+                )}
+              </button>
+            )
+          })}
         </div>
+      </div>
 
-        {/* Main content area */}
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            {ActiveStepComponent && (
-              activeStep === 1 ? (
-                <Step1Means onNext={handleNextStep} />
-              ) : activeStep === 2 ? (
-                <Step2Problem onNext={handleNextStep} />
-              ) : activeStep === 3 ? (
-                <Step3Trends onNext={handleNextStep} />
-              ) : activeStep === 4 ? (
-                <Step4Ideation onNext={handleNextStep} />
-              ) : activeStep === 5 ? (
-                <Step5UserValue onNext={handleNextStep} />
-              ) : (
-                <ActiveStepComponent />
-              )
-            )}
-          </div>
-        </div>
+      {/* Content */}
+      <div>
+        {ActiveStepComponent && (
+          activeStep === 1 ? (
+            <Step1Means onNext={handleNextStep} />
+          ) : activeStep === 2 ? (
+            <Step2Problem onNext={handleNextStep} />
+          ) : activeStep === 3 ? (
+            <Step3Trends onNext={handleNextStep} />
+          ) : activeStep === 4 ? (
+            <Step4Ideation onNext={handleNextStep} />
+          ) : activeStep === 5 ? (
+            <Step5UserValue onNext={handleNextStep} />
+          ) : (
+            <ActiveStepComponent />
+          )
+        )}
       </div>
     </div>
   )

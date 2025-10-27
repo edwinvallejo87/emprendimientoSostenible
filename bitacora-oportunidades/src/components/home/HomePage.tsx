@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useJournalStore } from '../../store/journal'
 import { useAuthStore } from '../../store/auth'
-import { Plus, BookOpen, Users, Calendar } from 'lucide-react'
+import { Plus, BookOpen, Users, Calendar, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import TestDataButton from '../TestDataButton'
 
 export default function HomePage() {
   const { user } = useAuthStore()
@@ -17,12 +18,16 @@ export default function HomePage() {
     setCurrentJournal,
     createTeam,
     createJournal,
+    deleteTeam,
+    deleteJournal,
   } = useJournalStore()
 
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showCreateJournal, setShowCreateJournal] = useState(false)
   const [teamName, setTeamName] = useState('')
   const [journalTitle, setJournalTitle] = useState('')
+  const [teamToDelete, setTeamToDelete] = useState<string | null>(null)
+  const [journalToDelete, setJournalToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadTeams()
@@ -62,66 +67,182 @@ export default function HomePage() {
     }
   }
 
+  const handleDeleteTeam = async () => {
+    if (!teamToDelete) return
+
+    try {
+      await deleteTeam(teamToDelete)
+      setTeamToDelete(null)
+    } catch (error) {
+      console.error('Error deleting team:', error)
+    }
+  }
+
+  const handleDeleteJournal = async () => {
+    if (!journalToDelete) return
+
+    try {
+      await deleteJournal(journalToDelete)
+      setJournalToDelete(null)
+    } catch (error) {
+      console.error('Error deleting journal:', error)
+    }
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-10">
-        <div className="animate-fade-in">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-primary-700 bg-clip-text text-transparent mb-3">
-            ¡Hola, {user?.email?.split('@')[0]}!
-          </h1>
-          <p className="text-xl text-gray-600 font-light leading-relaxed">
-            Gestiona tus equipos y crea bitácoras de oportunidades para 
-            <span className="font-semibold text-primary-600"> emprendimientos sostenibles</span>
-          </p>
+    <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl text-stone-900 mb-4">
+          Análisis de Oportunidades
+        </h1>
+        <p className="text-xl text-stone-600 mb-8">
+          Evalúa ideas de negocio sostenible usando metodología efectual
+        </p>
+        
+        {/* Test Data Button */}
+        <div className="max-w-md mx-auto">
+          <TestDataButton />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up">
-        {/* Teams Section */}
-        <div className="card card-body">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary-100 rounded-lg">
-                <Users className="h-5 w-5 text-primary-600" />
+      {/* Teams Section */}
+      <div className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl text-stone-900">Equipos</h2>
+          <button
+            onClick={() => setShowCreateTeam(true)}
+            className="btn btn-primary"
+          >
+            Nuevo Equipo
+          </button>
+        </div>
+
+        {showCreateTeam && (
+          <div className="mb-8 p-6 bg-white border border-stone-300 rounded-lg">
+            <form onSubmit={handleCreateTeam} className="space-y-6">
+              <div>
+                <label className="block text-stone-900 mb-3 text-lg">
+                  Nombre del equipo
+                </label>
+                <input
+                  type="text"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder="Nombre del equipo"
+                  className="input"
+                  autoFocus
+                />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">Mis Equipos</h2>
-            </div>
+              <div className="flex space-x-3">
+                <button type="submit" className="btn btn-primary">
+                  Crear
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateTeam(false)
+                    setTeamName('')
+                  }}
+                  className="btn btn-outline"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {teams.length === 0 ? (
+          <div className="text-center py-16 text-stone-500">
+            <p className="mb-4">Crea tu primer equipo para comenzar</p>
             <button
               onClick={() => setShowCreateTeam(true)}
-              className="btn btn-primary flex items-center space-x-2"
+              className="btn btn-outline"
             >
-              <Plus className="h-4 w-4" />
-              <span>Crear Equipo</span>
+              Crear equipo
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {teams.map((team) => (
+              <div
+                key={team.id}
+                className={`p-6 transition-colors border rounded-lg ${
+                  currentTeam?.id === team.id
+                    ? 'bg-stone-100 border-stone-400'
+                    : 'bg-white border-stone-300 hover:border-stone-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div 
+                    className="flex-1 cursor-pointer"
+                    onClick={() => setCurrentTeam(team)}
+                  >
+                    <h3 className="text-lg text-stone-900">{team.name}</h3>
+                    <p className="text-stone-600 mt-1">
+                      {format(new Date(team.created_at), 'dd MMM yyyy', { locale: es })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setTeamToDelete(team.id)
+                    }}
+                    className="ml-4 p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Eliminar equipo"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Journals Section */}
+      {currentTeam && (
+        <div>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl text-stone-900">Bitácoras de {currentTeam.name}</h2>
+              <p className="text-stone-600 mt-1">Cada bitácora contiene ideas analizadas con metodología efectual</p>
+            </div>
+            <button
+              onClick={() => setShowCreateJournal(true)}
+              className="btn btn-primary"
+            >
+              Nueva Bitácora
             </button>
           </div>
 
-          {showCreateTeam && (
-            <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-xl animate-fade-in">
-              <form onSubmit={handleCreateTeam} className="space-y-4">
+          {showCreateJournal && (
+            <div className="mb-8 p-6 bg-white border border-stone-300 rounded-lg">
+              <form onSubmit={handleCreateJournal} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre del equipo
+                  <label className="block text-stone-900 mb-3 text-lg">
+                    Título de la bitácora
                   </label>
                   <input
                     type="text"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="Ej: Equipo de Innovación Verde"
+                    value={journalTitle}
+                    onChange={(e) => setJournalTitle(e.target.value)}
+                    placeholder="Ej: Energías Renovables Q4 2024"
                     className="input"
                     autoFocus
                   />
                 </div>
                 <div className="flex space-x-3">
-                  <button type="submit" className="btn btn-primary flex-1">
-                    Crear Equipo
+                  <button type="submit" className="btn btn-primary">
+                    Crear
                   </button>
                   <button
                     type="button"
                     onClick={() => {
-                      setShowCreateTeam(false)
-                      setTeamName('')
+                      setShowCreateJournal(false)
+                      setJournalTitle('')
                     }}
-                    className="btn btn-secondary"
+                    className="btn btn-outline"
                   >
                     Cancelar
                   </button>
@@ -130,201 +251,119 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="space-y-3">
-            {teams.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="font-medium text-gray-900 mb-2">Sin equipos aún</h3>
-                <p className="text-sm text-gray-500 mb-4">Crea tu primer equipo para comenzar a colaborar</p>
-                <button
-                  onClick={() => setShowCreateTeam(true)}
-                  className="btn btn-outline btn-sm"
-                >
-                  Crear primer equipo
-                </button>
-              </div>
-            ) : (
-              teams.map((team) => (
-                <div
-                  key={team.id}
-                  className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
-                    currentTeam?.id === team.id
-                      ? 'bg-primary-50 border-2 border-primary-200 shadow-md'
-                      : 'bg-white border border-gray-200 hover:border-primary-200 hover:shadow-card-hover'
-                  }`}
-                  onClick={() => setCurrentTeam(team)}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className={`flex items-center justify-center w-12 h-12 rounded-xl ${
-                      currentTeam?.id === team.id 
-                        ? 'bg-primary-200' 
-                        : 'bg-gray-100'
-                    }`}>
-                      <Users className={`h-6 w-6 ${
-                        currentTeam?.id === team.id 
-                          ? 'text-primary-600' 
-                          : 'text-gray-500'
-                      }`} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{team.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        Creado el {format(new Date(team.created_at), 'dd MMM yyyy', { locale: es })}
-                      </p>
-                    </div>
-                    {currentTeam?.id === team.id && (
-                      <div className="badge badge-primary">
-                        Seleccionado
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Journals Section */}
-        <div className="card card-body">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-success-100 rounded-lg">
-                <BookOpen className="h-5 w-5 text-success-600" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Bitácoras</h2>
-                {currentTeam && (
-                  <p className="text-sm text-gray-500">{currentTeam.name}</p>
-                )}
-              </div>
-            </div>
-            {currentTeam && (
+          {journals.length === 0 ? (
+            <div className="text-center py-16 text-stone-500">
+              <p className="mb-4">Crea tu primera bitácora para comenzar a analizar ideas</p>
               <button
                 onClick={() => setShowCreateJournal(true)}
-                className="btn btn-primary flex items-center space-x-2"
+                className="btn btn-outline"
               >
-                <Plus className="h-4 w-4" />
-                <span>Nueva Bitácora</span>
+                Crear bitácora
               </button>
-            )}
-          </div>
-
-          {!currentTeam ? (
-            <div className="text-center py-12 text-gray-500">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="h-8 w-8 text-gray-400" />
-              </div>
-              <h3 className="font-medium text-gray-900 mb-2">Selecciona un equipo</h3>
-              <p className="text-sm text-gray-500">Elige un equipo de la izquierda para ver y crear bitácoras</p>
             </div>
           ) : (
-            <>
-              {showCreateJournal && (
-                <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-xl animate-fade-in">
-                  <form onSubmit={handleCreateJournal} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Título de la bitácora
-                      </label>
-                      <input
-                        type="text"
-                        value={journalTitle}
-                        onChange={(e) => setJournalTitle(e.target.value)}
-                        placeholder="Ej: Oportunidades en Energía Renovable"
-                        className="input"
-                        autoFocus
-                      />
-                    </div>
-                    <div className="flex space-x-3">
-                      <button type="submit" className="btn btn-primary flex-1">
-                        Crear Bitácora
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowCreateJournal(false)
-                          setJournalTitle('')
-                        }}
-                        className="btn btn-secondary"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {journals.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <BookOpen className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <h3 className="font-medium text-gray-900 mb-2">Sin bitácoras aún</h3>
-                    <p className="text-sm text-gray-500 mb-4">Crea la primera bitácora para comenzar a identificar oportunidades</p>
-                    <button
-                      onClick={() => setShowCreateJournal(true)}
-                      className="btn btn-outline btn-sm"
-                    >
-                      Crear primera bitácora
-                    </button>
-                  </div>
-                ) : (
-                  journals.map((journal) => (
-                    <div
-                      key={journal.id}
-                      className="p-5 bg-white border border-gray-200 rounded-xl hover:border-primary-200 hover:shadow-card-hover cursor-pointer transition-all duration-200 group"
+            <div className="space-y-4">
+              {journals.map((journal) => (
+                <div
+                  key={journal.id}
+                  className="p-6 bg-white border border-stone-300 rounded-lg hover:border-stone-400 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div 
+                      className="flex-1 cursor-pointer"
                       onClick={() => setCurrentJournal(journal)}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 flex-1">
-                          <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-success-100 to-success-200 rounded-xl group-hover:from-success-200 group-hover:to-success-300 transition-colors">
-                            <BookOpen className="h-6 w-6 text-success-600" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors">
-                              {journal.title}
-                            </h3>
-                            <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <div className="flex items-center space-x-2">
-                                <div className="progress w-16">
-                                  <div
-                                    className="progress-bar"
-                                    style={{ width: `${journal.progress}%` }}
-                                  />
-                                </div>
-                                <span className="font-medium">{journal.progress}%</span>
-                              </div>
-                              <span className="flex items-center space-x-1">
-                                <Calendar className="h-3 w-3" />
-                                <span>
-                                  {format(new Date(journal.updated_at), 'dd MMM yyyy', { locale: es })}
-                                </span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className={`badge ${
-                            journal.status === 'ready' ? 'badge-success' :
-                            journal.status === 'in_progress' ? 'badge-warning' :
-                            'badge-gray'
-                          }`}>
-                            {journal.status === 'ready' ? 'Completado' :
-                             journal.status === 'in_progress' ? 'En progreso' : 'Borrador'}
-                          </span>
-                        </div>
+                      <h3 className="text-lg text-stone-900 mb-2">
+                        {journal.title}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-sm text-stone-600">
+                        <span>Progreso: {journal.progress}%</span>
+                        <span>
+                          {format(new Date(journal.updated_at), 'dd MMM yyyy', { locale: es })}
+                        </span>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-2 bg-stone-200 rounded">
+                        <div
+                          className="h-2 bg-stone-600 rounded transition-all"
+                          style={{ width: `${journal.progress}%` }}
+                        />
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setJournalToDelete(journal.id)
+                        }}
+                        className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Eliminar bitácora"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-      </div>
+      )}
+
+      {/* Delete Team Confirmation */}
+      {teamToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg text-stone-900 mb-4">
+              ¿Eliminar equipo?
+            </h3>
+            <p className="text-stone-600 mb-6">
+              Esta acción eliminará permanentemente el equipo y todas sus bitácoras. No se puede deshacer.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleDeleteTeam}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+              <button
+                onClick={() => setTeamToDelete(null)}
+                className="px-4 py-2 border border-stone-300 text-stone-900 rounded-lg hover:bg-stone-50 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Journal Confirmation */}
+      {journalToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg text-stone-900 mb-4">
+              ¿Eliminar bitácora?
+            </h3>
+            <p className="text-stone-600 mb-6">
+              Esta acción eliminará permanentemente la bitácora y todo su contenido. No se puede deshacer.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleDeleteJournal}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+              <button
+                onClick={() => setJournalToDelete(null)}
+                className="px-4 py-2 border border-stone-300 text-stone-900 rounded-lg hover:bg-stone-50 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

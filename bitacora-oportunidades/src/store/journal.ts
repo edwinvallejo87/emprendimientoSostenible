@@ -41,6 +41,8 @@ interface JournalState {
   loadJournalData: (journalId: string) => Promise<void>
   createTeam: (name: string) => Promise<Team>
   createJournal: (teamId: string, title: string) => Promise<Journal>
+  deleteTeam: (teamId: string) => Promise<void>
+  deleteJournal: (journalId: string) => Promise<void>
   
   // Auto-save functions
   saveStep1Data: (journalId: string, memberId: string, data: Partial<Step1Data>) => Promise<void>
@@ -172,6 +174,56 @@ export const useJournalStore = create<JournalState>()(
         await get().loadJournals(teamId)
         
         return data
+      },
+
+      deleteTeam: async (teamId: string) => {
+        const { error } = await supabase
+          .from('teams')
+          .delete()
+          .eq('id', teamId)
+
+        if (error) throw error
+
+        // Update local state
+        const { teams, currentTeam } = get()
+        const updatedTeams = teams.filter(team => team.id !== teamId)
+        
+        set({ 
+          teams: updatedTeams,
+          currentTeam: currentTeam?.id === teamId ? null : currentTeam,
+          journals: currentTeam?.id === teamId ? [] : get().journals,
+          currentJournal: currentTeam?.id === teamId ? null : get().currentJournal
+        })
+      },
+
+      deleteJournal: async (journalId: string) => {
+        const { error } = await supabase
+          .from('journals')
+          .delete()
+          .eq('id', journalId)
+
+        if (error) throw error
+
+        // Update local state
+        const { journals, currentJournal, currentTeam } = get()
+        const updatedJournals = journals.filter(journal => journal.id !== journalId)
+        
+        set({ 
+          journals: updatedJournals,
+          currentJournal: currentJournal?.id === journalId ? null : currentJournal
+        })
+
+        // Clear journal data if this was the current journal
+        if (currentJournal?.id === journalId) {
+          set({
+            step1Data: [],
+            step2Data: null,
+            step3Data: [],
+            step4Data: [],
+            step5BuyerData: null,
+            step5VPData: null
+          })
+        }
       },
 
       saveStep1Data: async (journalId: string, memberId: string, data: Partial<Step1Data>) => {
