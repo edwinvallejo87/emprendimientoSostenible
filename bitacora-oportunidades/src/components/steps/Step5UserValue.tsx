@@ -9,6 +9,8 @@ import {
   type Step5VPCanvasData 
 } from '../../lib/validators/step5'
 import { Users, Target, CheckCircle, AlertTriangle } from 'lucide-react'
+import PdfExportButton from '../export/PdfExportButton'
+import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 
 interface Step5UserValueProps {
   onNext?: () => void
@@ -17,6 +19,10 @@ interface Step5UserValueProps {
 export default function Step5UserValue({ onNext }: Step5UserValueProps) {
   const {
     currentJournal,
+    step1Data,
+    step2Data,
+    step3Data,
+    step4Data,
     step5BuyerData,
     step5VPData,
     saveStep5BuyerData,
@@ -49,6 +55,19 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
 
   const buyerValues = watchBuyer()
   const vpValues = watchVP()
+
+  // Calculate if all steps are complete for PDF export
+  const overallProgress = calculateOverallProgress({
+    step1: step1Data || [],
+    step2: step2Data || null,
+    step3: step3Data || [],
+    step4: step4Data || [],
+    step5Buyer: step5BuyerData || null,
+    step5VP: step5VPData || null,
+    teamMembersCount: 2, // TODO: Get actual team member count
+  })
+  
+  const allStepsComplete = overallProgress.totalProgress === 100
 
   const onSubmit = async (buyerData: Step5BuyerData, vpData: Step5VPCanvasData) => {
     if (!currentJournal) return
@@ -466,15 +485,25 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center space-x-4">
             <button
               type="submit"
               disabled={!isBuyerValid || !isVPValid || saving}
               className="btn btn-primary"
             >
-              {saving ? 'Guardando...' : 'Siguiente'}
+              {saving ? 'Guardando...' : 'Finalizar'}
             </button>
+            
+            <PdfExportButton disabled={!allStepsComplete} />
           </div>
+
+          {!allStepsComplete && isBuyerValid && isVPValid && (
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800 text-center">
+                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora a PDF
+              </p>
+            </div>
+          )}
 
         </form>
 
