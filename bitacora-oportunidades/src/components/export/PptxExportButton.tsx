@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { FileDown, Loader2 } from 'lucide-react'
+import { FileDown, Loader2, Presentation } from 'lucide-react'
 import { useJournalStore } from '../../store/journal'
-import { generatePDF } from '../../lib/pdf/generatePdf'
+import { generatePPTX } from '../../lib/pptx/generatePptx'
 
-interface PdfExportButtonProps {
+interface PptxExportButtonProps {
   disabled?: boolean
 }
 
-export default function PdfExportButton({ disabled = false }: PdfExportButtonProps) {
+export default function PptxExportButton({ disabled = false }: PptxExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false)
   const {
     currentJournal,
@@ -36,10 +36,10 @@ export default function PdfExportButton({ disabled = false }: PdfExportButtonPro
         step5VP: step5VPData,
       }
 
-      await generatePDF(journalData)
+      await generatePPTX(journalData)
     } catch (error) {
-      console.error('Error exporting PDF:', error)
-      alert('Error al generar el PDF. Por favor intenta de nuevo.')
+      console.error('Error exporting PPTX:', error)
+      alert('Error al generar la presentación PowerPoint. Por favor intenta de nuevo.')
     } finally {
       setIsExporting(false)
     }
@@ -61,15 +61,15 @@ export default function PdfExportButton({ disabled = false }: PdfExportButtonPro
         }
         ${isExporting ? 'opacity-75' : ''}
       `}
-      title={disabled ? 'Completa todos los pasos para exportar' : 'Exportar bitácora a PDF'}
+      title={disabled ? 'Completa todos los pasos para exportar' : 'Exportar bitácora a PowerPoint'}
     >
       {isExporting ? (
         <Loader2 size={20} className="animate-spin" />
       ) : (
-        <FileDown size={20} />
+        <Presentation size={20} />
       )}
       <span>
-        {isExporting ? 'Generando PDF...' : 'Exportar PDF'}
+        {isExporting ? 'Generando PPTX...' : 'Exportar PowerPoint'}
       </span>
     </button>
   )

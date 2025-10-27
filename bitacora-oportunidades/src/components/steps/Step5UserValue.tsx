@@ -9,7 +9,7 @@ import {
   type Step5VPCanvasData 
 } from '../../lib/validators/step5'
 import { Users, Target, CheckCircle, AlertTriangle } from 'lucide-react'
-import PdfExportButton from '../export/PdfExportButton'
+import PptxExportButton from '../export/PptxExportButton'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 
 interface Step5UserValueProps {
@@ -494,13 +494,13 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
               {saving ? 'Guardando...' : 'Finalizar'}
             </button>
             
-            <PdfExportButton disabled={!allStepsComplete} />
+            <PptxExportButton disabled={!allStepsComplete} />
           </div>
 
           {!allStepsComplete && isBuyerValid && isVPValid && (
             <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-800 text-center">
-                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora a PDF
+                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora a PowerPoint
               </p>
             </div>
           )}
