@@ -260,7 +260,9 @@ export const useJournalStore = create<JournalState>()(
             })
 
           if (error) throw error
-          await get().loadJournalData(journalId)
+          
+          // Update only the step2 data in local state instead of reloading everything
+          set({ step2Data: { journal_id: journalId, ...data } as Step2Data })
         } catch (error) {
           console.error('Error saving step 2 data:', error)
         } finally {
@@ -337,7 +339,9 @@ export const useJournalStore = create<JournalState>()(
             })
 
           if (error) throw error
-          await get().loadJournalData(journalId)
+          
+          // Update only the step5Buyer data in local state
+          set({ step5BuyerData: { journal_id: journalId, ...data } as Step5BuyerData })
         } catch (error) {
           console.error('Error saving step 5 buyer data:', error)
         } finally {
@@ -356,7 +360,9 @@ export const useJournalStore = create<JournalState>()(
             })
 
           if (error) throw error
-          await get().loadJournalData(journalId)
+          
+          // Update only the step5VP data in local state
+          set({ step5VPData: { journal_id: journalId, ...data } as Step5VPData })
         } catch (error) {
           console.error('Error saving step 5 VP data:', error)
         } finally {
