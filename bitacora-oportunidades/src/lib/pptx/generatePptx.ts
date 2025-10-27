@@ -27,32 +27,50 @@ interface JournalData {
 
 export async function generatePPTX(data: JournalData) {
   try {
-    const pptx = new PptxGenJS()
+    console.log('Iniciando generación de PPTX...')
     
-    // Configuración del documento
-    pptx.author = data.team.name
-    pptx.title = `${data.journal.title} - Análisis de Oportunidades`
+    // Verificar que PptxGenJS esté disponible
+    if (typeof PptxGenJS === 'undefined') {
+      throw new Error('PptxGenJS no está disponible')
+    }
+    
+    const pptx = new PptxGenJS()
+    console.log('PptxGenJS inicializado')
+    
+    // Configuración del documento con validación
+    if (data.team?.name) pptx.author = data.team.name
+    if (data.journal?.title) pptx.title = `${data.journal.title} - Análisis de Oportunidades`
     pptx.subject = 'Bitácora de Oportunidades - Metodología Efectual'
     
-    // Crear slides
-    createTitleSlide(pptx, data)
-    createOverviewSlide(pptx, data)
-    createStep1Slide(pptx, data.step1)
-    createStep2Slide(pptx, data.step2)
-    createStep3Slide(pptx, data.step3)
-    createStep4Slide(pptx, data.step4)
-    createStep5Slide(pptx, data.step5Buyer, data.step5VP)
-    createConclusionSlide(pptx, data)
+    console.log('Creando slides...')
+    
+    // Crear slides con manejo de errores individual
+    try { createTitleSlide(pptx, data) } catch (e) { console.error('Error en slide título:', e) }
+    try { createOverviewSlide(pptx, data) } catch (e) { console.error('Error en slide overview:', e) }
+    try { createStep1Slide(pptx, data.step1) } catch (e) { console.error('Error en slide step1:', e) }
+    try { createStep2Slide(pptx, data.step2) } catch (e) { console.error('Error en slide step2:', e) }
+    try { createStep3Slide(pptx, data.step3) } catch (e) { console.error('Error en slide step3:', e) }
+    try { createStep4Slide(pptx, data.step4) } catch (e) { console.error('Error en slide step4:', e) }
+    try { createStep5Slide(pptx, data.step5Buyer, data.step5VP) } catch (e) { console.error('Error en slide step5:', e) }
+    try { createConclusionSlide(pptx, data) } catch (e) { console.error('Error en slide conclusión:', e) }
+    
+    console.log('Slides creados, generando archivo...')
     
     // Generar y descargar el archivo
     const currentDate = format(new Date(), 'yyyy-MM-dd')
-    const fileName = `${data.journal.title.replace(/[^a-zA-Z0-9]/g, '_')}_${currentDate}.pptx`
+    const safeTitle = data.journal?.title?.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_') || 'Bitacora'
+    const fileName = `${safeTitle}_${currentDate}.pptx`
     
-    await pptx.writeFile({ fileName })
+    console.log('Descargando archivo:', fileName)
+    
+    // Usar writeFile sin async/await ya que puede no ser promise
+    pptx.writeFile({ fileName })
+    
+    console.log('PPTX generado exitosamente')
     
   } catch (error) {
-    console.error('Error generating PPTX:', error)
-    throw new Error('Error al generar la presentación PowerPoint')
+    console.error('Error detallado generando PPTX:', error)
+    throw new Error(`Error al generar la presentación PowerPoint: ${error instanceof Error ? error.message : 'Error desconocido'}`)
   }
 }
 
@@ -63,7 +81,7 @@ function createTitleSlide(pptx: any, data: JournalData) {
   slide.background = { fill: { type: 'solid', color: '059669' } }
   
   // Título principal
-  slide.addText(data.journal.title, {
+  slide.addText(data.journal?.title || 'Bitácora de Oportunidades', {
     x: 0.5,
     y: 2,
     w: 9,
@@ -89,7 +107,7 @@ function createTitleSlide(pptx: any, data: JournalData) {
   
   // Información del equipo
   const currentDate = format(new Date(), 'dd \'de\' MMMM \'de\' yyyy', { locale: es })
-  slide.addText(`Equipo: ${data.team.name}\nFecha: ${currentDate}\nMetodología: Efectual`, {
+  slide.addText(`Equipo: ${data.team?.name || 'Sin nombre'}\nFecha: ${currentDate}\nMetodología: Efectual`, {
     x: 0.5,
     y: 5.2,
     w: 9,

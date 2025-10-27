@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FileDown, Loader2, Presentation } from 'lucide-react'
 import { useJournalStore } from '../../store/journal'
-import { generatePPTX } from '../../lib/pptx/generatePptx'
+import { generateSimplePPTX } from '../../lib/pptx/simplePptx'
 
 interface PptxExportButtonProps {
   disabled?: boolean
@@ -36,7 +36,7 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
         step5VP: step5VPData,
       }
 
-      await generatePPTX(journalData)
+      await generateSimplePPTX(journalData)
     } catch (error) {
       console.error('Error exporting PPTX:', error)
       alert('Error al generar la presentación PowerPoint. Por favor intenta de nuevo.')
@@ -61,7 +61,7 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
         }
         ${isExporting ? 'opacity-75' : ''}
       `}
-      title={disabled ? 'Completa todos los pasos para exportar' : 'Exportar bitácora a PowerPoint'}
+      title={disabled ? 'Completa todos los pasos para exportar' : 'Exportar bitácora como presentación'}
     >
       {isExporting ? (
         <Loader2 size={20} className="animate-spin" />
@@ -69,7 +69,7 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
         <Presentation size={20} />
       )}
       <span>
-        {isExporting ? 'Generando PPTX...' : 'Exportar PowerPoint'}
+        {isExporting ? 'Generando presentación...' : 'Exportar Presentación'}
       </span>
     </button>
   )

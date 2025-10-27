@@ -500,7 +500,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
           {!allStepsComplete && isBuyerValid && isVPValid && (
             <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-800 text-center">
-                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora a PowerPoint
+                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora como presentación
               </p>
             </div>
           )}
