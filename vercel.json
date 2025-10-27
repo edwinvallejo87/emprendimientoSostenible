@@ -1,5 +1,6 @@
 {
   "buildCommand": "cd bitacora-oportunidades && npm run build",
   "outputDirectory": "bitacora-oportunidades/dist",
-  "installCommand": "cd bitacora-oportunidades && npm install"
+  "installCommand": "cd bitacora-oportunidades && npm install",
+  "framework": null
 }
