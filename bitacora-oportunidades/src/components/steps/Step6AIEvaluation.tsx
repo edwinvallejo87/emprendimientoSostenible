@@ -45,11 +45,95 @@ export default function Step6AIEvaluation({ onNext }: Step6AIEvaluationProps) {
         valor: step5VPData,
       }
 
-      // Simular análisis de IA (en una implementación real, esto haría una llamada a OpenAI)
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Intentar análisis real con OpenAI, fallback a mock si no está disponible
+      const apiKey = import.meta.env.VITE_OPENAI_API_KEY
       
-      // Análisis profundo basado en metodología efectual
-      const mockAnalysis = {
+      let analysisResult
+      
+      if (apiKey) {
+        try {
+          console.log('🤖 Iniciando análisis IA real con OpenAI...')
+          
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'gpt-3.5-turbo',
+              messages: [
+                {
+                  role: 'system',
+                  content: `Eres un consultor experto en metodología efectual y emprendimiento. Analiza la siguiente bitácora de oportunidades y proporciona un análisis profundo y específico.`
+                },
+                {
+                  role: 'user',
+                  content: `Analiza esta bitácora de oportunidades:
+                  
+IDEA: ${currentIdea.title}
+${currentIdea.description}
+
+MEDIOS PERSONALES: ${JSON.stringify(step1Data, null, 2)}
+PROBLEMA: ${JSON.stringify(step2Data, null, 2)}
+TENDENCIAS: ${JSON.stringify(step3Data, null, 2)}
+EVALUACIÓN: ${JSON.stringify(step4EvaluationData, null, 2)}
+BUYER PERSONA: ${JSON.stringify(step5BuyerData, null, 2)}
+PROPUESTA DE VALOR: ${JSON.stringify(step5VPData, null, 2)}
+
+Proporciona un análisis profundo basado en los 5 principios efectuales: Bird-in-Hand, Affordable Loss, Crazy Quilt, Lemonade, y Pilot-in-the-Plane.
+
+Responde en formato JSON con esta estructura:
+{
+  "viability_score": número_entre_0_y_100,
+  "market_fit_score": número_entre_0_y_100,
+  "execution_score": número_entre_0_y_100,
+  "risk_score": número_entre_0_y_100,
+  "overall_recommendation": "PROCEED_WITH_CAUTION" | "HIGHLY_RECOMMENDED" | "NOT_RECOMMENDED",
+  "key_insights": ["insight 1", "insight 2", "insight 3", "insight 4", "insight 5"],
+  "recommendations": ["recomendación 1", "recomendación 2", "recomendación 3", "recomendación 4", "recomendación 5"],
+  "next_steps": ["paso 1", "paso 2", "paso 3", "paso 4", "paso 5"]
+}`
+                }
+              ],
+              temperature: 0.7,
+              max_tokens: 2000,
+            }),
+          })
+
+          if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`)
+          }
+
+          const result = await response.json()
+          const content = result.choices[0].message.content
+          
+          console.log('✅ Análisis IA completado exitosamente')
+          
+          // Intentar parsear el JSON del análisis
+          try {
+            const jsonMatch = content.match(/\{[\s\S]*\}/)
+            if (jsonMatch) {
+              analysisResult = JSON.parse(jsonMatch[0])
+            } else {
+              throw new Error('No se encontró JSON válido en la respuesta')
+            }
+          } catch (parseError) {
+            console.error('Error parseando respuesta IA:', parseError)
+            throw new Error('Error procesando respuesta de IA')
+          }
+          
+        } catch (aiError) {
+          console.error('Error con OpenAI API:', aiError)
+          console.log('🔄 Fallback a análisis simulado')
+          analysisResult = null // Usar mock como fallback
+        }
+      } else {
+        console.log('🔧 API key no configurada, usando análisis simulado')
+      }
+      
+      // Si el análisis IA falló o no hay API key, usar análisis mock mejorado
+      const mockAnalysis = analysisResult || {
         viability_score: Math.floor(Math.random() * 15) + 75, // 75-89
         market_fit_score: Math.floor(Math.random() * 20) + 70, // 70-89
         execution_score: Math.floor(Math.random() * 25) + 65, // 65-89
@@ -90,7 +174,7 @@ export default function Step6AIEvaluation({ onNext }: Step6AIEvaluationProps) {
         ]
       }
 
-      setAnalysis(mockAnalysis)
+      setAnalysis(analysisResult || mockAnalysis)
     } catch (err) {
       setError('Error generando análisis con IA')
       console.error('Error:', err)
