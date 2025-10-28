@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useJournalStore } from '../../store/journal'
@@ -10,6 +10,7 @@ import {
 } from '../../lib/validators/step5'
 import { Users, Target, CheckCircle, AlertTriangle } from 'lucide-react'
 import PptxExportButton from '../export/PptxExportButton'
+import AIAnalysisPanel from '../ai/AIAnalysisPanel'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 
 interface Step5UserValueProps {
@@ -19,6 +20,7 @@ interface Step5UserValueProps {
 export default function Step5UserValue({ onNext }: Step5UserValueProps) {
   const {
     currentJournal,
+    currentIdea,
     step1Data,
     step2Data,
     step3Data,
@@ -27,6 +29,8 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     step5VPData,
     saveStep5BuyerData,
     saveStep5VPData,
+    saveStep5BuyerDataForIdea,
+    saveStep5VPDataForIdea,
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
@@ -38,7 +42,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     formState: { errors: buyerErrors, isValid: isBuyerValid },
   } = useForm<Step5BuyerData>({
     resolver: zodResolver(step5BuyerSchema),
-    defaultValues: step5BuyerData || {},
+    values: step5BuyerData || {},
     mode: 'onChange'
   })
 
@@ -49,7 +53,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     formState: { errors: vpErrors, isValid: isVPValid },
   } = useForm<Step5VPCanvasData>({
     resolver: zodResolver(step5VPCanvasSchema),
-    defaultValues: step5VPData || {},
+    values: step5VPData || {},
     mode: 'onChange'
   })
 
@@ -70,13 +74,13 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
   const allStepsComplete = overallProgress.totalProgress === 100
 
   const onSubmit = async (buyerData: Step5BuyerData, vpData: Step5VPCanvasData) => {
-    if (!currentJournal) return
+    if (!currentIdea) return
     
     setSaving(true)
     try {
       await Promise.all([
-        saveStep5BuyerData(currentJournal.id, buyerData),
-        saveStep5VPData(currentJournal.id, vpData)
+        saveStep5BuyerDataForIdea(currentIdea.id, buyerData),
+        saveStep5VPDataForIdea(currentIdea.id, vpData)
       ])
       if (onNext) {
         onNext()
@@ -94,8 +98,8 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     }
   }
 
-  if (!currentJournal) {
-    return <div>No hay bitácora seleccionada</div>
+  if (!currentIdea) {
+    return <div>No hay idea seleccionada</div>
   }
 
   const getBuyerFieldStatus = (field: keyof Step5BuyerData) => {
@@ -121,9 +125,9 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Usuario y Propuesta de Valor</h1>
+          <h1 className="text-3xl text-stone-900 mb-3">Usuario y Valor (Pilot-in-the-Plane)</h1>
           <p className="text-lg text-stone-600">
-            Define el buyer persona y desarrolla el canvas de propuesta de valor
+            Define tu usuario y propuesta de valor. ¿Cómo vas a controlar el futuro en lugar de predecirlo?
           </p>
         </div>
 
@@ -526,6 +530,13 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
             <li>• Asegúrate de que hay match entre ambos lados del canvas</li>
           </ul>
         </div>
+
+        {/* AI Analysis Panel - Show only when all steps are complete */}
+        {allStepsComplete && (
+          <div className="mt-8">
+            <AIAnalysisPanel />
+          </div>
+        )}
       </div>
     </div>
   )

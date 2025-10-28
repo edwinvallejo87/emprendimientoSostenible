@@ -112,6 +112,65 @@ export type Database = {
           }
         ]
       }
+      ideas: {
+        Row: {
+          id: string
+          journal_id: string
+          title: string
+          description: string | null
+          target_market: string | null
+          unique_value: string | null
+          resources_needed: string[] | null
+          implementation_complexity: 'Low' | 'Medium' | 'High' | null
+          market_potential: 'Low' | 'Medium' | 'High' | null
+          alignment_score: number | null
+          reasoning: string | null
+          status: 'draft' | 'in_progress' | 'completed'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          journal_id: string
+          title: string
+          description?: string | null
+          target_market?: string | null
+          unique_value?: string | null
+          resources_needed?: string[] | null
+          implementation_complexity?: 'Low' | 'Medium' | 'High' | null
+          market_potential?: 'Low' | 'Medium' | 'High' | null
+          alignment_score?: number | null
+          reasoning?: string | null
+          status?: 'draft' | 'in_progress' | 'completed'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          journal_id?: string
+          title?: string
+          description?: string | null
+          target_market?: string | null
+          unique_value?: string | null
+          resources_needed?: string[] | null
+          implementation_complexity?: 'Low' | 'Medium' | 'High' | null
+          market_potential?: 'Low' | 'Medium' | 'High' | null
+          alignment_score?: number | null
+          reasoning?: string | null
+          status?: 'draft' | 'in_progress' | 'completed'
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ideas_journal_id_fkey"
+            columns: ["journal_id"]
+            isOneToOne: false
+            referencedRelation: "journals"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       step1_means: {
         Row: {
           id: string
@@ -166,7 +225,8 @@ export type Database = {
       step2_problem: {
         Row: {
           id: string
-          journal_id: string
+          journal_id: string | null
+          idea_id: string | null
           title: string | null
           description: string | null
           affected: string | null
@@ -176,7 +236,8 @@ export type Database = {
         }
         Insert: {
           id?: string
-          journal_id: string
+          journal_id?: string | null
+          idea_id?: string | null
           title?: string | null
           description?: string | null
           affected?: string | null
@@ -186,7 +247,8 @@ export type Database = {
         }
         Update: {
           id?: string
-          journal_id?: string
+          journal_id?: string | null
+          idea_id?: string | null
           title?: string | null
           description?: string | null
           affected?: string | null
@@ -201,13 +263,21 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "journals"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "step2_problem_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
           }
         ]
       }
       step3_trends: {
         Row: {
           id: string
-          journal_id: string
+          journal_id: string | null
+          idea_id: string | null
           name: string | null
           type: 'Social' | 'Tecnológica' | 'Ambiental' | 'Cultural' | 'Consumo' | null
           brief: string | null
@@ -218,7 +288,8 @@ export type Database = {
         }
         Insert: {
           id?: string
-          journal_id: string
+          journal_id?: string | null
+          idea_id?: string | null
           name?: string | null
           type?: 'Social' | 'Tecnológica' | 'Ambiental' | 'Cultural' | 'Consumo' | null
           brief?: string | null
@@ -229,7 +300,8 @@ export type Database = {
         }
         Update: {
           id?: string
-          journal_id?: string
+          journal_id?: string | null
+          idea_id?: string | null
           name?: string | null
           type?: 'Social' | 'Tecnológica' | 'Ambiental' | 'Cultural' | 'Consumo' | null
           brief?: string | null
@@ -244,6 +316,13 @@ export type Database = {
             columns: ["journal_id"]
             isOneToOne: false
             referencedRelation: "journals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "step3_trends_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
             referencedColumns: ["id"]
           }
         ]
@@ -292,10 +371,58 @@ export type Database = {
           }
         ]
       }
+      step4_idea_evaluation: {
+        Row: {
+          id: string
+          idea_id: string
+          strengths: string | null
+          weaknesses: string | null
+          opportunities: string | null
+          threats: string | null
+          success_factors: string | null
+          risk_mitigation: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          strengths?: string | null
+          weaknesses?: string | null
+          opportunities?: string | null
+          threats?: string | null
+          success_factors?: string | null
+          risk_mitigation?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          strengths?: string | null
+          weaknesses?: string | null
+          opportunities?: string | null
+          threats?: string | null
+          success_factors?: string | null
+          risk_mitigation?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "step4_idea_evaluation_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       step5_buyer: {
         Row: {
           id: string
-          journal_id: string
+          journal_id: string | null
+          idea_id: string | null
           name: string | null
           age: number | null
           occupation: string | null
@@ -306,7 +433,8 @@ export type Database = {
         }
         Insert: {
           id?: string
-          journal_id: string
+          journal_id?: string | null
+          idea_id?: string | null
           name?: string | null
           age?: number | null
           occupation?: string | null
@@ -317,7 +445,8 @@ export type Database = {
         }
         Update: {
           id?: string
-          journal_id?: string
+          journal_id?: string | null
+          idea_id?: string | null
           name?: string | null
           age?: number | null
           occupation?: string | null
@@ -333,13 +462,21 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "journals"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "step5_buyer_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
           }
         ]
       }
       step5_vpcanvas: {
         Row: {
           id: string
-          journal_id: string
+          journal_id: string | null
+          idea_id: string | null
           customer_jobs: string | null
           customer_pains: string | null
           customer_gains: string | null
@@ -350,7 +487,8 @@ export type Database = {
         }
         Insert: {
           id?: string
-          journal_id: string
+          journal_id?: string | null
+          idea_id?: string | null
           customer_jobs?: string | null
           customer_pains?: string | null
           customer_gains?: string | null
@@ -361,7 +499,8 @@ export type Database = {
         }
         Update: {
           id?: string
-          journal_id?: string
+          journal_id?: string | null
+          idea_id?: string | null
           customer_jobs?: string | null
           customer_pains?: string | null
           customer_gains?: string | null
@@ -376,6 +515,13 @@ export type Database = {
             columns: ["journal_id"]
             isOneToOne: false
             referencedRelation: "journals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "step5_vpcanvas_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
             referencedColumns: ["id"]
           }
         ]

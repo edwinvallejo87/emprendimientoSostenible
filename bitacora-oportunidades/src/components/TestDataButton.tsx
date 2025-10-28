@@ -5,7 +5,7 @@ import { useJournalStore } from '../store/journal'
 export default function TestDataButton() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const { loadTeams, loadJournals, setCurrentTeam, setCurrentJournal } = useJournalStore()
+  const { loadTeams, loadJournals, loadIdeas, setCurrentTeam, setCurrentJournal, setCurrentIdea } = useJournalStore()
 
   const handleCreateTestData = async () => {
     setLoading(true)
@@ -14,7 +14,7 @@ export default function TestDataButton() {
     try {
       const result = await createCompleteTestData()
       
-      if (result?.success && result.team && result.journal) {
+      if (result?.success && result.team && result.journal && result.idea) {
         setMessage('✅ Datos creados! Cargando en la interfaz...')
         
         // Recargar equipos y seleccionar el nuevo
@@ -25,7 +25,11 @@ export default function TestDataButton() {
         await loadJournals(result.team.id)
         setCurrentJournal(result.journal)
         
-        setMessage('🎉 ¡Listo! Datos de prueba cargados exitosamente')
+        // Cargar ideas de la bitácora y seleccionar la creada
+        await loadIdeas(result.journal.id)
+        setCurrentIdea(result.idea)
+        
+        setMessage('🎉 ¡Listo! Datos de prueba cargados exitosamente con idea seleccionada')
         
         // Auto-hide después de 5 segundos
         setTimeout(() => {

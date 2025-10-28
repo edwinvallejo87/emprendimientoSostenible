@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useJournalStore } from '../../store/journal'
@@ -12,8 +12,10 @@ interface Step2ProblemProps {
 export default function Step2Problem({ onNext }: Step2ProblemProps) {
   const {
     currentJournal,
+    currentIdea,
     step2Data,
     saveStep2Data,
+    saveStep2DataForIdea,
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
@@ -22,21 +24,22 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<Step2ProblemData>({
     resolver: zodResolver(step2ProblemSchema),
-    defaultValues: step2Data || {},
+    values: step2Data || {},
     mode: 'onChange'
   })
 
   const watchedValues = watch()
 
   const onSubmit = async (data: Step2ProblemData) => {
-    if (!currentJournal) return
+    if (!currentIdea) return
     
     setSaving(true)
     try {
-      await saveStep2Data(currentJournal.id, data)
+      await saveStep2DataForIdea(currentIdea.id, data)
       if (onNext) {
         onNext()
       }
@@ -47,8 +50,8 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
     }
   }
 
-  if (!currentJournal) {
-    return <div>No hay bitácora seleccionada</div>
+  if (!currentIdea) {
+    return <div>No hay idea seleccionada</div>
   }
 
   const getFieldStatus = (fieldName: keyof Step2ProblemData, minLength = 200) => {
@@ -73,9 +76,9 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Problema o Necesidad</h1>
+          <h1 className="text-3xl text-stone-900 mb-3">Problema o Necesidad (Affordable Loss)</h1>
           <p className="text-stone-600 text-lg">
-            Identifica un problema específico que podría convertirse en una oportunidad
+            Identifica el problema que resuelve tu idea. ¿Cuánto puedes permitirte perder explorando esta oportunidad?
           </p>
         </div>
 

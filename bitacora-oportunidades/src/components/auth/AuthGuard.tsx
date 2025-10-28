@@ -12,19 +12,28 @@ const DEMO_MODE = true
 
 export default function AuthGuard({ children }: AuthGuardProps) {
   const { user, loading, setUser, setLoading } = useAuthStore()
-  const [showDemoPrompt, setShowDemoPrompt] = useState(DEMO_MODE)
+  const [showDemoPrompt, setShowDemoPrompt] = useState(() => {
+    if (!DEMO_MODE) return false
+    // Check if user has already entered demo mode
+    return !localStorage.getItem('demo-mode-entered')
+  })
 
   useEffect(() => {
     if (DEMO_MODE) {
-      // Create a mock user for demo mode
-      const demoUser = {
-        id: 'demo-user-123',
-        email: 'demo@ean.edu.co',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+      // If user already entered demo mode, auto-login
+      if (localStorage.getItem('demo-mode-entered')) {
+        const demoUser = {
+          id: 'demo-user-123',
+          email: 'demo@ean.edu.co',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        setUser(demoUser as any)
+        setLoading(false)
+        setShowDemoPrompt(false)
+      } else {
+        setLoading(false)
       }
-      setUser(demoUser as any)
-      setLoading(false)
       return
     }
 
@@ -52,6 +61,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       updated_at: new Date().toISOString(),
     }
     setUser(demoUser as any)
+    localStorage.setItem('demo-mode-entered', 'true')
     setShowDemoPrompt(false)
   }
 

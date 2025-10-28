@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -19,22 +19,29 @@ interface Step3TrendsProps {
 export default function Step3Trends({ onNext }: Step3TrendsProps) {
   const {
     currentJournal,
+    currentIdea,
     step3Data,
     saveStep3Data,
+    saveStep3DataForIdea,
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
 
-  const initialTrends = step3Data.length > 0 
-    ? step3Data.map(trend => ({
-        name: trend.name || '',
-        type: trend.type || 'Social' as TrendType,
-        brief: trend.brief || '',
-        example: trend.example || '',
-        source_apa: trend.source_apa || '',
-        comment: trend.comment || '',
-      }))
-    : [
+  const formValues = useMemo(() => {
+    if (step3Data.length > 0) {
+      return {
+        trends: step3Data.map(trend => ({
+          name: trend.name || '',
+          type: trend.type || 'Social' as TrendType,
+          brief: trend.brief || '',
+          example: trend.example || '',
+          source_apa: trend.source_apa || '',
+          comment: trend.comment || '',
+        }))
+      }
+    }
+    return {
+      trends: [
         {
           name: '',
           type: 'Social' as TrendType,
@@ -44,6 +51,8 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
           comment: '',
         }
       ]
+    }
+  }, [step3Data])
 
   const {
     control,
@@ -51,9 +60,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
     formState: { errors, isValid },
   } = useForm<TrendsFormData>({
     resolver: zodResolver(trendsFormSchema),
-    defaultValues: {
-      trends: initialTrends
-    },
+    values: formValues,
     mode: 'onChange'
   })
 
@@ -80,11 +87,11 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
   }
 
   const onSubmit = async (data: TrendsFormData) => {
-    if (!currentJournal) return
+    if (!currentIdea) return
     
     setSaving(true)
     try {
-      await saveStep3Data(currentJournal.id, data.trends)
+      await saveStep3DataForIdea(currentIdea.id, data.trends)
       if (onNext) {
         onNext()
       }
@@ -95,17 +102,17 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
     }
   }
 
-  if (!currentJournal) {
-    return <div>No hay bitácora seleccionada</div>
+  if (!currentIdea) {
+    return <div>No hay idea seleccionada</div>
   }
 
   return (
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Tendencias</h1>
+          <h1 className="text-3xl text-stone-900 mb-3">Tendencias (Crazy Quilt)</h1>
           <p className="text-lg text-stone-600">
-            Identifica al menos 3 tendencias que podrían influir en el problema o crear nuevas oportunidades
+            Identifica tendencias y posibles alianzas que apoyen tu idea. ¿Qué colaboraciones puedes tejer?
           </p>
         </div>
 

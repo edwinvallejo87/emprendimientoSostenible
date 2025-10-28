@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useJournalStore } from '../../store/journal'
@@ -14,15 +14,26 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
   const { user } = useAuthStore()
   const {
     currentJournal,
+    currentIdea,
     step1Data,
     saveStep1Data,
+    saveStep1DataForIdea,
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
 
   // Use demo user ID for development
   const demoUserId = '00000000-0000-0000-0000-000000000000'
-  const currentUserData = step1Data.find(data => data.member_id === demoUserId) || {}
+  
+  const formValues = useMemo(() => {
+    const currentUserData = step1Data.find(data => data.member_id === demoUserId) || {}
+    return {
+      who_i_am: currentUserData.who_i_am || '',
+      what_i_know: currentUserData.what_i_know || '',
+      who_i_know: currentUserData.who_i_know || '',
+      what_i_have: currentUserData.what_i_have || '',
+    }
+  }, [step1Data, demoUserId])
 
   const {
     control,
@@ -30,21 +41,16 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
     formState: { errors, isValid },
   } = useForm<Step1MeansData>({
     resolver: zodResolver(step1MeansSchema),
-    defaultValues: {
-      who_i_am: currentUserData.who_i_am || '',
-      what_i_know: currentUserData.what_i_know || '',
-      who_i_know: currentUserData.who_i_know || '',
-      what_i_have: currentUserData.what_i_have || '',
-    },
+    values: formValues,
     mode: 'onChange'
   })
 
   const onSubmit = async (data: Step1MeansData) => {
-    if (!currentJournal) return
+    if (!currentIdea) return
     
     setSaving(true)
     try {
-      await saveStep1Data(currentJournal.id, demoUserId, data)
+      await saveStep1DataForIdea(currentIdea.id, demoUserId, data)
       if (onNext) {
         onNext()
       }
@@ -55,8 +61,8 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
     }
   }
 
-  if (!currentJournal) {
-    return <div>No hay bitácora seleccionada</div>
+  if (!currentIdea) {
+    return <div>No hay idea seleccionada</div>
   }
 
   return (

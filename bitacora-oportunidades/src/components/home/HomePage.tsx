@@ -5,6 +5,7 @@ import { Plus, BookOpen, Users, Calendar, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import TestDataButton from '../TestDataButton'
+import MultipleIdeasTestButton from '../MultipleIdeasTestButton'
 
 export default function HomePage() {
   const { user } = useAuthStore()
@@ -16,6 +17,7 @@ export default function HomePage() {
     loadJournals,
     setCurrentTeam,
     setCurrentJournal,
+    setCurrentIdea,
     createTeam,
     createJournal,
     deleteTeam,
@@ -59,7 +61,6 @@ export default function HomePage() {
 
     try {
       await createJournal(currentTeam.id, journalTitle)
-      // createJournal already sets currentJournal
       setJournalTitle('')
       setShowCreateJournal(false)
     } catch (error) {
@@ -99,9 +100,12 @@ export default function HomePage() {
           Evalúa ideas de negocio sostenible usando metodología efectual
         </p>
         
-        {/* Test Data Button */}
-        <div className="max-w-md mx-auto">
-          <TestDataButton />
+        {/* Test Data Buttons */}
+        <div className="max-w-4xl mx-auto space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <TestDataButton />
+            <MultipleIdeasTestButton />
+          </div>
         </div>
       </div>
 
@@ -271,7 +275,10 @@ export default function HomePage() {
                   <div className="flex items-center justify-between">
                     <div 
                       className="flex-1 cursor-pointer"
-                      onClick={() => setCurrentJournal(journal)}
+                      onClick={() => {
+                        setCurrentIdea(null) // Clear any selected idea
+                        setCurrentJournal(journal)
+                      }}
                     >
                       <h3 className="text-lg text-stone-900 mb-2">
                         {journal.title}
@@ -308,6 +315,7 @@ export default function HomePage() {
           )}
         </div>
       )}
+
 
       {/* Delete Team Confirmation */}
       {teamToDelete && (
@@ -364,6 +372,7 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
     </div>
   )
 }
