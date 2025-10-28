@@ -61,43 +61,186 @@ export default function Step6AIEvaluation({ onNext }: Step6AIEvaluationProps) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'gpt-3.5-turbo',
+              model: 'gpt-4-turbo-preview',
               messages: [
                 {
                   role: 'system',
-                  content: `Eres un consultor experto en metodología efectual y emprendimiento. Analiza la siguiente bitácora de oportunidades y proporciona un análisis profundo y específico.`
+                  content: `Eres un consultor senior en emprendimiento con PhD en Administración de Empresas, MBA de Stanford, y 20+ años de experiencia evaluando startups para fondos de inversión de serie A/B. Has evaluado más de 1000 emprendimientos y tienes expertise específico en:
+
+🎯 METODOLOGÍA EFECTUAL (Sarasvathy): Bird-in-Hand, Affordable Loss, Crazy Quilt, Lemonade, Pilot-in-the-Plane
+📊 ANÁLISIS CUANTITATIVO: Market sizing, unit economics, financial modeling, risk assessment
+🧠 EVALUACIÓN DE EQUIPOS: Team dynamics, capability gaps, founder-market fit
+💰 DUE DILIGENCE: Competitive analysis, IP assessment, regulatory risks
+🚀 STRATEGY: Go-to-market, scaling strategies, exit planning
+
+Tu misión es realizar un análisis EXHAUSTIVO, CRÍTICO y CUANTITATIVO que un inversor profesional usaría para decidir si invertir $500K-2M. Debes ser:
+
+🔍 IMPLACABLEMENTE ANALÍTICO: Examina cada inconsistencia, gap de información, y suposición no validada
+📈 OBSESIVAMENTE CUANTITATIVO: Proporciona números específicos, percentiles, rangos, probabilidades
+💼 ESTRATÉGICAMENTE VISIONARIO: Identifica oportunidades de escalabilidad que el equipo no ve
+⚠️ BRUTALMENTE HONESTO: Señala debilidades graves sin diplomatic language
+🎯 ACCIONABLEMENTE CONSTRUCTIVO: Por cada problema, ofrece 3+ soluciones específicas con costos estimados
+🧮 FINANCIERAMENTE RIGUROSO: Evalúa unit economics, CAC/LTV, burn rate, runway requirements
+
+Evalúa con la mentalidad de: "¿Recomendaría a mi LP más exigente que invierta $1M de su patrimonio en esto? ¿Qué exactamente haría falta para lograr 10x ROI en 5 años?"`
                 },
                 {
                   role: 'user',
-                  content: `Analiza esta bitácora de oportunidades:
-                  
-IDEA: ${currentIdea.title}
-${currentIdea.description}
+                  content: `REALIZA UN ANÁLISIS EXHAUSTIVO DE INVERSIÓN para esta oportunidad. Como consultor senior, evalúa cada aspecto con rigor de due diligence institucional:
 
-MEDIOS PERSONALES: ${JSON.stringify(step1Data, null, 2)}
-PROBLEMA: ${JSON.stringify(step2Data, null, 2)}
-TENDENCIAS: ${JSON.stringify(step3Data, null, 2)}
-EVALUACIÓN: ${JSON.stringify(step4EvaluationData, null, 2)}
-BUYER PERSONA: ${JSON.stringify(step5BuyerData, null, 2)}
-PROPUESTA DE VALOR: ${JSON.stringify(step5VPData, null, 2)}
+═══════════════════════════════════════════════════════════════════
+📋 DATOS DEL PROYECTO - ANÁLISIS EFECTUAL
+═══════════════════════════════════════════════════════════════════
 
-Proporciona un análisis profundo basado en los 5 principios efectuales: Bird-in-Hand, Affordable Loss, Crazy Quilt, Lemonade, y Pilot-in-the-Plane.
+**IDEA CENTRAL:**
+Título: ${currentIdea.title}
+Descripción: ${currentIdea.description}
 
-Responde en formato JSON con esta estructura:
+**ANÁLISIS BIRD-IN-HAND (Medios Disponibles):**
+${step1Data.map((member, i) => `
+MIEMBRO ${i + 1}:
+• Identidad profesional: ${member.who_i_am || 'NO ESPECIFICADO - RED FLAG'}
+• Conocimientos técnicos: ${member.what_i_know || 'NO ESPECIFICADO - RED FLAG'}
+• Red de contactos: ${member.who_i_know || 'NO ESPECIFICADO - RED FLAG'}  
+• Recursos materiales: ${member.what_i_have || 'NO ESPECIFICADO - RED FLAG'}
+`).join('\n')}
+
+**ANÁLISIS AFFORDABLE LOSS (Problema/Riesgo):**
+• Título del problema: ${step2Data?.title || 'NO DEFINIDO - CRITICAL GAP'}
+• Descripción detallada: ${step2Data?.description || 'NO DEFINIDO - CRITICAL GAP'}
+• Población afectada: ${step2Data?.affected || 'NO DEFINIDO - CRITICAL GAP'}
+• Relevancia económica/social: ${step2Data?.relevance || 'NO DEFINIDO - CRITICAL GAP'}
+• Conexión con medios del equipo: ${step2Data?.link_to_means || 'NO DEFINIDO - CRITICAL GAP'}
+
+**ANÁLISIS CRAZY QUILT (Tendencias/Alianzas):**
+Total de tendencias identificadas: ${step3Data?.length || 0}
+${step3Data?.map((trend, i) => `
+TENDENCIA ${i + 1}: "${trend.name}" [Tipo: ${trend.type}]
+• Descripción: ${trend.brief || 'Descripción incompleta'}
+• Ejemplo concreto: ${trend.example || 'SIN EJEMPLO - debilidad analítica'}
+• Fuente académica: ${trend.source_apa || 'SIN FUENTE - falta rigor'}
+• Comentario estratégico: ${trend.comment || 'Sin análisis estratégico'}
+`).join('\n')}
+
+**ANÁLISIS LEMONADE (Evaluación/Pivoteo):**
+Evaluación SWOT realizada: ${step4EvaluationData ? 'SÍ' : 'NO - CRITICAL GAP'}
+${step4EvaluationData ? `
+• Fortalezas identificadas: ${step4EvaluationData.strengths?.length || 0}
+• Debilidades identificadas: ${step4EvaluationData.weaknesses?.length || 0}  
+• Oportunidades identificadas: ${step4EvaluationData.opportunities?.length || 0}
+• Amenazas identificadas: ${step4EvaluationData.threats?.length || 0}
+` : 'DATOS DE EVALUACIÓN FALTANTES - IMPOSIBLE EVALUAR CAPACIDAD DE ADAPTACIÓN'}
+
+**ANÁLISIS PILOT-IN-THE-PLANE (Usuario/Valor):**
+
+BUYER PERSONA:
+${step5BuyerData ? `
+• Nombre/Perfil: ${step5BuyerData.name || 'NO DEFINIDO'} 
+• Edad: ${step5BuyerData.age || 'NO DEFINIDO'} años
+• Ocupación: ${step5BuyerData.occupation || 'NO DEFINIDO'}
+• Segmento: ${step5BuyerData.segment || 'NO SEGMENTADO - problema de targeting'}
+• Ingresos: ${step5BuyerData.income || 'NO ESPECIFICADO - imposible evaluar paying capacity'}
+• Motivaciones: ${step5BuyerData.motivations || 'NO DEFINIDAS'}
+• Pain points: ${step5BuyerData.pains || 'NO IDENTIFICADOS'}
+• Necesidades: ${step5BuyerData.needs || 'NO ESPECIFICADAS'}
+` : 'BUYER PERSONA NO DEFINIDO - CRITICAL FLAW'}
+
+CANVAS DE PROPUESTA DE VALOR:
+${step5VPData ? `
+LADO CLIENTE:
+• Trabajos del cliente: ${step5VPData.customer_jobs || 'NO DEFINIDOS'}
+• Dolores del cliente: ${step5VPData.customer_pains || 'NO IDENTIFICADOS'}
+• Ganancias esperadas: ${step5VPData.customer_gains || 'NO ESPECIFICADAS'}
+
+LADO PROPUESTA:
+• Productos/Servicios: ${step5VPData.products_services || 'NO DEFINIDOS'}
+• Aliviadores de dolor: ${step5VPData.pain_relievers || 'NO ESPECIFICADOS'}
+• Generadores de ganancia: ${step5VPData.gain_creators || 'NO DEFINIDOS'}
+` : 'PROPUESTA DE VALOR NO DEFINIDA - FUNDAMENTAL FLAW'}
+
+═══════════════════════════════════════════════════════════════════
+🎯 INSTRUCCIONES DE ANÁLISIS RIGUROSO
+═══════════════════════════════════════════════════════════════════
+
+EVALÚA CRÍTICAMENTE CON MÉTRICAS ESPECÍFICAS:
+
+1. **TEAM ASSESSMENT (30% del score):**
+   - ¿Tienen las skills técnicas necesarias? (específico: qué falta)
+   - ¿Experiencia previa relevante? (años, companies, éxitos/fracasos)
+   - ¿Complementariedad del equipo? (gaps críticos)
+   - ¿Founder-market fit? (0-10 score con justificación)
+
+2. **MARKET OPPORTUNITY (25% del score):**
+   - Tamaño de mercado TAM/SAM/SOM estimado ($)
+   - Crecimiento de mercado anual (% CAGR)
+   - Timing de mercado (early/perfect/late - justificar)
+   - Defensibilidad competitiva (moats posibles)
+
+3. **PRODUCT-MARKET FIT (20% del score):**
+   - Validación de problema (¿entrevistas? ¿datos?)
+   - Unicidad de solución (¿qué diferencia de competencia?)
+   - Willingness to pay estimado ($ y % de target market)
+
+4. **EXECUTION CAPABILITY (15% del score):**
+   - Roadmap técnico realista (complejidad 1-10)
+   - Go-to-market strategy (CAC/LTV estimado)
+   - Funding requirements ($K needed para next 18 meses)
+
+5. **RISK ASSESSMENT (10% del score):**
+   - Technical risks (probabilidad % de fracaso técnico)
+   - Market risks (competitive threats, market changes)
+   - Team risks (key person dependency, co-founder conflict)
+
+IDENTIFICA GAPS ESPECÍFICOS Y CUANTIFICA:
+• ¿Cuántas validaciones de usuario faltam? (target: X entrevistas)
+• ¿Qué % del análisis está basado en assumptions vs. datos?
+• ¿Cuánto funding estimado necesitan para llegar a Series A?
+• ¿Qué probabilidad de éxito le das? (% con intervalos de confianza)
+
+BENCHMARKING COMPETITIVO:
+• ¿Quiénes son los 3 competidores más cercanos?
+• ¿Cómo se comparan en funding, traction, features?
+• ¿Ventaja competitiva sostenible? (network effects, data, etc.)
+
+Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitativo y brutalmente honesto):
+
 {
-  "viability_score": número_entre_0_y_100,
-  "market_fit_score": número_entre_0_y_100,
-  "execution_score": número_entre_0_y_100,
-  "risk_score": número_entre_0_y_100,
-  "overall_recommendation": "PROCEED_WITH_CAUTION" | "HIGHLY_RECOMMENDED" | "NOT_RECOMMENDED",
-  "key_insights": ["insight 1", "insight 2", "insight 3", "insight 4", "insight 5"],
-  "recommendations": ["recomendación 1", "recomendación 2", "recomendación 3", "recomendación 4", "recomendación 5"],
-  "next_steps": ["paso 1", "paso 2", "paso 3", "paso 4", "paso 5"]
+  "viability_score": número_0_a_100_con_justificación_cuantitativa,
+  "market_fit_score": número_0_a_100_basado_en_validación_real,
+  "execution_score": número_0_a_100_evaluando_capacidad_de_ejecución,
+  "risk_score": número_0_a_100_donde_100_es_riesgo_máximo,
+  "overall_recommendation": "HIGHLY_RECOMMENDED" | "PROCEED_WITH_CAUTION" | "NOT_RECOMMENDED",
+  "key_insights": [
+    "INSIGHT CUANTIFICADO 1 con números específicos y comparación de mercado",
+    "INSIGHT CUANTIFICADO 2 con análisis de competitive advantage",
+    "INSIGHT CUANTIFICADO 3 con assessment de team capabilities", 
+    "INSIGHT CUANTIFICADO 4 con evaluation de market timing",
+    "INSIGHT CUANTIFICADO 5 con análisis de unit economics potencial"
+  ],
+  "recommendations": [
+    "RECOMENDACIÓN ESPECÍFICA 1 con timeline (X semanas) y costo estimado ($Y)",
+    "RECOMENDACIÓN ESPECÍFICA 2 con métricas de éxito definidas",
+    "RECOMENDACIÓN ESPECÍFICA 3 con recursos específicos requeridos",
+    "RECOMENDACIÓN ESPECÍFICA 4 con partnerships estratégicos sugeridos",
+    "RECOMENDACIÓN ESPECÍFICA 5 con milestone de validación críticos",
+    "RECOMENDACIÓN ESPECÍFICA 6 con funding strategy recommendations",
+    "RECOMENDACIÓN ESPECÍFICA 7 con risk mitigation específica"
+  ],
+  "next_steps": [
+    "PASO 1 (Semana 1-2): Acción específica con deliverables cuantificados",
+    "PASO 2 (Semana 3-4): Validación específica con número de usuarios/entrevistas",
+    "PASO 3 (Mes 2): Desarrollo con features específicas y metrics", 
+    "PASO 4 (Mes 3): Go-to-market con canales específicos y CAC targets",
+    "PASO 5 (Mes 4-6): Scaling con hiring plan y funding requirements",
+    "PASO 6 (Mes 6-12): Growth con expansion strategy y exit considerations",
+    "PASO 7 (Año 2): Scale up con international expansion o M&A prep",
+    "PASO 8 (Año 3-5): Exit strategy preparation con IPO o acquisition targets"
+  ]
 }`
                 }
               ],
-              temperature: 0.7,
-              max_tokens: 2000,
+              temperature: 0.3,
+              max_tokens: 4000,
             }),
           })
 
