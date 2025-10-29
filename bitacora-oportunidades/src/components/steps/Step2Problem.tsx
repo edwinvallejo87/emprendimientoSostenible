@@ -210,7 +210,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                 disabled={!isValid || saving}
                 className="btn btn-primary disabled:opacity-50"
               >
-                {saving ? 'Guardando...' : 'Continuar al Paso 3'}
+                {saving ? 'Guardando...' : 'Continuar al Paso 4'}
               </button>
             </div>
         </form>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useJournalStore } from '../../store/journal'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
+import { validateStep2Complete } from '../../lib/validators/step2'
 import GuardedTab from './GuardedTab'
 import ProgressBadge from './ProgressBadge'
 import Step1Means from '../steps/Step1Means'
@@ -87,44 +88,33 @@ export default function WizardLayout() {
         let step7Complete = false, step7Progress = 0
         
         if (currentIdea) {
-          console.log('🔍 WizardLayout progress check:', {
-            currentIdea: currentIdea.title,
-            step1Data: step1Data?.length,
-            step2Data: step2Data ? Object.keys(step2Data).length : 0,
-            step3Data: step3Data?.length,
-            step4EvaluationData: step4EvaluationData ? Object.keys(step4EvaluationData).length : 0,
-            step5BuyerData: step5BuyerData ? Object.keys(step5BuyerData).length : 0,
-            step5VPData: step5VPData ? Object.keys(step5VPData).length : 0
-          })
           
-          // Step 2: Medios personales (idea-specific)
+          // Step 2: Medios personales (Bird in Hand) - UI Step 2 - Component: Step1Means
           step2Complete = step1Data && step1Data.length > 0
           step2Progress = step2Complete ? 100 : 0
           
-          // Step 3: Problem analysis (idea-specific)  
-          step3Complete = step2Data ? Object.keys(step2Data).length > 0 : false
+          // Step 3: Problema (Affordable Loss) - UI Step 3 - Component: Step2Problem
+          step3Complete = step2Data ? validateStep2Complete(step2Data) : false
           step3Progress = step3Complete ? 100 : 0
           
-          // Step 4: Trends (idea-specific)
-          step4Complete = step3Data && step3Data.length >= 3
+          
+          // Step 4: SWOT evaluation (idea-specific)
+          step4Complete = step4EvaluationData ? Object.keys(step4EvaluationData).length > 0 : false
           step4Progress = step4Complete ? 100 : 0
           
-          // Step 5: Idea evaluation (idea-specific)
-          step5Complete = step4EvaluationData ? Object.keys(step4EvaluationData).length > 0 : false
+          // Step 5: User & Value Proposition (idea-specific)
+          step5Complete = step5BuyerData && step5VPData ? 
+            Object.keys(step5BuyerData).length > 0 && Object.keys(step5VPData).length > 0 : false
           step5Progress = step5Complete ? 100 : 0
           
-          // Step 6: User value (idea-specific)
-          step6Complete = step5BuyerData && step5VPData ? 
-            Object.keys(step5BuyerData).length > 0 && Object.keys(step5VPData).length > 0 : false
+          // Step 6: AI Analysis (idea-specific)
+          step6Complete = step5Complete // Depends on all previous steps
           step6Progress = step6Complete ? 100 : 0
           
           // Step 7: AI Evaluation (available when step 6 is complete)
           step7Complete = false // We don't track completion for AI evaluation yet
           step7Progress = 0
           
-          console.log('📊 Step completion status:', {
-            step2Complete, step3Complete, step4Complete, step5Complete, step6Complete
-          })
         }
         
         const progress = {

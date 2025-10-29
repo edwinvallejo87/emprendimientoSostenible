@@ -4,8 +4,7 @@ import { useAuthStore } from '../../store/auth'
 import { Plus, BookOpen, Users, Calendar, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import TestDataButton from '../TestDataButton'
-import MultipleIdeasTestButton from '../MultipleIdeasTestButton'
+import AIIdeaCreator from '../AIIdeaCreator'
 
 export default function HomePage() {
   const { user } = useAuthStore()
@@ -100,12 +99,9 @@ export default function HomePage() {
           Evalúa ideas de negocio sostenible usando metodología efectual
         </p>
         
-        {/* Test Data Buttons */}
-        <div className="max-w-4xl mx-auto space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <TestDataButton />
-            <MultipleIdeasTestButton />
-          </div>
+        {/* AI Idea Generator */}
+        <div className="max-w-4xl mx-auto">
+          <AIIdeaCreator />
         </div>
       </div>
 

@@ -7,7 +7,7 @@ import { step3TrendSchema, trendTypes, type Step3TrendData, type TrendType } fro
 import { TrendingUp, ArrowRight, Plus, Trash2 } from 'lucide-react'
 
 const trendsFormSchema = z.object({
-  trends: z.array(step3TrendSchema).min(3, 'Debe tener al menos 3 tendencias')
+  trends: z.array(step3TrendSchema).min(1, 'Debe tener al menos 1 tendencia')
 })
 
 type TrendsFormData = z.infer<typeof trendsFormSchema>

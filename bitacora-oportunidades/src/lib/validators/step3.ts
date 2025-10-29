@@ -15,7 +15,7 @@ export type Step3TrendData = z.infer<typeof step3TrendSchema>
 export type TrendType = z.infer<typeof trendTypeSchema>
 
 export const validateStep3Complete = (trendsData: Partial<Step3TrendData>[]): boolean => {
-  if (!trendsData || trendsData.length < 3) return false
+  if (!trendsData || trendsData.length < 1) return false
   
   const validTrends = trendsData.filter(trend => {
     try {
@@ -26,13 +26,12 @@ export const validateStep3Complete = (trendsData: Partial<Step3TrendData>[]): bo
     }
   })
   
-  return validTrends.length >= 3
+  return validTrends.length >= 1
 }
 
 export const getStep3Progress = (trendsData: Partial<Step3TrendData>[]): number => {
   if (!trendsData) return 0
   
-  const minRequired = 3
   const validTrends = trendsData.filter(trend => {
     try {
       step3TrendSchema.parse(trend)
@@ -42,12 +41,12 @@ export const getStep3Progress = (trendsData: Partial<Step3TrendData>[]): number 
     }
   })
   
-  // Progress based on minimum 3 trends required
-  if (validTrends.length >= minRequired) {
+  // Progress based on having at least 1 valid trend
+  if (validTrends.length >= 1) {
     return 100
   }
   
-  return Math.round((validTrends.length / minRequired) * 100)
+  return 0
 }
 
 export const trendTypes: TrendType[] = ['Social', 'Tecnológica', 'Ambiental', 'Cultural', 'Consumo']

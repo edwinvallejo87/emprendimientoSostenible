@@ -53,6 +53,7 @@ interface JournalState {
   deleteTeam: (teamId: string) => Promise<void>
   deleteJournal: (journalId: string) => Promise<void>
   deleteIdea: (ideaId: string) => Promise<void>
+  cleanupOrphanedData: () => Promise<void>
   
   // Auto-save functions
   saveStep1Data: (journalId: string, memberId: string, data: Partial<Step1Data>) => Promise<void>
@@ -112,9 +113,41 @@ export const useJournalStore = create<JournalState>()(
 
           if (error) throw error
           set({ teams: data || [], loading: false })
+          
+          // Clean up orphaned journals in local state
+          await get().cleanupOrphanedData()
         } catch (error) {
           console.error('Error loading teams:', error)
           set({ teams: [], loading: false })
+        }
+      },
+
+      // Clean up orphaned data in local state
+      cleanupOrphanedData: async () => {
+        const { teams, journals, currentJournal } = get()
+        const teamIds = teams.map(team => team.id)
+        
+        // Filter out journals that don't have a corresponding team
+        const validJournals = journals.filter(journal => teamIds.includes(journal.team_id))
+        
+        // If current journal is orphaned, clear it
+        const isCurrentJournalOrphaned = currentJournal && !teamIds.includes(currentJournal.team_id)
+        
+        if (validJournals.length !== journals.length || isCurrentJournalOrphaned) {
+          set({
+            journals: validJournals,
+            currentJournal: isCurrentJournalOrphaned ? null : currentJournal,
+            ideas: isCurrentJournalOrphaned ? [] : get().ideas,
+            currentIdea: isCurrentJournalOrphaned ? null : get().currentIdea,
+            // Clear step data if current journal was orphaned
+            step1Data: isCurrentJournalOrphaned ? [] : get().step1Data,
+            step2Data: isCurrentJournalOrphaned ? null : get().step2Data,
+            step3Data: isCurrentJournalOrphaned ? [] : get().step3Data,
+            step4Data: isCurrentJournalOrphaned ? [] : get().step4Data,
+            step4EvaluationData: isCurrentJournalOrphaned ? null : get().step4EvaluationData,
+            step5BuyerData: isCurrentJournalOrphaned ? null : get().step5BuyerData,
+            step5VPData: isCurrentJournalOrphaned ? null : get().step5VPData
+          })
         }
       },
 
@@ -269,16 +302,34 @@ export const useJournalStore = create<JournalState>()(
 
         if (error) throw error
 
-        // Update local state
-        const { teams, currentTeam } = get()
+        // Update local state - clear everything related to the deleted team
+        const { teams, currentTeam, journals } = get()
         const updatedTeams = teams.filter(team => team.id !== teamId)
+        
+        // If the deleted team was current, clear all related data
+        const isCurrentTeam = currentTeam?.id === teamId
         
         set({ 
           teams: updatedTeams,
-          currentTeam: currentTeam?.id === teamId ? null : currentTeam,
-          journals: currentTeam?.id === teamId ? [] : get().journals,
-          currentJournal: currentTeam?.id === teamId ? null : get().currentJournal
+          currentTeam: isCurrentTeam ? null : currentTeam,
+          journals: isCurrentTeam ? [] : journals.filter(journal => journal.team_id !== teamId),
+          currentJournal: isCurrentTeam ? null : get().currentJournal,
+          ideas: isCurrentTeam ? [] : get().ideas,
+          currentIdea: isCurrentTeam ? null : get().currentIdea,
+          // Clear all step data if current team was deleted
+          step1Data: isCurrentTeam ? [] : get().step1Data,
+          step2Data: isCurrentTeam ? null : get().step2Data,
+          step3Data: isCurrentTeam ? [] : get().step3Data,
+          step4Data: isCurrentTeam ? [] : get().step4Data,
+          step4EvaluationData: isCurrentTeam ? null : get().step4EvaluationData,
+          step5BuyerData: isCurrentTeam ? null : get().step5BuyerData,
+          step5VPData: isCurrentTeam ? null : get().step5VPData
         })
+
+        // If we deleted the current team, reload the teams to refresh the UI
+        if (isCurrentTeam) {
+          await get().loadTeams()
+        }
       },
 
       deleteJournal: async (journalId: string) => {
@@ -374,20 +425,44 @@ export const useJournalStore = create<JournalState>()(
           // Use demo user ID for development
           const demoUserId = '00000000-0000-0000-0000-000000000000'
           
-          const { error } = await supabase
+          // First, check if record exists
+          const { data: existingData, error: selectError } = await supabase
             .from('step1_means')
-            .upsert({
-              idea_id: ideaId,
-              member_id: demoUserId,
-              ...data
-            }, {
-              onConflict: 'idea_id,member_id'
-            })
+            .select('id')
+            .eq('idea_id', ideaId)
+            .eq('member_id', demoUserId)
+            .maybeSingle()
 
-          if (error) throw error
+          if (selectError) throw selectError
+
+          const recordData = {
+            idea_id: ideaId,
+            member_id: demoUserId,
+            ...data
+          }
+
+          if (existingData) {
+            // Update existing record
+            const { error: updateError } = await supabase
+              .from('step1_means')
+              .update(recordData)
+              .eq('idea_id', ideaId)
+              .eq('member_id', demoUserId)
+
+            if (updateError) throw updateError
+          } else {
+            // Insert new record
+            const { error: insertError } = await supabase
+              .from('step1_means')
+              .insert(recordData)
+
+            if (insertError) throw insertError
+          }
+
           await get().loadIdeaData(ideaId)
         } catch (error) {
           console.error('Error saving step 1 data for idea:', error)
+          throw error
         } finally {
           set({ saving: false })
         }
@@ -544,20 +619,41 @@ export const useJournalStore = create<JournalState>()(
       saveStep2DataForIdea: async (ideaId: string, data: Partial<Step2Data>) => {
         set({ saving: true })
         try {
-          const { error } = await supabase
+          // First, check if record exists
+          const { data: existingData, error: selectError } = await supabase
             .from('step2_problem')
-            .upsert({
-              idea_id: ideaId,
-              ...data
-            }, {
-              onConflict: 'idea_id'
-            })
+            .select('id')
+            .eq('idea_id', ideaId)
+            .maybeSingle()
 
-          if (error) throw error
+          if (selectError) throw selectError
+
+          const recordData = {
+            idea_id: ideaId,
+            ...data
+          }
+
+          if (existingData) {
+            // Update existing record
+            const { error: updateError } = await supabase
+              .from('step2_problem')
+              .update(recordData)
+              .eq('idea_id', ideaId)
+
+            if (updateError) throw updateError
+          } else {
+            // Insert new record
+            const { error: insertError } = await supabase
+              .from('step2_problem')
+              .insert(recordData)
+
+            if (insertError) throw insertError
+          }
           
           await get().loadIdeaData(ideaId)
         } catch (error) {
           console.error('Error saving step 2 data for idea:', error)
+          throw error
         } finally {
           set({ saving: false })
         }

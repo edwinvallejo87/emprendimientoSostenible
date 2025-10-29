@@ -176,7 +176,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                 disabled={!isValid || saving}
                 className="btn btn-primary disabled:opacity-50"
               >
-                {saving ? 'Guardando...' : 'Continuar al Paso 2'}
+                {saving ? 'Guardando...' : 'Continuar al Paso 3'}
               </button>
             </div>
         </form>
