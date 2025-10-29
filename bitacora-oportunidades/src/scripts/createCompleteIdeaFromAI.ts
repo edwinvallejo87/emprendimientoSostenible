@@ -191,6 +191,19 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
     console.log('✅ Step 5 VP creado')
 
     console.log('🎉 ¡Idea completa creada exitosamente con IA!')
+    console.log('📋 Resumen de datos creados:', {
+      teamId: team.id,
+      journalId: journal.id,
+      ideaId: idea.id,
+      stepDataCreated: {
+        step1: true,
+        step2: true,
+        step3: true,
+        step4: true,
+        step5Buyer: true,
+        step5VP: true
+      }
+    })
 
     return {
       success: true,

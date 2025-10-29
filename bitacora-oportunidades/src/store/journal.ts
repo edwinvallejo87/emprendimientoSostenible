@@ -278,6 +278,7 @@ export const useJournalStore = create<JournalState>()(
       },
 
       loadIdeaData: async (ideaId: string) => {
+        console.log('🔍 Loading idea data for ideaId:', ideaId)
         set({ loading: true })
         try {
           const [step1Result, step2Result, step3Result, step4EvalResult, step5BuyerResult, step5VPResult] = await Promise.all([
@@ -288,6 +289,15 @@ export const useJournalStore = create<JournalState>()(
             supabase.from('step5_buyer').select('*').eq('idea_id', ideaId).maybeSingle(),
             supabase.from('step5_vpcanvas').select('*').eq('idea_id', ideaId).maybeSingle(),
           ])
+
+          console.log('📊 Loaded step data:', {
+            step1Count: step1Result.data?.length || 0,
+            step2Found: !!step2Result.data,
+            step3Count: step3Result.data?.length || 0,
+            step4Found: !!step4EvalResult.data,
+            step5BuyerFound: !!step5BuyerResult.data,
+            step5VPFound: !!step5VPResult.data
+          })
 
           set({
             step1Data: step1Result.data || [],

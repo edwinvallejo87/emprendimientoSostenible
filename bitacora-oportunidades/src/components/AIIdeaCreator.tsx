@@ -38,6 +38,9 @@ export default function AIIdeaCreator() {
         
         // Establecer la idea actual y cargar sus datos específicos
         setCurrentIdea(result.idea)
+        
+        // Small delay to ensure all database transactions are committed
+        await new Promise(resolve => setTimeout(resolve, 500))
         await loadIdeaData(result.idea.id)
         
         setMessage(`🎉 ¡Listo! Análisis completo generado por IA`)
