@@ -114,7 +114,7 @@ export const useJournalStore = create<JournalState>()(
           if (error) throw error
           set({ teams: data || [], loading: false })
           
-          // Clean up orphaned journals in local state
+          // Clean up orphaned journals both in database and local state
           await get().cleanupOrphanedData()
         } catch (error) {
           console.error('Error loading teams:', error)
@@ -122,32 +122,97 @@ export const useJournalStore = create<JournalState>()(
         }
       },
 
-      // Clean up orphaned data in local state
+      // Clean up orphaned data both locally and from database
       cleanupOrphanedData: async () => {
-        const { teams, journals, currentJournal } = get()
-        const teamIds = teams.map(team => team.id)
-        
-        // Filter out journals that don't have a corresponding team
-        const validJournals = journals.filter(journal => teamIds.includes(journal.team_id))
-        
-        // If current journal is orphaned, clear it
-        const isCurrentJournalOrphaned = currentJournal && !teamIds.includes(currentJournal.team_id)
-        
-        if (validJournals.length !== journals.length || isCurrentJournalOrphaned) {
-          set({
-            journals: validJournals,
-            currentJournal: isCurrentJournalOrphaned ? null : currentJournal,
-            ideas: isCurrentJournalOrphaned ? [] : get().ideas,
-            currentIdea: isCurrentJournalOrphaned ? null : get().currentIdea,
-            // Clear step data if current journal was orphaned
-            step1Data: isCurrentJournalOrphaned ? [] : get().step1Data,
-            step2Data: isCurrentJournalOrphaned ? null : get().step2Data,
-            step3Data: isCurrentJournalOrphaned ? [] : get().step3Data,
-            step4Data: isCurrentJournalOrphaned ? [] : get().step4Data,
-            step4EvaluationData: isCurrentJournalOrphaned ? null : get().step4EvaluationData,
-            step5BuyerData: isCurrentJournalOrphaned ? null : get().step5BuyerData,
-            step5VPData: isCurrentJournalOrphaned ? null : get().step5VPData
-          })
+        try {
+          // First, clean up orphaned journals from database
+          const { data: allJournals } = await supabase
+            .from('journals')
+            .select('id, team_id')
+
+          const { data: allTeams } = await supabase
+            .from('teams')
+            .select('id')
+
+          if (allJournals && allTeams) {
+            const teamIds = allTeams.map(team => team.id)
+            const orphanedJournals = allJournals.filter(journal => !teamIds.includes(journal.team_id))
+
+            if (orphanedJournals.length > 0) {
+              console.log(`🧹 Found ${orphanedJournals.length} orphaned journals, cleaning up...`)
+              const orphanedJournalIds = orphanedJournals.map(j => j.id)
+
+              // Get all ideas for orphaned journals
+              const { data: orphanedIdeas } = await supabase
+                .from('ideas')
+                .select('id')
+                .in('journal_id', orphanedJournalIds)
+
+              if (orphanedIdeas && orphanedIdeas.length > 0) {
+                const orphanedIdeaIds = orphanedIdeas.map(idea => idea.id)
+                
+                // Delete idea-specific data first
+                await Promise.all([
+                  supabase.from('step1_means').delete().in('idea_id', orphanedIdeaIds),
+                  supabase.from('step2_problem').delete().in('idea_id', orphanedIdeaIds),
+                  supabase.from('step3_trends').delete().in('idea_id', orphanedIdeaIds),
+                  supabase.from('step4_idea_evaluation').delete().in('idea_id', orphanedIdeaIds),
+                  supabase.from('step5_buyer').delete().in('idea_id', orphanedIdeaIds),
+                  supabase.from('step5_vpcanvas').delete().in('idea_id', orphanedIdeaIds)
+                ])
+
+                // Delete the ideas
+                await supabase.from('ideas').delete().in('id', orphanedIdeaIds)
+              }
+
+              // Delete journal-specific data
+              await Promise.all([
+                supabase.from('step1_means').delete().in('journal_id', orphanedJournalIds),
+                supabase.from('step2_problem').delete().in('journal_id', orphanedJournalIds),
+                supabase.from('step3_trends').delete().in('journal_id', orphanedJournalIds),
+                supabase.from('step4_ideas').delete().in('journal_id', orphanedJournalIds),
+                supabase.from('step5_buyer').delete().in('journal_id', orphanedJournalIds),
+                supabase.from('step5_vpcanvas').delete().in('journal_id', orphanedJournalIds)
+              ])
+
+              // Delete the orphaned journals
+              await supabase
+                .from('journals')
+                .delete()
+                .in('id', orphanedJournalIds)
+
+              console.log('✅ Orphaned journals cleaned up')
+            }
+          }
+
+          // Then clean up local state
+          const { teams, journals, currentJournal } = get()
+          const teamIds = teams.map(team => team.id)
+          
+          // Filter out journals that don't have a corresponding team
+          const validJournals = journals.filter(journal => teamIds.includes(journal.team_id))
+          
+          // If current journal is orphaned, clear it
+          const isCurrentJournalOrphaned = currentJournal && !teamIds.includes(currentJournal.team_id)
+          
+          if (validJournals.length !== journals.length || isCurrentJournalOrphaned) {
+            set({
+              journals: validJournals,
+              currentJournal: isCurrentJournalOrphaned ? null : currentJournal,
+              ideas: isCurrentJournalOrphaned ? [] : get().ideas,
+              currentIdea: isCurrentJournalOrphaned ? null : get().currentIdea,
+              // Clear step data if current journal was orphaned
+              step1Data: isCurrentJournalOrphaned ? [] : get().step1Data,
+              step2Data: isCurrentJournalOrphaned ? null : get().step2Data,
+              step3Data: isCurrentJournalOrphaned ? [] : get().step3Data,
+              step4Data: isCurrentJournalOrphaned ? [] : get().step4Data,
+              step4EvaluationData: isCurrentJournalOrphaned ? null : get().step4EvaluationData,
+              step5BuyerData: isCurrentJournalOrphaned ? null : get().step5BuyerData,
+              step5VPData: isCurrentJournalOrphaned ? null : get().step5VPData
+            })
+          }
+        } catch (error) {
+          console.error('Error cleaning up orphaned data:', error)
         }
       },
 
@@ -295,40 +360,103 @@ export const useJournalStore = create<JournalState>()(
       },
 
       deleteTeam: async (teamId: string) => {
-        const { error } = await supabase
-          .from('teams')
-          .delete()
-          .eq('id', teamId)
+        try {
+          // First, get all journals for this team to delete their related data
+          const { data: teamJournals } = await supabase
+            .from('journals')
+            .select('id')
+            .eq('team_id', teamId)
 
-        if (error) throw error
+          if (teamJournals && teamJournals.length > 0) {
+            const journalIds = teamJournals.map(j => j.id)
 
-        // Update local state - clear everything related to the deleted team
-        const { teams, currentTeam, journals } = get()
-        const updatedTeams = teams.filter(team => team.id !== teamId)
-        
-        // If the deleted team was current, clear all related data
-        const isCurrentTeam = currentTeam?.id === teamId
-        
-        set({ 
-          teams: updatedTeams,
-          currentTeam: isCurrentTeam ? null : currentTeam,
-          journals: isCurrentTeam ? [] : journals.filter(journal => journal.team_id !== teamId),
-          currentJournal: isCurrentTeam ? null : get().currentJournal,
-          ideas: isCurrentTeam ? [] : get().ideas,
-          currentIdea: isCurrentTeam ? null : get().currentIdea,
-          // Clear all step data if current team was deleted
-          step1Data: isCurrentTeam ? [] : get().step1Data,
-          step2Data: isCurrentTeam ? null : get().step2Data,
-          step3Data: isCurrentTeam ? [] : get().step3Data,
-          step4Data: isCurrentTeam ? [] : get().step4Data,
-          step4EvaluationData: isCurrentTeam ? null : get().step4EvaluationData,
-          step5BuyerData: isCurrentTeam ? null : get().step5BuyerData,
-          step5VPData: isCurrentTeam ? null : get().step5VPData
-        })
+            // Delete all related data in parallel
+            await Promise.all([
+              // Delete step data (using correct journal_id relationships)
+              supabase.from('step1_means').delete().in('journal_id', journalIds),
+              supabase.from('step2_problem').delete().in('journal_id', journalIds), 
+              supabase.from('step3_trends').delete().in('journal_id', journalIds),
+              supabase.from('step4_ideas').delete().in('journal_id', journalIds),
+              supabase.from('step5_buyer').delete().in('journal_id', journalIds),
+              supabase.from('step5_vpcanvas').delete().in('journal_id', journalIds)
+            ])
 
-        // If we deleted the current team, reload the teams to refresh the UI
-        if (isCurrentTeam) {
+            // Get all ideas for these journals and delete their related data
+            const { data: ideaData } = await supabase
+              .from('ideas')
+              .select('id')
+              .in('journal_id', journalIds)
+
+            if (ideaData && ideaData.length > 0) {
+              const ideaIds = ideaData.map(idea => idea.id)
+              
+              // Delete idea-specific data
+              await Promise.all([
+                supabase.from('step1_means').delete().in('idea_id', ideaIds),
+                supabase.from('step2_problem').delete().in('idea_id', ideaIds),
+                supabase.from('step3_trends').delete().in('idea_id', ideaIds),
+                supabase.from('step4_idea_evaluation').delete().in('idea_id', ideaIds),
+                supabase.from('step5_buyer').delete().in('idea_id', ideaIds),
+                supabase.from('step5_vpcanvas').delete().in('idea_id', ideaIds)
+              ])
+
+              // Finally delete the ideas
+              await supabase.from('ideas').delete().in('id', ideaIds)
+            }
+
+            // Now delete all journals for this team
+            const { error: journalsError } = await supabase
+              .from('journals')
+              .delete()
+              .eq('team_id', teamId)
+
+            if (journalsError) {
+              console.error('Error deleting journals:', journalsError)
+              throw journalsError
+            }
+          }
+
+          // Finally, delete the team
+          const { error: teamError } = await supabase
+            .from('teams')
+            .delete()
+            .eq('id', teamId)
+
+          if (teamError) {
+            console.error('Error deleting team:', teamError)
+            throw teamError
+          }
+
+          // Update local state - clear everything related to the deleted team
+          const { teams, currentTeam, journals } = get()
+          const updatedTeams = teams.filter(team => team.id !== teamId)
+          
+          // If the deleted team was current, clear all related data
+          const isCurrentTeam = currentTeam?.id === teamId
+          
+          set({ 
+            teams: updatedTeams,
+            currentTeam: isCurrentTeam ? null : currentTeam,
+            journals: journals.filter(journal => journal.team_id !== teamId),
+            currentJournal: isCurrentTeam ? null : get().currentJournal,
+            ideas: isCurrentTeam ? [] : get().ideas,
+            currentIdea: isCurrentTeam ? null : get().currentIdea,
+            // Clear all step data if current team was deleted
+            step1Data: isCurrentTeam ? [] : get().step1Data,
+            step2Data: isCurrentTeam ? null : get().step2Data,
+            step3Data: isCurrentTeam ? [] : get().step3Data,
+            step4Data: isCurrentTeam ? [] : get().step4Data,
+            step4EvaluationData: isCurrentTeam ? null : get().step4EvaluationData,
+            step5BuyerData: isCurrentTeam ? null : get().step5BuyerData,
+            step5VPData: isCurrentTeam ? null : get().step5VPData
+          })
+
+          // Reload teams to ensure UI is in sync
           await get().loadTeams()
+
+        } catch (error) {
+          console.error('Error deleting team:', error)
+          throw error
         }
       },
 
