@@ -5,6 +5,7 @@ import type { Database } from '../database.types'
 type Tables = Database['public']['Tables']
 type Team = Tables['teams']['Row']
 type Journal = Tables['journals']['Row']
+type Idea = Tables['ideas']['Row']
 type Step1Data = Tables['step1_means']['Row'][]
 type Step2Data = Tables['step2_problem']['Row'] | null
 type Step3Data = Tables['step3_trends']['Row'][]
@@ -12,15 +13,32 @@ type Step4Data = Tables['step4_ideas']['Row'][]
 type Step5BuyerData = Tables['step5_buyer']['Row'] | null
 type Step5VPData = Tables['step5_vpcanvas']['Row'] | null
 
+// Sustainability module types
+type SustainableCanvasData = Tables['sustainable_canvas']['Row'] | null
+type InnovationPatternsData = Tables['innovation_patterns']['Row'][]
+type PrototypeData = Tables['prototypes']['Row'] | null
+type ValidationStrategyData = Tables['validation_strategies']['Row'] | null
+type EcosystemActorsData = Tables['ecosystem_actors']['Row'][]
+type SustainabilityReflectionData = Tables['sustainability_reflections']['Row'] | null
+
 interface JournalData {
   journal: Journal
   team: Team
+  idea?: Idea | null
+  // Effectual analysis data (steps 1-5)
   step1: Step1Data
   step2: Step2Data
   step3: Step3Data
   step4: Step4Data
   step5Buyer: Step5BuyerData
   step5VP: Step5VPData
+  // Sustainability data (steps 8-13)
+  step8SustainableCanvas?: SustainableCanvasData
+  step9InnovationPatterns?: InnovationPatternsData
+  step10Prototype?: PrototypeData
+  step11ValidationStrategy?: ValidationStrategyData
+  step12EcosystemActors?: EcosystemActorsData
+  step13SustainabilityReflection?: SustainabilityReflectionData
 }
 
 export async function generateSimplePPTX(data: JournalData) {
@@ -71,6 +89,13 @@ function generatePresentationHTML(data: JournalData): string {
       ${generateStep3Slide(data.step3)}
       ${generateStep4Slide(data.step4)}
       ${generateStep5Slide(data.step5Buyer, data.step5VP)}
+      ${generateSustainabilityOverviewSlide()}
+      ${generateStep8Slide(data.step8SustainableCanvas)}
+      ${generateStep9Slide(data.step9InnovationPatterns)}
+      ${generateStep10Slide(data.step10Prototype)}
+      ${generateStep11Slide(data.step11ValidationStrategy)}
+      ${generateStep12Slide(data.step12EcosystemActors)}
+      ${generateStep13Slide(data.step13SustainabilityReflection)}
       ${generateConclusionSlide()}
       
       <script>
@@ -468,19 +493,191 @@ function generateStep5Slide(buyerData: Step5BuyerData, vpData: Step5VPData): str
   `
 }
 
+function generateSustainabilityOverviewSlide(): string {
+  return `
+    <div class="slide slide-content">
+      <h2>🌱 Módulo: Emprendimiento Sostenible</h2>
+      <div class="content">
+        <div class="overview-text">
+          <p>Continuamos con el análisis de sostenibilidad que integra impacto social, ambiental y económico.</p>
+        </div>
+        <ul class="overview-list">
+          <li>🌱 Canvas Sostenible Interactivo</li>
+          <li>💡 Patrones de Innovación</li>
+          <li>🔧 Prototipo y MVP</li>
+          <li>🎯 Estrategia de Validación</li>
+          <li>🤝 Mapa del Ecosistema</li>
+          <li>🌍 Reflexión de Sostenibilidad</li>
+        </ul>
+      </div>
+    </div>
+  `
+}
+
+function generateStep8Slide(canvasData?: SustainableCanvasData): string {
+  const content = canvasData ? `
+    <div class="canvas-grid">
+      <div class="canvas-section">
+        <h4>👥 Lado del Cliente</h4>
+        <p><strong>Segmentos:</strong> ${canvasData.customer_segments?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Propuestas de Valor:</strong> ${canvasData.value_propositions?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Beneficios Sociales:</strong> ${canvasData.social_benefits?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Beneficios Ambientales:</strong> ${canvasData.environmental_benefits?.substring(0, 80) || 'N/A'}...</p>
+      </div>
+      <div class="canvas-section">
+        <h4>🏢 Lado del Negocio</h4>
+        <p><strong>Recursos Clave:</strong> ${canvasData.key_resources?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Actividades Clave:</strong> ${canvasData.key_activities?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Alianzas:</strong> ${canvasData.key_partnerships?.substring(0, 80) || 'N/A'}...</p>
+        <p><strong>Costos Sostenibles:</strong> ${canvasData.environmental_costs?.substring(0, 80) || 'N/A'}...</p>
+      </div>
+    </div>
+  ` : '<p>Canvas sostenible no completado</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 8: Canvas Sostenible</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
+function generateStep9Slide(patternsData?: InnovationPatternsData): string {
+  const content = patternsData && patternsData.length > 0 ? `
+    <div class="patterns-list">
+      ${patternsData.map(pattern => `
+        <div class="pattern-item">
+          <h4>💡 ${pattern.pattern_name} ${pattern.is_primary ? '(Principal)' : ''}</h4>
+          <p>${pattern.pattern_description?.substring(0, 120) || 'Sin descripción'}...</p>
+          <p><strong>Justificación:</strong> ${pattern.justification?.substring(0, 100) || 'N/A'}...</p>
+        </div>
+      `).join('')}
+    </div>
+  ` : '<p>Patrones de innovación no completados</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 9: Patrones de Innovación</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
+function generateStep10Slide(prototypeData?: PrototypeData): string {
+  const content = prototypeData ? `
+    <div class="prototype-info">
+      <h4>🔧 ${prototypeData.name}</h4>
+      <p><strong>Tipo:</strong> ${prototypeData.type}</p>
+      <p><strong>Descripción:</strong> ${prototypeData.description?.substring(0, 150) || 'Sin descripción'}...</p>
+      <p><strong>Hipótesis a validar:</strong> ${prototypeData.hypothesis_to_validate?.substring(0, 120) || 'N/A'}...</p>
+      <p><strong>Métricas esperadas:</strong> ${prototypeData.expected_learning_metrics?.substring(0, 100) || 'N/A'}...</p>
+    </div>
+  ` : '<p>Prototipo no completado</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 10: Prototipo y MVP</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
+function generateStep11Slide(validationData?: ValidationStrategyData): string {
+  const content = validationData ? `
+    <div class="validation-info">
+      <h4>🎯 Estrategia de Validación</h4>
+      <p><strong>Hipótesis:</strong> ${validationData.hypothesis?.substring(0, 120) || 'N/A'}...</p>
+      <p><strong>Segmentos objetivo:</strong> ${validationData.target_segments?.substring(0, 100) || 'N/A'}...</p>
+      <p><strong>Métodos:</strong> ${validationData.validation_methods?.join(', ') || 'N/A'}</p>
+      <p><strong>Cronograma:</strong> ${validationData.timeline_weeks || 0} semanas</p>
+      <p><strong>Presupuesto:</strong> $${validationData.budget_estimate || 0}</p>
+      <p><strong>Progreso:</strong> ${validationData.progress_percentage || 0}%</p>
+    </div>
+  ` : '<p>Estrategia de validación no completada</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 11: Estrategia de Validación</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
+function generateStep12Slide(actorsData?: EcosystemActorsData): string {
+  const content = actorsData && actorsData.length > 0 ? `
+    <div class="actors-grid">
+      ${actorsData.map(actor => `
+        <div class="actor-item">
+          <h4>🤝 ${actor.actor_name}</h4>
+          <p><strong>Tipo:</strong> ${actor.actor_type}</p>
+          <p><strong>Rol:</strong> ${actor.role_description?.substring(0, 100) || 'N/A'}...</p>
+          <p><strong>Soporte:</strong> ${actor.support_types?.join(', ') || 'N/A'}</p>
+          <p><strong>Estado:</strong> ${actor.relationship_status}</p>
+        </div>
+      `).join('')}
+    </div>
+  ` : '<p>Mapa del ecosistema no completado</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 12: Mapa del Ecosistema</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
+function generateStep13Slide(reflectionData?: SustainabilityReflectionData): string {
+  const content = reflectionData ? `
+    <div class="reflection-sections">
+      <div class="reflection-item">
+        <h4>⚖️ Equilibrio de Impactos</h4>
+        <p>${reflectionData.social_impact_balance?.substring(0, 150) || 'N/A'}...</p>
+      </div>
+      <div class="reflection-item">
+        <h4>🎯 Decisiones Sostenibles</h4>
+        <p>${reflectionData.sustainability_decisions?.substring(0, 150) || 'N/A'}...</p>
+      </div>
+      <div class="reflection-item">
+        <h4>🚀 Estrategia de Escalamiento</h4>
+        <p>${reflectionData.scaling_strategy?.substring(0, 150) || 'N/A'}...</p>
+      </div>
+    </div>
+  ` : '<p>Reflexión de sostenibilidad no completada</p>'
+
+  return `
+    <div class="slide slide-content">
+      <h2>Paso 13: Reflexión de Sostenibilidad</h2>
+      <div class="content">
+        ${content}
+      </div>
+    </div>
+  `
+}
+
 function generateConclusionSlide(): string {
   return `
     <div class="slide slide-content">
-      <h2>Conclusiones</h2>
+      <h2>🎉 Conclusiones</h2>
       <div class="content">
         <ul class="conclusion-list">
-          <li>✅ Análisis completo usando metodología efectual</li>
+          <li>✅ Análisis efectual completo (pasos 1-5)</li>
+          <li>🌱 Módulos de sostenibilidad integrados (pasos 8-13)</li>
           <li>🎯 Oportunidad identificada y validada</li>
-          <li>💡 Idea seleccionada con justificación sólida</li>
-          <li>👥 Cliente específico definido</li>
-          <li>🚀 Propuesta de valor articulada</li>
+          <li>💡 Idea sostenible con triple impacto</li>
+          <li>👥 Cliente y ecosistema definidos</li>
+          <li>🚀 Estrategia de implementación lista</li>
         </ul>
-        <div class="final-message">¡Listo para implementar!</div>
+        <div class="final-message">🌱 ¡Listo para emprender sosteniblemente!</div>
       </div>
     </div>
   `

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useJournalStore } from '../../store/journal'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 import { validateStep2Complete } from '../../lib/validators/step2'
+import { supabase } from '../../lib/supabase'
 import GuardedTab from './GuardedTab'
 import ProgressBadge from './ProgressBadge'
 import Step1Means from '../steps/Step1Means'
@@ -11,6 +12,12 @@ import Step3Trends from '../steps/Step3Trends'
 import Step4IdeaEvaluation from '../steps/Step4IdeaEvaluation'
 import Step5UserValue from '../steps/Step5UserValue'
 import Step6AIEvaluation from '../steps/Step6AIEvaluation'
+import Step7SustainableCanvas from '../steps/Step7SustainableCanvas'
+import Step8InnovationPatterns from '../steps/Step8InnovationPatterns'
+import Step9PrototypeMVP from '../steps/Step9PrototypeMVP'
+import Step10ValidationStrategy from '../steps/Step10ValidationStrategy'
+import Step11EcosystemMap from '../steps/Step11EcosystemMap'
+import Step12SustainabilityReflection from '../steps/Step12SustainabilityReflection'
 import { FileDown, Save, Home } from 'lucide-react'
 
 const steps = [
@@ -21,11 +28,18 @@ const steps = [
   { id: 5, title: 'Evaluación (Lemonade)', component: Step4IdeaEvaluation },
   { id: 6, title: 'Usuario/Valor (Pilot-in-Plane)', component: Step5UserValue },
   { id: 7, title: 'Evaluación IA', component: Step6AIEvaluation },
+  { id: 8, title: 'Canvas Sostenible', component: Step7SustainableCanvas },
+  { id: 9, title: 'Patrones Innovación', component: Step8InnovationPatterns },
+  { id: 10, title: 'Prototipo/PMV', component: Step9PrototypeMVP },
+  { id: 11, title: 'Validación', component: Step10ValidationStrategy },
+  { id: 12, title: 'Ecosistema', component: Step11EcosystemMap },
+  { id: 13, title: 'Reflexión Final', component: Step12SustainabilityReflection },
 ]
 
 export default function WizardLayout() {
   const [activeStep, setActiveStep] = useState(1)
   const [overallProgress, setOverallProgress] = useState({ totalProgress: 0, steps: [] })
+  const [sustainabilityData, setSustainabilityData] = useState<any>({})
   
   const {
     currentJournal,
@@ -69,8 +83,48 @@ export default function WizardLayout() {
   useEffect(() => {
     if (currentIdea) {
       loadIdeaData(currentIdea.id)
+      loadSustainabilityData(currentIdea.id)
     }
   }, [currentIdea, loadIdeaData])
+
+  // Load sustainability data for new steps
+  const loadSustainabilityData = async (ideaId: string) => {
+    try {
+      const [canvasResult, patternsResult, prototypeResult, validationResult, ecosystemResult, reflectionResult] = await Promise.allSettled([
+        supabase.from('sustainable_canvas').select('*').eq('idea_id', ideaId).single(),
+        supabase.from('innovation_patterns').select('*').eq('idea_id', ideaId),
+        supabase.from('prototypes').select('*').eq('idea_id', ideaId).single(),
+        supabase.from('validation_strategies').select('*').eq('idea_id', ideaId).single(),
+        supabase.from('ecosystem_actors').select('*').eq('idea_id', ideaId),
+        supabase.from('sustainability_reflections').select('*').eq('idea_id', ideaId).single()
+      ])
+
+      const data: any = {}
+      
+      if (canvasResult.status === 'fulfilled' && canvasResult.value.data) {
+        data.canvas = canvasResult.value.data
+      }
+      if (patternsResult.status === 'fulfilled' && patternsResult.value.data) {
+        data.patterns = patternsResult.value.data
+      }
+      if (prototypeResult.status === 'fulfilled' && prototypeResult.value.data) {
+        data.prototype = prototypeResult.value.data
+      }
+      if (validationResult.status === 'fulfilled' && validationResult.value.data) {
+        data.validation = validationResult.value.data
+      }
+      if (ecosystemResult.status === 'fulfilled' && ecosystemResult.value.data) {
+        data.ecosystem = ecosystemResult.value.data
+      }
+      if (reflectionResult.status === 'fulfilled' && reflectionResult.value.data) {
+        data.reflection = reflectionResult.value.data
+      }
+
+      setSustainabilityData(data)
+    } catch (error) {
+      console.error('Error loading sustainability data:', error)
+    }
+  }
 
   useEffect(() => {
     if (currentJournal) {
@@ -79,24 +133,29 @@ export default function WizardLayout() {
         const step1Complete = ideas && ideas.length > 0 && currentIdea
         const step1Progress = step1Complete ? 100 : 0
         
-        // Steps 2-7: Only if currentIdea is selected
+        // Steps 2-13: Only if currentIdea is selected
         let step2Complete = false, step2Progress = 0
         let step3Complete = false, step3Progress = 0
         let step4Complete = false, step4Progress = 0
         let step5Complete = false, step5Progress = 0
         let step6Complete = false, step6Progress = 0
         let step7Complete = false, step7Progress = 0
+        let step8Complete = false, step8Progress = 0
+        let step9Complete = false, step9Progress = 0
+        let step10Complete = false, step10Progress = 0
+        let step11Complete = false, step11Progress = 0
+        let step12Complete = false, step12Progress = 0
+        let step13Complete = false, step13Progress = 0
         
         if (currentIdea) {
           
-          // Step 2: Medios personales (Bird in Hand) - UI Step 2 - Component: Step1Means
+          // Step 2: Medios personales (Bird in Hand)
           step2Complete = step1Data && step1Data.length > 0
           step2Progress = step2Complete ? 100 : 0
           
-          // Step 3: Problema (Affordable Loss) - UI Step 3 - Component: Step2Problem
+          // Step 3: Problema (Affordable Loss)
           step3Complete = step2Data ? validateStep2Complete(step2Data) : false
           step3Progress = step3Complete ? 100 : 0
-          
           
           // Step 4: SWOT evaluation (idea-specific)
           step4Complete = step4EvaluationData ? Object.keys(step4EvaluationData).length > 0 : false
@@ -108,17 +167,73 @@ export default function WizardLayout() {
           step5Progress = step5Complete ? 100 : 0
           
           // Step 6: AI Analysis (idea-specific)
-          step6Complete = step5Complete // Depends on all previous steps
+          step6Complete = step5Complete
           step6Progress = step6Complete ? 100 : 0
           
-          // Step 7: AI Evaluation (available when step 6 is complete)
-          step7Complete = false // We don't track completion for AI evaluation yet
-          step7Progress = 0
+          // Step 7: AI Evaluation
+          step7Complete = step6Complete
+          step7Progress = step7Complete ? 100 : 0
           
+          // Step 8: Sustainable Canvas
+          if (sustainabilityData.canvas) {
+            const canvasFields = ['customer_segments', 'value_propositions', 'social_benefits', 'environmental_benefits', 'key_resources', 'cost_structure']
+            const filledFields = canvasFields.filter(field => sustainabilityData.canvas[field] && sustainabilityData.canvas[field].trim().length > 0)
+            step8Progress = Math.round((filledFields.length / canvasFields.length) * 100)
+            step8Complete = step8Progress >= 80
+          }
+          
+          // Step 9: Innovation Patterns
+          if (sustainabilityData.patterns && sustainabilityData.patterns.length >= 3) {
+            step9Progress = 100
+            step9Complete = true
+          } else if (sustainabilityData.patterns) {
+            step9Progress = Math.round((sustainabilityData.patterns.length / 3) * 100)
+          }
+          
+          // Step 10: Prototype/MVP
+          if (sustainabilityData.prototype) {
+            const requiredFields = ['name', 'type', 'description', 'hypothesis_to_validate']
+            const filledFields = requiredFields.filter(field => sustainabilityData.prototype[field])
+            step10Progress = Math.round((filledFields.length / requiredFields.length) * 100)
+            step10Complete = step10Progress >= 80
+          }
+          
+          // Step 11: Validation Strategy
+          if (sustainabilityData.validation) {
+            const requiredFields = ['hypothesis', 'target_segments', 'validation_methods', 'expected_learnings']
+            const filledFields = requiredFields.filter(field => {
+              const value = sustainabilityData.validation[field]
+              if (field === 'validation_methods') {
+                return Array.isArray(value) && value.length > 0
+              }
+              return value && String(value).trim().length > 0
+            })
+            step11Progress = Math.round((filledFields.length / requiredFields.length) * 100)
+            step11Complete = step11Progress >= 70
+          }
+          
+          // Step 12: Ecosystem Map
+          if (sustainabilityData.ecosystem && sustainabilityData.ecosystem.length >= 5) {
+            step12Progress = 100
+            step12Complete = true
+          } else if (sustainabilityData.ecosystem) {
+            step12Progress = Math.round((sustainabilityData.ecosystem.length / 5) * 100)
+          }
+          
+          // Step 13: Sustainability Reflection
+          if (sustainabilityData.reflection) {
+            const reflectionFields = ['social_impact_balance', 'sustainability_decisions', 'scaling_strategy']
+            const filledFields = reflectionFields.filter(field => {
+              const value = sustainabilityData.reflection[field]
+              return value && String(value).trim().length >= 200
+            })
+            step13Progress = Math.round((filledFields.length / reflectionFields.length) * 100)
+            step13Complete = step13Progress >= 80
+          }
         }
         
         const progress = {
-          totalProgress: Math.round((step1Progress + step2Progress + step3Progress + step4Progress + step5Progress + step6Progress + step7Progress) / 7),
+          totalProgress: Math.round((step1Progress + step2Progress + step3Progress + step4Progress + step5Progress + step6Progress + step7Progress + step8Progress + step9Progress + step10Progress + step11Progress + step12Progress + step13Progress) / 13),
           steps: [
             { step: 1, completed: step1Complete, progress: step1Progress, locked: false },
             { step: 2, completed: step2Complete, progress: step2Progress, locked: !step1Complete },
@@ -127,6 +242,12 @@ export default function WizardLayout() {
             { step: 5, completed: step5Complete, progress: step5Progress, locked: !step4Complete },
             { step: 6, completed: step6Complete, progress: step6Progress, locked: !step5Complete },
             { step: 7, completed: step7Complete, progress: step7Progress, locked: !step6Complete },
+            { step: 8, completed: step8Complete, progress: step8Progress, locked: !step7Complete },
+            { step: 9, completed: step9Complete, progress: step9Progress, locked: !step8Complete },
+            { step: 10, completed: step10Complete, progress: step10Progress, locked: !step9Complete },
+            { step: 11, completed: step11Complete, progress: step11Progress, locked: !step10Complete },
+            { step: 12, completed: step12Complete, progress: step12Progress, locked: !step11Complete },
+            { step: 13, completed: step13Complete, progress: step13Progress, locked: !step12Complete },
           ]
         }
         
@@ -144,11 +265,17 @@ export default function WizardLayout() {
             { step: 5, completed: false, progress: 0, locked: true },
             { step: 6, completed: false, progress: 0, locked: true },
             { step: 7, completed: false, progress: 0, locked: true },
+            { step: 8, completed: false, progress: 0, locked: true },
+            { step: 9, completed: false, progress: 0, locked: true },
+            { step: 10, completed: false, progress: 0, locked: true },
+            { step: 11, completed: false, progress: 0, locked: true },
+            { step: 12, completed: false, progress: 0, locked: true },
+            { step: 13, completed: false, progress: 0, locked: true },
           ]
         })
       }
     }
-  }, [step1Data, step2Data, step3Data, step4Data, step4EvaluationData, step5BuyerData, step5VPData, currentJournal, currentIdea, ideas])
+  }, [step1Data, step2Data, step3Data, step4Data, step4EvaluationData, step5BuyerData, step5VPData, currentJournal, currentIdea, ideas, sustainabilityData])
 
   const handleNextStep = () => {
     const nextStep = activeStep + 1
@@ -341,6 +468,90 @@ export default function WizardLayout() {
           ) : activeStep === 7 ? (
             currentIdea ? (
               <Step6AIEvaluation onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 8 ? (
+            currentIdea ? (
+              <Step7SustainableCanvas onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 9 ? (
+            currentIdea ? (
+              <Step8InnovationPatterns onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 10 ? (
+            currentIdea ? (
+              <Step9PrototypeMVP onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 11 ? (
+            currentIdea ? (
+              <Step10ValidationStrategy onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 12 ? (
+            currentIdea ? (
+              <Step11EcosystemMap onNext={handleNextStep} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
+                <button
+                  onClick={() => setActiveStep(1)}
+                  className="btn btn-outline mt-4"
+                >
+                  Volver a Selección de Ideas
+                </button>
+              </div>
+            )
+          ) : activeStep === 13 ? (
+            currentIdea ? (
+              <Step12SustainabilityReflection onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>

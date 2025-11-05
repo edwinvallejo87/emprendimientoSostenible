@@ -61,6 +61,74 @@ export interface CompleteIdeaData {
     pain_relievers: string
     gain_creators: string
   }
+  
+  // Step 8: Canvas Sostenible
+  step8SustainableCanvas: {
+    customer_segments: string
+    value_propositions: string
+    products_services: string
+    channels: string
+    customer_relationships: string
+    revenue_streams: string
+    social_benefits: string
+    environmental_benefits: string
+    key_resources: string
+    key_activities: string
+    key_partnerships: string
+    cost_structure: string
+    social_costs: string
+    environmental_costs: string
+    sustainability_reflection: string
+  }
+  
+  // Step 9: Patrones de Innovación
+  step9InnovationPatterns: Array<{
+    pattern_name: string
+    pattern_description: string
+    justification: string
+    expected_impact: string
+    is_primary: boolean
+  }>
+  
+  // Step 10: Prototipo y MVP
+  step10Prototype: {
+    name: string
+    type: 'concept' | 'wireframe' | 'mockup' | 'mvp' | 'physical' | 'digital' | 'service'
+    description: string
+    hypothesis_to_validate: string
+    expected_learning_metrics: string
+    ai_mvp_suggestion: string
+  }
+  
+  // Step 11: Estrategia de Validación
+  step11ValidationStrategy: {
+    hypothesis: string
+    target_segments: string
+    validation_methods: ('interview' | 'survey' | 'landing_page' | 'ab_test' | 'observation' | 'focus_group' | 'prototype_test')[]
+    expected_learnings: string
+    success_criteria: string
+    timeline_weeks: number
+    budget_estimate: number
+  }
+  
+  // Step 12: Mapa del Ecosistema
+  step12EcosystemActors: Array<{
+    actor_name: string
+    actor_type: 'financial' | 'academic' | 'business' | 'social' | 'institutional'
+    role_description: string
+    support_types: ('funding' | 'mentorship' | 'infrastructure' | 'networking' | 'technical' | 'legal' | 'marketing')[]
+    benefit_to_venture: string
+    benefit_to_actor: string
+    relationship_status: string
+  }>
+  
+  // Step 13: Reflexión de Sostenibilidad
+  step13SustainabilityReflection: {
+    social_impact_balance: string
+    sustainability_decisions: string
+    scaling_strategy: string
+    ai_generated_reflection: string
+  }
 }
 
 export class CompleteIdeaGenerator {
@@ -95,7 +163,7 @@ export class CompleteIdeaGenerator {
           messages: [
             {
               role: 'system',
-              content: `Eres un experto en metodología efectual y desarrollo de oportunidades emprendedoriales. Tu especialidad es tomar una idea básica y desarrollar un análisis completo de 6 pasos siguiendo la metodología efectual de Sarasvathy.
+              content: `Eres un experto en metodología efectual y emprendimiento sostenible. Tu especialidad es tomar una idea básica y desarrollar un análisis completo de 13 pasos integrando metodología efectual (pasos 1-7) con emprendimiento sostenible (pasos 8-13).
 
 METODOLOGÍA EFECTUAL - 5 PRINCIPIOS:
 🎯 BIRD-IN-HAND: Partir de medios disponibles (quién soy, qué sé, a quién conozco, qué tengo)
@@ -104,7 +172,13 @@ METODOLOGÍA EFECTUAL - 5 PRINCIPIOS:
 🍋 LEMONADE: Capitalizar contingencias vs. evitar incertidumbre  
 ✈️ PILOT-IN-THE-PLANE: Controlar el futuro vs. predecirlo
 
-Tu misión: Desarrollar una bitácora completa y realista que un emprendedor podría usar para validar y ejecutar la oportunidad.`
+EMPRENDIMIENTO SOSTENIBLE - ENFOQUE INTEGRAL:
+🌱 TRIPLE IMPACTO: Equilibrio entre beneficio económico, social y ambiental
+🔄 ECONOMÍA CIRCULAR: Optimización de recursos y reducción de desperdicios
+🤝 STAKEHOLDER VALUE: Valor para todos los actores del ecosistema
+🌍 ESCALABILIDAD SOSTENIBLE: Crecimiento que preserve el impacto positivo
+
+Tu misión: Desarrollar una bitácora completa de 13 pasos que integre viabilidad empresarial con impacto sostenible.`
             },
             {
               role: 'user',

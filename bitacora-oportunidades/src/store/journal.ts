@@ -16,6 +16,14 @@ type Step4EvaluationData = Tables['step4_idea_evaluation']['Row']
 type Step5BuyerData = Tables['step5_buyer']['Row']
 type Step5VPData = Tables['step5_vpcanvas']['Row']
 
+// Sustainability module types
+type SustainableCanvasData = Tables['sustainable_canvas']['Row']
+type InnovationPatternData = Tables['innovation_patterns']['Row']
+type PrototypeData = Tables['prototypes']['Row']
+type ValidationStrategyData = Tables['validation_strategies']['Row']
+type EcosystemActorData = Tables['ecosystem_actors']['Row']
+type SustainabilityReflectionData = Tables['sustainability_reflections']['Row']
+
 interface JournalState {
   // Current selection
   currentTeam: Team | null
@@ -33,6 +41,14 @@ interface JournalState {
   step4EvaluationData: Step4EvaluationData | null
   step5BuyerData: Step5BuyerData | null
   step5VPData: Step5VPData | null
+  
+  // Sustainability module data
+  sustainableCanvasData: SustainableCanvasData | null
+  innovationPatternsData: InnovationPatternData[]
+  prototypeData: PrototypeData | null
+  validationStrategyData: ValidationStrategyData | null
+  ecosystemActorsData: EcosystemActorData[]
+  sustainabilityReflectionData: SustainabilityReflectionData | null
   
   // Loading states
   loading: boolean
@@ -95,6 +111,15 @@ export const useJournalStore = create<JournalState>()(
       step4EvaluationData: null,
       step5BuyerData: null,
       step5VPData: null,
+      
+      // Sustainability module data - initial state
+      sustainableCanvasData: null,
+      innovationPatternsData: [],
+      prototypeData: null,
+      validationStrategyData: null,
+      ecosystemActorsData: [],
+      sustainabilityReflectionData: null,
+      
       loading: false,
       saving: false,
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CompleteIdeaGenerator } from '../lib/ai/completeIdeaGenerator'
 import { createCompleteIdeaFromAI } from '../scripts/createCompleteIdeaFromAI'
 import { useJournalStore } from '../store/journal'
+import { loadSustainabilityData } from '../utils/loadSustainabilityData'
 
 export default function AIIdeaCreator() {
   const [loading, setLoading] = useState(false)
@@ -39,11 +40,24 @@ export default function AIIdeaCreator() {
         // Establecer la idea actual y cargar sus datos específicos
         setCurrentIdea(result.idea)
         
-        // Small delay to ensure all database transactions are committed
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // Extended delay to ensure all database transactions are committed (including sustainability data)
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+        // Load idea data and specifically load sustainability data
         await loadIdeaData(result.idea.id)
         
-        setMessage(`🎉 ¡Listo! Análisis completo generado por IA`)
+        // Additional load for sustainability data with extra delay
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        const sustainabilityData = await loadSustainabilityData(result.idea.id)
+        
+        // Final reload to ensure all data is in the store
+        await loadIdeaData(result.idea.id)
+        
+        if (sustainabilityData) {
+          setMessage(`🎉 ¡Listo! Análisis completo de 13 pasos generado por IA`)
+        } else {
+          setMessage(`🎉 ¡Listo! Análisis efectual generado - datos de sostenibilidad cargándose...`)
+        }
         setIdeaInput('')
         
         // Auto-hide después de 5 segundos
@@ -80,14 +94,14 @@ export default function AIIdeaCreator() {
       <div className="text-center">
         <h3 className="text-blue-900 font-semibold mb-2 text-lg">🤖 Generador IA de Ideas</h3>
         <p className="text-blue-800 text-sm mb-4">
-          Describe tu idea básica y la IA creará un análisis completo con metodología efectual
+          Describe tu idea básica y la IA creará un análisis completo de 13 pasos con metodología efectual y emprendimiento sostenible
         </p>
         
         <div className="mb-4">
           <textarea
             value={ideaInput}
             onChange={(e) => setIdeaInput(e.target.value)}
-            placeholder="Ejemplo: Una app para conectar agricultores con consumidores locales..."
+            placeholder="Ejemplo: Una app para conectar agricultores con consumidores locales de forma sostenible..."
             className="w-full p-3 border border-blue-300 rounded-lg text-sm"
             rows={3}
             disabled={loading}
@@ -95,13 +109,26 @@ export default function AIIdeaCreator() {
         </div>
 
         <div className="text-xs text-blue-700 mb-4 space-y-1">
-          <p>🎯 <strong>La IA analizará:</strong></p>
-          <p>• Medios personales del equipo</p>
-          <p>• Problema y relevancia</p>
-          <p>• Tendencias del mercado</p>
-          <p>• Evaluación FODA</p>
-          <p>• Usuario objetivo y propuesta de valor</p>
-          <p>• Análisis de inversión</p>
+          <p>🎯 <strong>La IA generará análisis completo de 13 pasos:</strong></p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left">
+            <div>
+              <p className="font-semibold mb-1">📊 Metodología Efectual (Pasos 1-7):</p>
+              <p>• Medios personales del equipo</p>
+              <p>• Problema y relevancia</p>
+              <p>• Tendencias del mercado</p>
+              <p>• Evaluación FODA</p>
+              <p>• Usuario objetivo y propuesta de valor</p>
+            </div>
+            <div>
+              <p className="font-semibold mb-1">🌱 Emprendimiento Sostenible (Pasos 8-13):</p>
+              <p>• Canvas sostenible interactivo</p>
+              <p>• Patrones de innovación</p>
+              <p>• Prototipo y MVP</p>
+              <p>• Estrategia de validación</p>
+              <p>• Mapa del ecosistema</p>
+              <p>• Reflexión de sostenibilidad</p>
+            </div>
+          </div>
         </div>
         
         <button

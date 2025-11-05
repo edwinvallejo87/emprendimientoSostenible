@@ -9,7 +9,6 @@ import {
   type Step5VPCanvasData 
 } from '../../lib/validators/step5'
 import { Users, Target, CheckCircle, AlertTriangle } from 'lucide-react'
-import PptxExportButton from '../export/PptxExportButton'
 import AIAnalysisPanel from '../ai/AIAnalysisPanel'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 
@@ -71,7 +70,6 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     teamMembersCount: 2, // TODO: Get actual team member count
   })
   
-  const allStepsComplete = overallProgress.totalProgress === 100
 
   const onSubmit = async (buyerData: Step5BuyerData, vpData: Step5VPCanvasData) => {
     if (!currentIdea) return
@@ -489,22 +487,20 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
             </div>
           </div>
 
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center">
             <button
               type="submit"
               disabled={!isBuyerValid || !isVPValid || saving}
               className="btn btn-primary"
             >
-              {saving ? 'Guardando...' : 'Finalizar'}
+              {saving ? 'Guardando...' : (onNext ? 'Continuar →' : 'Guardar')}
             </button>
-            
-            <PptxExportButton disabled={!allStepsComplete} />
           </div>
 
-          {!allStepsComplete && isBuyerValid && isVPValid && (
-            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-sm text-amber-800 text-center">
-                <strong>💡 Consejo:</strong> Una vez que guardes este paso, podrás exportar toda la bitácora como presentación
+          {isBuyerValid && isVPValid && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800 text-center">
+                <strong>🌱 Siguiente:</strong> Continúa con los módulos de emprendimiento sostenible (pasos 8-13)
               </p>
             </div>
           )}
@@ -531,8 +527,8 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
           </ul>
         </div>
 
-        {/* AI Analysis Panel - Show only when all steps are complete */}
-        {allStepsComplete && (
+        {/* AI Analysis Panel - Show when effectual analysis (steps 1-5) is complete */}
+        {overallProgress.effectualProgress === 100 && (
           <div className="mt-8">
             <AIAnalysisPanel />
           </div>

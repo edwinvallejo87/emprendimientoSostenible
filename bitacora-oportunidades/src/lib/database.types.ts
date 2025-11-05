@@ -574,6 +574,327 @@ export type Database = {
           }
         ]
       }
+      sustainable_canvas: {
+        Row: {
+          id: string
+          idea_id: string
+          customer_segments: string | null
+          value_propositions: string | null
+          products_services: string | null
+          channels: string | null
+          customer_relationships: string | null
+          revenue_streams: string | null
+          social_benefits: string | null
+          environmental_benefits: string | null
+          key_resources: string | null
+          key_activities: string | null
+          key_partnerships: string | null
+          cost_structure: string | null
+          social_costs: string | null
+          environmental_costs: string | null
+          sustainability_reflection: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          customer_segments?: string | null
+          value_propositions?: string | null
+          products_services?: string | null
+          channels?: string | null
+          customer_relationships?: string | null
+          revenue_streams?: string | null
+          social_benefits?: string | null
+          environmental_benefits?: string | null
+          key_resources?: string | null
+          key_activities?: string | null
+          key_partnerships?: string | null
+          cost_structure?: string | null
+          social_costs?: string | null
+          environmental_costs?: string | null
+          sustainability_reflection?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          customer_segments?: string | null
+          value_propositions?: string | null
+          products_services?: string | null
+          channels?: string | null
+          customer_relationships?: string | null
+          revenue_streams?: string | null
+          social_benefits?: string | null
+          environmental_benefits?: string | null
+          key_resources?: string | null
+          key_activities?: string | null
+          key_partnerships?: string | null
+          cost_structure?: string | null
+          social_costs?: string | null
+          environmental_costs?: string | null
+          sustainability_reflection?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sustainable_canvas_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: true
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      innovation_patterns: {
+        Row: {
+          id: string
+          idea_id: string
+          pattern_name: string
+          pattern_description: string | null
+          justification: string | null
+          expected_impact: string | null
+          is_primary: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          pattern_name: string
+          pattern_description?: string | null
+          justification?: string | null
+          expected_impact?: string | null
+          is_primary?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          pattern_name?: string
+          pattern_description?: string | null
+          justification?: string | null
+          expected_impact?: string | null
+          is_primary?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "innovation_patterns_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      prototypes: {
+        Row: {
+          id: string
+          idea_id: string
+          name: string
+          type: 'concept' | 'wireframe' | 'mockup' | 'mvp' | 'physical' | 'digital' | 'service'
+          description: string | null
+          hypothesis_to_validate: string | null
+          expected_learning_metrics: string | null
+          image_url: string | null
+          video_url: string | null
+          external_link: string | null
+          link_description: string | null
+          ai_mvp_suggestion: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          name: string
+          type: 'concept' | 'wireframe' | 'mockup' | 'mvp' | 'physical' | 'digital' | 'service'
+          description?: string | null
+          hypothesis_to_validate?: string | null
+          expected_learning_metrics?: string | null
+          image_url?: string | null
+          video_url?: string | null
+          external_link?: string | null
+          link_description?: string | null
+          ai_mvp_suggestion?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          name?: string
+          type?: 'concept' | 'wireframe' | 'mockup' | 'mvp' | 'physical' | 'digital' | 'service'
+          description?: string | null
+          hypothesis_to_validate?: string | null
+          expected_learning_metrics?: string | null
+          image_url?: string | null
+          video_url?: string | null
+          external_link?: string | null
+          link_description?: string | null
+          ai_mvp_suggestion?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prototypes_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: true
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      validation_strategies: {
+        Row: {
+          id: string
+          idea_id: string
+          hypothesis: string
+          target_segments: string | null
+          validation_methods: ('interview' | 'survey' | 'landing_page' | 'ab_test' | 'observation' | 'focus_group' | 'prototype_test')[]
+          expected_learnings: string | null
+          success_criteria: string | null
+          timeline_weeks: number | null
+          budget_estimate: number | null
+          progress_percentage: number
+          results_summary: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          hypothesis: string
+          target_segments?: string | null
+          validation_methods: ('interview' | 'survey' | 'landing_page' | 'ab_test' | 'observation' | 'focus_group' | 'prototype_test')[]
+          expected_learnings?: string | null
+          success_criteria?: string | null
+          timeline_weeks?: number | null
+          budget_estimate?: number | null
+          progress_percentage?: number
+          results_summary?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          hypothesis?: string
+          target_segments?: string | null
+          validation_methods?: ('interview' | 'survey' | 'landing_page' | 'ab_test' | 'observation' | 'focus_group' | 'prototype_test')[]
+          expected_learnings?: string | null
+          success_criteria?: string | null
+          timeline_weeks?: number | null
+          budget_estimate?: number | null
+          progress_percentage?: number
+          results_summary?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_strategies_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: true
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      ecosystem_actors: {
+        Row: {
+          id: string
+          idea_id: string
+          actor_name: string
+          actor_type: 'financial' | 'academic' | 'business' | 'social' | 'institutional'
+          role_description: string | null
+          support_types: ('funding' | 'mentorship' | 'infrastructure' | 'networking' | 'technical' | 'legal' | 'marketing')[]
+          benefit_to_venture: string | null
+          benefit_to_actor: string | null
+          contact_info: string | null
+          relationship_status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          actor_name: string
+          actor_type: 'financial' | 'academic' | 'business' | 'social' | 'institutional'
+          role_description?: string | null
+          support_types: ('funding' | 'mentorship' | 'infrastructure' | 'networking' | 'technical' | 'legal' | 'marketing')[]
+          benefit_to_venture?: string | null
+          benefit_to_actor?: string | null
+          contact_info?: string | null
+          relationship_status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          actor_name?: string
+          actor_type?: 'financial' | 'academic' | 'business' | 'social' | 'institutional'
+          role_description?: string | null
+          support_types?: ('funding' | 'mentorship' | 'infrastructure' | 'networking' | 'technical' | 'legal' | 'marketing')[]
+          benefit_to_venture?: string | null
+          benefit_to_actor?: string | null
+          contact_info?: string | null
+          relationship_status?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecosystem_actors_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sustainability_reflections: {
+        Row: {
+          id: string
+          idea_id: string
+          social_impact_balance: string | null
+          sustainability_decisions: string | null
+          scaling_strategy: string | null
+          ai_generated_reflection: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          idea_id: string
+          social_impact_balance?: string | null
+          sustainability_decisions?: string | null
+          scaling_strategy?: string | null
+          ai_generated_reflection?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          idea_id?: string
+          social_impact_balance?: string | null
+          sustainability_decisions?: string | null
+          scaling_strategy?: string | null
+          ai_generated_reflection?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sustainability_reflections_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: true
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
