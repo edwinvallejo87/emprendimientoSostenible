@@ -157,7 +157,13 @@ export class CompleteIdeaGenerator {
       console.log('🤖 Generando idea completa con IA...')
       console.log('📝 Prompt length:', this.buildCompleteIdeaPrompt(ideaPrompt, userProfile).length)
       
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      // Create timeout promise (2 minutes)
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout after 120 seconds')), 120000)
+      )
+      
+      // Create fetch promise
+      const fetchPromise = fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
@@ -168,9 +174,16 @@ export class CompleteIdeaGenerator {
           messages: [
             {
               role: 'system',
-              content: `Eres un experto en metodología efectual y emprendimiento sostenible. Desarrollas análisis completos de emprendimientos basados en 5 principios efectuales y sostenibilidad.
+              content: `Eres un consultor senior experto en metodología efectual y emprendimiento sostenible con 15+ años de experiencia. Desarrollas análisis exhaustivos y detallados de emprendimientos.
 
-Genera respuestas en JSON con contenido extenso y realista para cada campo. IMPORTANTE: Los campos de step4 deben ser STRINGS detallados, NO arrays.`
+INSTRUCCIONES ESPECÍFICAS:
+- Genera contenido extenso, profundo y realista para cada campo
+- Incluye datos específicos, porcentajes, cifras de mercado cuando sea posible
+- Proporciona análisis cualitativos y cuantitativos detallados
+- Los campos de step4 deben ser STRINGS con análisis profundo, NO arrays
+- Cada descripción debe ser sustancial y demostrar expertise profesional
+
+Responde ÚNICAMENTE en formato JSON válido.`
             },
             {
               role: 'user',
@@ -178,9 +191,12 @@ Genera respuestas en JSON con contenido extenso y realista para cada campo. IMPO
             }
           ],
           temperature: 0.7,
-          max_tokens: 16000,
+          max_tokens: 12000,
         }),
       })
+      
+      // Race between fetch and timeout
+      const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
 
       console.log('📡 Response status:', response.status, response.statusText)
       
@@ -216,40 +232,121 @@ Genera respuestas en JSON con contenido extenso y realista para cada campo. IMPO
 
   private buildCompleteIdeaPrompt(ideaPrompt: string, userProfile?: string): string {
     return `
-Desarrolla una bitácora COMPLETA de emprendimiento para: "${ideaPrompt}"
+Como consultor senior en emprendimiento sostenible, desarrolla una bitácora COMPLETA Y DETALLADA para: "${ideaPrompt}"
 
-${userProfile ? `Perfil: ${userProfile}` : ''}
+${userProfile ? `Contexto del emprendedor: ${userProfile}` : ''}
 
-REQUISITOS CRÍTICOS DE EXTENSIÓN:
-- TODOS los campos de texto deben tener MÍNIMO 600 caracteres
-- Análisis PROFUNDO y DETALLADO como consultor senior
-- Incluir números específicos, porcentajes, datos de mercado
-- Citas y referencias cuando sea posible
-- Análisis cuantitativo exhaustivo
+REQUISITOS:
+- Análisis profesional detallado para cada campo
+- Incluir datos específicos, cifras y métricas cuando sea posible
+- Contenido sustancial y específico para cada sección
+- 4 tendencias (tipos: "Social", "Tecnológica", "Ambiental", "Cultural", "Consumo")
+- 3 patrones de innovación mínimo
+- 4 actores del ecosistema mínimo
 
-IMPORTANTE: Los campos de step4 (strengths, weaknesses, opportunities, threats, success_factors, risk_mitigation) DEBEN ser STRINGS extensos con análisis profundo de mínimo 600 caracteres cada uno.
-
-GENERAR MÚLTIPLES ELEMENTOS:
-- step3: 4-5 tendencias detalladas
-- step9InnovationPatterns: 3-4 patrones con análisis extenso
-- step12EcosystemActors: 4-5 actores con descripciones completas
-
-Estructura JSON exacta:
+Responde en JSON con contenido detallado:
 
 {
-  "idea": {"title": "TÍTULO ESPECÍFICO", "description": "MÍNIMO 600 CARACTERES - Análisis detallado", "target_market": "MÍNIMO 400 CARACTERES - Mercado específico", "unique_value": "MÍNIMO 400 CARACTERES"},
-  "step1": {"who_i_am": "MÍNIMO 600 CARACTERES - Perfil profesional completo", "what_i_know": "MÍNIMO 600 CARACTERES - Conocimientos detallados", "who_i_know": "MÍNIMO 600 CARACTERES - Red completa", "what_i_have": "MÍNIMO 600 CARACTERES - Recursos detallados"},
-  "step2": {"title": "TÍTULO ESPECÍFICO", "description": "MÍNIMO 600 CARACTERES - Problema detallado", "affected": "MÍNIMO 600 CARACTERES - Población afectada", "relevance": "MÍNIMO 600 CARACTERES - Relevancia económica", "link_to_means": "MÍNIMO 600 CARACTERES - Conexión con medios"},
-  "step3": [{"name": "...", "type": "Social", "brief": "MÍNIMO 400 CARACTERES", "example": "MÍNIMO 300 CARACTERES", "source_apa": "...", "comment": "MÍNIMO 300 CARACTERES"}, {...}, {...}, {...}],
-  "step4": {"strengths": "MÍNIMO 600 CARACTERES - Análisis profundo", "weaknesses": "MÍNIMO 600 CARACTERES - Análisis profundo", "opportunities": "MÍNIMO 600 CARACTERES - Análisis profundo", "threats": "MÍNIMO 600 CARACTERES - Análisis profundo", "success_factors": "MÍNIMO 600 CARACTERES - Factores críticos", "risk_mitigation": "MÍNIMO 600 CARACTERES - Estrategias específicas"},
-  "step5Buyer": {"name": "...", "age": 30, "occupation": "MÍNIMO 600 CARACTERES - Ocupación detallada", "motivations": "MÍNIMO 600 CARACTERES - Motivaciones profundas", "pains": "MÍNIMO 600 CARACTERES - Pain points detallados", "needs": "MÍNIMO 600 CARACTERES - Necesidades específicas"},
-  "step5VP": {"customer_jobs": "MÍNIMO 600 CARACTERES", "customer_pains": "MÍNIMO 600 CARACTERES", "customer_gains": "MÍNIMO 600 CARACTERES", "products_services": "MÍNIMO 600 CARACTERES", "pain_relievers": "MÍNIMO 600 CARACTERES", "gain_creators": "MÍNIMO 600 CARACTERES"},
-  "step8SustainableCanvas": {"customer_segments": "MÍNIMO 600 CARACTERES", "value_propositions": "MÍNIMO 600 CARACTERES", "products_services": "MÍNIMO 600 CARACTERES", "channels": "MÍNIMO 600 CARACTERES", "customer_relationships": "MÍNIMO 600 CARACTERES", "revenue_streams": "MÍNIMO 600 CARACTERES", "social_benefits": "MÍNIMO 600 CARACTERES", "environmental_benefits": "MÍNIMO 600 CARACTERES", "key_resources": "MÍNIMO 600 CARACTERES", "key_activities": "MÍNIMO 600 CARACTERES", "key_partnerships": "MÍNIMO 600 CARACTERES", "cost_structure": "MÍNIMO 600 CARACTERES", "social_costs": "MÍNIMO 600 CARACTERES", "environmental_costs": "MÍNIMO 600 CARACTERES", "sustainability_reflection": "MÍNIMO 600 CARACTERES"},
-  "step9InnovationPatterns": [{"pattern_name": "...", "pattern_description": "MÍNIMO 600 CARACTERES", "justification": "MÍNIMO 500 CARACTERES", "expected_impact": "MÍNIMO 500 CARACTERES", "is_primary": true}, {...}, {...}, {...}],
-  "step10Prototype": {"name": "...", "type": "digital", "description": "MÍNIMO 600 CARACTERES", "hypothesis_to_validate": "MÍNIMO 500 CARACTERES", "expected_learning_metrics": "MÍNIMO 500 CARACTERES", "ai_mvp_suggestion": "MÍNIMO 600 CARACTERES"},
-  "step11ValidationStrategy": {"hypothesis": "MÍNIMO 600 CARACTERES", "target_segments": "MÍNIMO 600 CARACTERES", "validation_methods": ["interview", "survey", "prototype_test"], "expected_learnings": "MÍNIMO 600 CARACTERES", "success_criteria": "MÍNIMO 600 CARACTERES", "timeline_weeks": 8, "budget_estimate": 15000},
-  "step12EcosystemActors": [{"actor_name": "...", "actor_type": "financial", "role_description": "MÍNIMO 600 CARACTERES", "support_types": ["funding"], "benefit_to_venture": "MÍNIMO 600 CARACTERES", "benefit_to_actor": "MÍNIMO 600 CARACTERES", "relationship_status": "MÍNIMO 400 CARACTERES"}, {...}, {...}, {...}],
-  "step13SustainabilityReflection": {"social_impact_balance": "MÍNIMO 600 CARACTERES", "sustainability_decisions": "MÍNIMO 600 CARACTERES", "scaling_strategy": "MÍNIMO 600 CARACTERES", "ai_generated_reflection": "MÍNIMO 800 CARACTERES - EVALUACIÓN FINAL IA COMPLETA"}
+  "idea": {
+    "title": "Título específico del emprendimiento", 
+    "description": "Descripción detallada con análisis de mercado y propuesta de valor diferenciada, incluyendo datos específicos de la industria",
+    "target_market": "Segmentación específica con tamaños de mercado, demografía y análisis de competencia",
+    "unique_value": "Propuesta de valor única con ventajas competitivas sostenibles"
+  },
+  "step1": {
+    "who_i_am": "Perfil profesional completo con experiencia relevante, formación y habilidades técnicas específicas",
+    "what_i_know": "Conocimientos específicos del área, industria objetivo, metodologías y herramientas dominadas",
+    "who_i_know": "Red de contactos estratégica en la industria con roles específicos y conexiones relevantes",
+    "what_i_have": "Recursos disponibles incluyendo capital, activos, tecnología y team potential"
+  },
+  "step2": {
+    "title": "Título específico del problema",
+    "description": "Análisis detallado del problema con causas, impacto cuantificado y por qué soluciones actuales son inadecuadas",
+    "affected": "Población afectada específica con demografía, tamaño de mercado y características socioeconómicas",
+    "relevance": "Relevancia económica con impacto cuantificado y oportunidad de mercado específica",
+    "link_to_means": "Conexión con medios personales y ventajas únicas para abordar este problema"
+  },
+  "step3": [
+    {"name": "Tendencia Social", "type": "Social", "brief": "Análisis detallado de tendencia social con drivers y proyecciones", "example": "Ejemplo concreto con datos reales", "source_apa": "Fuente específica APA", "comment": "Relevancia para emprendimiento"},
+    {"name": "Tendencia Tecnológica", "type": "Tecnológica", "brief": "Análisis técnico con adoption rates y costos", "example": "Ejemplo con números específicos", "source_apa": "Fuente técnica", "comment": "Ventaja competitiva"},
+    {"name": "Tendencia Ambiental", "type": "Ambiental", "brief": "Driver ambiental con regulaciones y financial implications", "example": "Ejemplo con metrics sustainability", "source_apa": "Fuente ambiental", "comment": "Oportunidad de negocio"},
+    {"name": "Tendencia Cultural", "type": "Cultural", "brief": "Shift cultural con datos específicos", "example": "Ejemplo con consumer behavior", "source_apa": "Fuente cultural", "comment": "Implicaciones comerciales"}
+  ],
+  "step4": {
+    "strengths": "Análisis detallado de fortalezas estratégicas y ventajas competitivas específicas",
+    "weaknesses": "Limitaciones actuales y gaps en recursos o capabilities específicos",
+    "opportunities": "Oportunidades de mercado específicas con tamaños cuantificados",
+    "threats": "Amenazas competitivas y riesgos específicos del mercado",
+    "success_factors": "Factores críticos que determinarán el éxito del venture",
+    "risk_mitigation": "Estrategias específicas para mitigar riesgos identificados"
+  },
+  "step5Buyer": {
+    "name": "Nombre del buyer persona",
+    "age": 32,
+    "occupation": "Ocupación específica con income range y características profesionales",
+    "motivations": "Motivaciones profundas y drivers específicos para decisiones",
+    "pains": "Pain points específicos y frustraciones con solutions existentes",
+    "needs": "Necesidades específicas y outcomes buscados"
+  },
+  "step5VP": {
+    "customer_jobs": "Jobs específicos del customer con análisis funcional y emocional",
+    "customer_pains": "Pain points detallados con severity analysis",
+    "customer_gains": "Beneficios específicos valorados por el customer",
+    "products_services": "Descripción de offerings específicos con features clave",
+    "pain_relievers": "Cómo productos alivian customer pains específicos",
+    "gain_creators": "Cómo offerings crean value para el customer"
+  },
+  "step8SustainableCanvas": {
+    "customer_segments": "Análisis de segmentos que priorizan sustainability con características específicas",
+    "value_propositions": "Value propositions sostenibles con impacto ambiental/social cuantificado",
+    "products_services": "Ofertas con features de sustainability específicas",
+    "channels": "Canales de distribución alineados con valores sostenibles",
+    "customer_relationships": "Estrategias de relación que fomentan engagement sostenible",
+    "revenue_streams": "Modelos de ingresos alineados con goals de sostenibilidad",
+    "social_benefits": "Impactos sociales específicos cuantificados",
+    "environmental_benefits": "Impacto ambiental cuantificado con metrics específicas",
+    "key_resources": "Recursos críticos para goals de sostenibilidad",
+    "key_activities": "Actividades core que drive business y sustainability",
+    "key_partnerships": "Partnerships estratégicas con valores alineados",
+    "cost_structure": "Estructura de costos incluyendo true environmental costs",
+    "social_costs": "Análisis de potential negative social impacts",
+    "environmental_costs": "Costos ambientales de operations con analysis",
+    "sustainability_reflection": "Reflexión sobre how business model drives sustainability"
+  },
+  "step9InnovationPatterns": [
+    {"pattern_name": "Patrón Principal", "pattern_description": "Descripción detallada del innovation pattern aplicado", "justification": "Justificación para este pattern específico", "expected_impact": "Impacto proyectado con metrics", "is_primary": true},
+    {"pattern_name": "Patrón Secundario", "pattern_description": "Second innovation pattern con implementation", "justification": "Justificación para secondary pattern", "expected_impact": "Impacto esperado con timeline", "is_primary": false},
+    {"pattern_name": "Patrón Terciario", "pattern_description": "Supporting pattern con applications", "justification": "Strategic fit y benefits", "expected_impact": "Impacto adicional", "is_primary": false}
+  ],
+  "step10Prototype": {
+    "name": "Nombre del prototipo/MVP",
+    "type": "digital",
+    "description": "Descripción detallada del prototype con features específicas",
+    "hypothesis_to_validate": "Hipótesis específica con assumptions clave",
+    "expected_learning_metrics": "KPIs específicos para measure learning",
+    "ai_mvp_suggestion": "Recomendación detallada para MVP scope"
+  },
+  "step11ValidationStrategy": {
+    "hypothesis": "Hipótesis de negocio específicas a validar",
+    "target_segments": "Customer segments específicos para validation",
+    "validation_methods": ["interview", "survey", "prototype_test"],
+    "expected_learnings": "Insights específicos buscados",
+    "success_criteria": "Métricas cuantificadas de éxito",
+    "timeline_weeks": 8,
+    "budget_estimate": 15000
+  },
+  "step12EcosystemActors": [
+    {"actor_name": "Actor Financiero", "actor_type": "financial", "role_description": "Análisis del financial actor específico", "support_types": ["funding", "mentorship"], "benefit_to_venture": "Beneficios específicos al venture", "benefit_to_actor": "Value proposition para el actor", "relationship_status": "Estado actual de relación"},
+    {"actor_name": "Socio Comercial", "actor_type": "business", "role_description": "Análisis del business partner", "support_types": ["marketing", "infrastructure"], "benefit_to_venture": "Ventajas estratégicas", "benefit_to_actor": "Beneficios para el partner", "relationship_status": "Engagement level actual"},
+    {"actor_name": "Institución Académica", "actor_type": "academic", "role_description": "Análisis de academic institution", "support_types": ["technical", "networking"], "benefit_to_venture": "Capabilities de research", "benefit_to_actor": "Oportunidades académicas", "relationship_status": "Nivel de relación"},
+    {"actor_name": "Organización Social", "actor_type": "social", "role_description": "Análisis de social organization", "support_types": ["advocacy", "networking"], "benefit_to_venture": "Community access", "benefit_to_actor": "Mission advancement", "relationship_status": "Engagement actual"}
+  ],
+  "step13SustainabilityReflection": {
+    "social_impact_balance": "Análisis comprehensive del net social impact",
+    "sustainability_decisions": "Key sustainability decisions en business model",
+    "scaling_strategy": "Plan detallado para scale sostenible",
+    "ai_generated_reflection": "Evaluación final comprehensiva con synthesis completo"
+  }
 }
 `
   }
