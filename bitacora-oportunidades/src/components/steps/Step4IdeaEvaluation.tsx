@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useJournalStore } from '../../store/journal'
+import { supabase } from '../../lib/supabase'
 import { Target, TrendingUp, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react'
 
 const step4EvaluationSchema = z.object({
@@ -24,21 +25,76 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
   const {
     currentIdea,
     step4EvaluationData,
+    loading,
     saveStep4EvaluationData,
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
 
+  // Debug: Check current status
+  console.log(`📊 Step4 - Idea: "${currentIdea?.title}" | Loading: ${loading} | HasData: ${!!step4EvaluationData}`)
+
   const {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<Step4EvaluationData>({
     resolver: zodResolver(step4EvaluationSchema),
-    values: step4EvaluationData || {},
+    defaultValues: {
+      strengths: '',
+      weaknesses: '',
+      opportunities: '',
+      threats: '',
+      success_factors: '',
+      risk_mitigation: '',
+    },
     mode: 'onChange'
   })
+
+  // Reset form when step4EvaluationData changes
+  useEffect(() => {
+    // Only reset if we have actual data to load
+    if (step4EvaluationData && currentIdea) {
+      console.log('🔄 Loading existing data for:', currentIdea.title)
+      console.log('📊 Raw step4EvaluationData:', step4EvaluationData)
+      
+      // Fix arrays stored as strings
+      const parseField = (field: string | null | undefined) => {
+        if (!field) return ''
+        if (field === '[]') return '' // Empty array as string
+        try {
+          const parsed = JSON.parse(field)
+          if (Array.isArray(parsed)) {
+            return parsed.join('\n• ')
+          }
+          return field
+        } catch {
+          return field
+        }
+      }
+
+      const formData = {
+        strengths: parseField(step4EvaluationData.strengths),
+        weaknesses: parseField(step4EvaluationData.weaknesses),
+        opportunities: parseField(step4EvaluationData.opportunities),
+        threats: parseField(step4EvaluationData.threats),
+        success_factors: parseField(step4EvaluationData.success_factors),
+        risk_mitigation: parseField(step4EvaluationData.risk_mitigation),
+      }
+      
+      console.log('📝 Form data to load:', formData)
+      
+      const timer = setTimeout(() => {
+        reset(formData)
+        console.log('✅ Form reset completed')
+      }, 100)
+
+      return () => clearTimeout(timer)
+    }
+    // Don't clear the form if there's no data - let user fill it manually
+  }, [step4EvaluationData, reset, currentIdea])
 
   const watchedValues = watch()
 
@@ -60,6 +116,15 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
 
   if (!currentIdea) {
     return <div>No hay idea seleccionada</div>
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+        <p className="mt-4 text-stone-600">Cargando datos de evaluación...</p>
+      </div>
+    )
   }
 
   const getFieldStatus = (fieldName: keyof Step4EvaluationData, minLength = 50) => {
@@ -290,6 +355,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
             )}
           </div>
         </div>
+
 
         {/* Submit button */}
         <div className="flex justify-center pt-8">

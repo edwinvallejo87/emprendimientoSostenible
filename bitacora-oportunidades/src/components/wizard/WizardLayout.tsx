@@ -27,13 +27,13 @@ const steps = [
   { id: 4, title: 'Tendencias (Crazy Quilt)', component: Step3Trends },
   { id: 5, title: 'Evaluación (Lemonade)', component: Step4IdeaEvaluation },
   { id: 6, title: 'Usuario/Valor (Pilot-in-Plane)', component: Step5UserValue },
-  { id: 7, title: 'Evaluación IA', component: Step6AIEvaluation },
-  { id: 8, title: 'Canvas Sostenible', component: Step7SustainableCanvas },
-  { id: 9, title: 'Patrones Innovación', component: Step8InnovationPatterns },
-  { id: 10, title: 'Prototipo/PMV', component: Step9PrototypeMVP },
-  { id: 11, title: 'Validación', component: Step10ValidationStrategy },
-  { id: 12, title: 'Ecosistema', component: Step11EcosystemMap },
-  { id: 13, title: 'Reflexión Final', component: Step12SustainabilityReflection },
+  { id: 7, title: 'Canvas Sostenible', component: Step7SustainableCanvas },
+  { id: 8, title: 'Patrones Innovación', component: Step8InnovationPatterns },
+  { id: 9, title: 'Prototipo/PMV', component: Step9PrototypeMVP },
+  { id: 10, title: 'Validación', component: Step10ValidationStrategy },
+  { id: 11, title: 'Ecosistema', component: Step11EcosystemMap },
+  { id: 12, title: 'Reflexión Final', component: Step12SustainabilityReflection },
+  { id: 13, title: 'Evaluación IA Final', component: Step6AIEvaluation },
 ]
 
 export default function WizardLayout() {
@@ -467,7 +467,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 7 ? (
             currentIdea ? (
-              <Step6AIEvaluation onNext={handleNextStep} />
+              <Step7SustainableCanvas onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -481,7 +481,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 8 ? (
             currentIdea ? (
-              <Step7SustainableCanvas onNext={handleNextStep} />
+              <Step8InnovationPatterns onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -495,7 +495,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 9 ? (
             currentIdea ? (
-              <Step8InnovationPatterns onNext={handleNextStep} />
+              <Step9PrototypeMVP onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -509,7 +509,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 10 ? (
             currentIdea ? (
-              <Step9PrototypeMVP onNext={handleNextStep} />
+              <Step10ValidationStrategy onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -523,7 +523,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 11 ? (
             currentIdea ? (
-              <Step10ValidationStrategy onNext={handleNextStep} />
+              <Step11EcosystemMap onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -537,7 +537,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 12 ? (
             currentIdea ? (
-              <Step11EcosystemMap onNext={handleNextStep} />
+              <Step12SustainabilityReflection onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>
@@ -551,7 +551,7 @@ export default function WizardLayout() {
             )
           ) : activeStep === 13 ? (
             currentIdea ? (
-              <Step12SustainabilityReflection onNext={handleNextStep} />
+              <Step6AIEvaluation onNext={handleNextStep} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-stone-600">Selecciona una idea en el paso 1 para continuar</p>

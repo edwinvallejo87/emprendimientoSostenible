@@ -36,10 +36,12 @@ export interface CompleteIdeaData {
   
   // Step 4: Evaluación SWOT
   step4: {
-    strengths: string[]
-    weaknesses: string[]
-    opportunities: string[]
-    threats: string[]
+    strengths: string
+    weaknesses: string
+    opportunities: string
+    threats: string
+    success_factors: string
+    risk_mitigation: string
   }
   
   // Step 5A: Buyer Persona
@@ -137,6 +139,8 @@ export class CompleteIdeaGenerator {
   constructor() {
     // Use the same pattern as the existing openai.ts file
     this.apiKey = (import.meta as any).env?.VITE_OPENAI_API_KEY || null
+    console.log('🔐 API Key length:', this.apiKey?.length || 0)
+    console.log('🔐 API Key starts with:', this.apiKey?.substring(0, 10) || 'undefined')
   }
 
   async generateCompleteIdea(ideaPrompt: string, userProfile?: string): Promise<CompleteIdeaData> {
@@ -151,6 +155,7 @@ export class CompleteIdeaGenerator {
 
     try {
       console.log('🤖 Generando idea completa con IA...')
+      console.log('📝 Prompt length:', this.buildCompleteIdeaPrompt(ideaPrompt, userProfile).length)
       
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -159,49 +164,51 @@ export class CompleteIdeaGenerator {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4-turbo-preview',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
-              content: `Eres un experto en metodología efectual y emprendimiento sostenible. Tu especialidad es tomar una idea básica y desarrollar un análisis completo de 13 pasos integrando metodología efectual (pasos 1-7) con emprendimiento sostenible (pasos 8-13).
+              content: `Eres un experto en metodología efectual y emprendimiento sostenible. Desarrollas análisis completos de emprendimientos basados en 5 principios efectuales y sostenibilidad.
 
-METODOLOGÍA EFECTUAL - 5 PRINCIPIOS:
-🎯 BIRD-IN-HAND: Partir de medios disponibles (quién soy, qué sé, a quién conozco, qué tengo)
-💰 AFFORDABLE LOSS: Definir pérdidas asequibles vs. retornos esperados
-🤝 CRAZY QUILT: Formar alianzas antes que análisis competitivo
-🍋 LEMONADE: Capitalizar contingencias vs. evitar incertidumbre  
-✈️ PILOT-IN-THE-PLANE: Controlar el futuro vs. predecirlo
-
-EMPRENDIMIENTO SOSTENIBLE - ENFOQUE INTEGRAL:
-🌱 TRIPLE IMPACTO: Equilibrio entre beneficio económico, social y ambiental
-🔄 ECONOMÍA CIRCULAR: Optimización de recursos y reducción de desperdicios
-🤝 STAKEHOLDER VALUE: Valor para todos los actores del ecosistema
-🌍 ESCALABILIDAD SOSTENIBLE: Crecimiento que preserve el impacto positivo
-
-Tu misión: Desarrollar una bitácora completa de 13 pasos que integre viabilidad empresarial con impacto sostenible.`
+Genera respuestas en JSON con contenido extenso y realista para cada campo. IMPORTANTE: Los campos de step4 deben ser STRINGS detallados, NO arrays.`
             },
             {
               role: 'user',
               content: this.buildCompleteIdeaPrompt(ideaPrompt, userProfile)
             }
           ],
-          temperature: 0.4,
-          max_tokens: 4000,
+          temperature: 0.7,
+          max_tokens: 16000,
         }),
       })
 
+      console.log('📡 Response status:', response.status, response.statusText)
+      
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`)
+        const errorText = await response.text()
+        console.error('❌ API Error details:', errorText)
+        throw new Error(`API Error: ${response.status} - ${errorText}`)
       }
 
       const result = await response.json()
       const content = result.choices[0].message.content
       
       console.log('✅ Idea completa generada exitosamente')
+      console.log('🔍 Raw AI response length:', content?.length)
+      console.log('🔍 Raw AI response preview:', content?.substring(0, 200) + '...')
       
-      return this.parseCompleteIdea(content)
+      const parsedData = this.parseCompleteIdea(content)
+      
+      console.log('🔍 Parsed Step4 data:', parsedData.step4)
+      console.log('🔍 Step4 strengths type:', typeof parsedData.step4.strengths, '| Length:', parsedData.step4.strengths?.length)
+      console.log('🔍 Parsed Step9InnovationPatterns:', parsedData.step9InnovationPatterns?.length, 'patterns')
+      console.log('🔍 Parsed Step12EcosystemActors:', parsedData.step12EcosystemActors?.length, 'actors')
+      console.log('🔍 AI generated reflection:', parsedData.step13SustainabilityReflection?.ai_generated_reflection?.substring(0, 100) + '...')
+      
+      return parsedData
     } catch (error) {
-      console.error('Error generando idea completa:', error)
+      console.error('❌ Error generando idea completa:', error)
+      console.error('🔍 Error details:', error.message)
       console.log('🔄 Fallback a idea simulada')
       return this.getMockCompleteIdea(ideaPrompt)
     }
@@ -209,153 +216,40 @@ Tu misión: Desarrollar una bitácora completa de 13 pasos que integre viabilida
 
   private buildCompleteIdeaPrompt(ideaPrompt: string, userProfile?: string): string {
     return `
-DESARROLLA UNA BITÁCORA COMPLETA DE OPORTUNIDAD basada en esta idea inicial:
+Desarrolla una bitácora COMPLETA de emprendimiento para: "${ideaPrompt}"
 
-💡 IDEA INICIAL: "${ideaPrompt}"
+${userProfile ? `Perfil: ${userProfile}` : ''}
 
-${userProfile ? `👤 PERFIL DEL EMPRENDEDOR: ${userProfile}` : ''}
+REQUISITOS CRÍTICOS DE EXTENSIÓN:
+- TODOS los campos de texto deben tener MÍNIMO 600 caracteres
+- Análisis PROFUNDO y DETALLADO como consultor senior
+- Incluir números específicos, porcentajes, datos de mercado
+- Citas y referencias cuando sea posible
+- Análisis cuantitativo exhaustivo
 
-═══════════════════════════════════════════════════════════════════
-🎯 DESARROLLO COMPLETO REQUERIDO - 6 PASOS
-═══════════════════════════════════════════════════════════════════
+IMPORTANTE: Los campos de step4 (strengths, weaknesses, opportunities, threats, success_factors, risk_mitigation) DEBEN ser STRINGS extensos con análisis profundo de mínimo 600 caracteres cada uno.
 
-⚠️ INSTRUCCIONES CRÍTICAS DE LONGITUD:
-- TODOS los campos de texto deben tener MÍNIMO 400 caracteres
-- NO generes texto corto. EXTIENDE cada respuesta con detalles, ejemplos, cifras y análisis profundo
-- Incluye datos específicos, números, porcentajes, y referencias concretas
-- Desarrolla cada idea completamente con contexto exhaustivo
+GENERAR MÚLTIPLES ELEMENTOS:
+- step3: 4-5 tendencias detalladas
+- step9InnovationPatterns: 3-4 patrones con análisis extenso
+- step12EcosystemActors: 4-5 actores con descripciones completas
 
-Desarrolla COMPLETAMENTE cada paso con información realista y específica:
-
-**PASO 1 - MEDIOS PERSONALES (Bird-in-Hand):**
-Crea un perfil realista del emprendedor ideal para esta oportunidad:
-• Identidad profesional específica (background, experiencia, estudios)
-• Conocimientos técnicos y skills relevantes (específicos para la idea)
-• Red de contactos relevantes (industria, roles, influencia)
-• Recursos materiales disponibles (financieros, técnicos, físicos)
-
-**PASO 2 - PROBLEMA/NECESIDAD (Affordable Loss):**
-Define el problema que resuelve la idea:
-• Título específico del problema (conciso pero descriptivo)
-• Descripción detallada del problema (manifestaciones, frecuencia, impacto)
-• Población afectada (segmentos específicos, tamaño, características)
-• Relevancia económica/social (impacto cuantificado, tendencias)
-• Conexión con medios del equipo (por qué este equipo puede resolverlo)
-
-**PASO 3 - TENDENCIAS (Crazy Quilt):**
-Identifica 3-5 tendencias relevantes que apoyan la oportunidad (genera múltiples tendencias en el array step3):
-• Nombre de la tendencia
-• Tipo (Social/Tecnológica/Ambiental/Cultural/Consumo)
-• Descripción breve pero específica
-• Ejemplo concreto de la tendencia en acción
-• Fuente académica o de autoridad (formato APA)
-• Comentario sobre cómo beneficia la oportunidad
-
-**PASO 4 - EVALUACIÓN SWOT (Lemonade):**
-Análisis realista de:
-• 4-5 Fortalezas específicas del proyecto/equipo
-• 4-5 Debilidades críticas a abordar
-• 4-5 Oportunidades de mercado concretas
-• 4-5 Amenazas y riesgos reales
-
-**PASO 5A - BUYER PERSONA (Pilot-in-the-Plane):**
-Crea un buyer persona específico y realista:
-• Nombre y edad específicos
-• Ocupación detallada (incluir segmento de mercado e ingresos en este campo)
-• Motivaciones principales (3-4 específicas)
-• Pain points principales (3-4 específicos)
-• Necesidades clave (3-4 específicas)
-
-**PASO 5B - PROPUESTA DE VALOR (Pilot-in-the-Plane):**
-Canvas de propuesta de valor completo:
-• Trabajos del cliente (jobs-to-be-done específicos)
-• Dolores del cliente (pain points detallados)
-• Ganancias esperadas (gains específicos)
-• Productos/servicios ofrecidos (descripción detallada)
-• Aliviadores de dolor (cómo resuelve cada pain point)
-• Generadores de ganancia (cómo crea valor específico)
-
-═══════════════════════════════════════════════════════════════════
-📋 REQUERIMIENTOS DE CALIDAD
-═══════════════════════════════════════════════════════════════════
-
-✅ REALISMO: Todo debe ser factible y realista
-✅ ESPECIFICIDAD: Evita generalidades, sé específico
-✅ COHERENCIA: Todos los pasos deben estar interconectados
-✅ ACTIONABLE: La información debe ser utilizable
-✅ CUANTIFICACIÓN: Incluye números donde sea posible
-✅ METODOLOGÍA EFECTUAL: Refleja los 5 principios
-
-Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
+Estructura JSON exacta:
 
 {
-  "idea": {
-    "title": "Título conciso de la oportunidad",
-    "description": "Descripción detallada de 2-3 párrafos",
-    "target_market": "Mercado objetivo específico",
-    "unique_value": "Propuesta de valor única"
-  },
-  "step1": {
-    "who_i_am": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Identidad profesional completa con background detallado, experiencia laboral específica (empresas, roles, años), educación formal e informal, certificaciones relevantes, habilidades técnicas y blandas desarrolladas, logros profesionales cuantificados, experiencias emprendedoras previas, motivaciones personales profundas, pasiones que impulsan el proyecto, valores profesionales, red de mentores, y características de personalidad que favorecen el emprendimiento. Incluir ejemplos específicos y cronología.",
-    "what_i_know": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Conocimientos técnicos específicos y especializados incluyendo: tecnologías dominadas con años de experiencia, metodologías aplicadas en proyectos reales, certificaciones profesionales obtenidas, competencias desarrolladas en industrias relevantes, conocimiento del mercado objetivo, experiencia en desarrollo de productos similares, habilidades en marketing digital, ventas, operaciones, finanzas, experiencia regulatoria, conocimiento de tendencias del sector, y expertise único que diferencia al equipo de la competencia.",
-    "who_i_know": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Red de contactos profesionales específica incluyendo: mentores con experiencia en la industria (nombres, roles, influencia), socios potenciales estratégicos, clientes pioneros identificados, proveedores clave con relaciones establecidas, inversores o fondos con interés en el sector, expertos técnicos consultores, influencers del mercado, profesionales de servicios (legales, contables, marketing), autoridades regulatorias, y contactos internacionales. Especificar el valor específico que cada contacto aporta al proyecto.",
-    "what_i_have": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Recursos tangibles e intangibles disponibles incluyendo: capital inicial específico (monto exacto), equipamiento técnico detallado, software y licencias, oficinas o espacios de trabajo, vehículos, inventario inicial, ahorros personales destinados al proyecto, activos que pueden monetizarse, tiempo dedicado semanalmente, infraestructura tecnológica, bases de datos existentes, propiedad intelectual, marcas registradas, contratos preexistentes, y recursos familiares o personales que pueden apalancarse para el proyecto."
-  },
-  "step2": {
-    "title": "Título específico del problema",
-    "description": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Descripción exhaustiva del problema incluyendo contexto histórico, causas raíz, manifestaciones actuales, frecuencia de ocurrencia, gravedad del impacto, consecuencias a corto y largo plazo, ejemplos específicos de casos reales, datos estadísticos relevantes, y cómo afecta la vida diaria de las personas. Incluir números, porcentajes y referencias específicas.",
-    "affected": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Población afectada con análisis demográfico completo incluyendo: rangos de edad específicos, distribución geográfica (países, regiones, ciudades), nivel socioeconómico, educación, profesión, ingresos promedio, tamaño exacto del mercado potencial, segmentación por características psicográficas, comportamientos de consumo, preferencias tecnológicas, y datos estadísticos de censos o estudios de mercado. Incluir cifras exactas y fuentes.",
-    "relevance": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Relevancia económica y social cuantificada con análisis detallado del impacto financiero actual, costos anuales del problema a nivel individual y social, pérdidas económicas estimadas, oportunidad de mercado valorizada en cifras específicas, beneficios sociales potenciales, ROI proyectado, análisis de costo-beneficio, comparación con soluciones existentes, datos de investigaciones académicas o informes de consultoría, y proyecciones de crecimiento del mercado.",
-    "link_to_means": "TEXTO EXTENSO OBLIGATORIO - Mínimo 400 caracteres: Conexión específica y detallada entre CADA uno de los medios del equipo y la solución del problema. Explicar cómo los conocimientos técnicos específicos se aplican, qué contactos clave facilitarán el desarrollo y distribución, cómo los recursos financieros y materiales se utilizarán eficientemente, experiencias previas relevantes del equipo, ventajas competitivas únicas, sinergias entre recursos disponibles, y plan específico de implementación utilizando los medios identificados."
-  },
-  "step3": [
-    {
-      "name": "Nombre de tendencia 1",
-      "type": "Social|Tecnológica|Ambiental|Cultural|Consumo",
-      "brief": "Descripción específica de la tendencia 1",
-      "example": "Ejemplo concreto de la tendencia 1",
-      "source_apa": "Fuente APA de tendencia 1",
-      "comment": "Cómo beneficia la oportunidad"
-    },
-    {
-      "name": "Nombre de tendencia 2", 
-      "type": "Social|Tecnológica|Ambiental|Cultural|Consumo",
-      "brief": "Descripción específica de la tendencia 2",
-      "example": "Ejemplo concreto de la tendencia 2",
-      "source_apa": "Fuente APA de tendencia 2", 
-      "comment": "Cómo beneficia la oportunidad"
-    },
-    {
-      "name": "Nombre de tendencia 3",
-      "type": "Social|Tecnológica|Ambiental|Cultural|Consumo", 
-      "brief": "Descripción específica de la tendencia 3",
-      "example": "Ejemplo concreto de la tendencia 3",
-      "source_apa": "Fuente APA de tendencia 3",
-      "comment": "Cómo beneficia la oportunidad"
-    }
-  ],
-  "step4": {
-    "strengths": ["fortaleza 1 específica", "fortaleza 2", "fortaleza 3", "fortaleza 4"],
-    "weaknesses": ["debilidad 1 específica", "debilidad 2", "debilidad 3", "debilidad 4"],
-    "opportunities": ["oportunidad 1 específica", "oportunidad 2", "oportunidad 3", "oportunidad 4"],
-    "threats": ["amenaza 1 específica", "amenaza 2", "amenaza 3", "amenaza 4"]
-  },
-  "step5Buyer": {
-    "name": "Nombre específico",
-    "age": número,
-    "occupation": "Ocupación específica, segmento de mercado e ingresos",
-    "motivations": "Motivaciones principales detalladas",
-    "pains": "Pain points específicos detallados",
-    "needs": "Necesidades clave específicas"
-  },
-  "step5VP": {
-    "customer_jobs": "Jobs-to-be-done específicos del cliente",
-    "customer_pains": "Dolores específicos del cliente",
-    "customer_gains": "Ganancias esperadas específicas",
-    "products_services": "Productos/servicios ofrecidos detallados",
-    "pain_relievers": "Cómo alivia cada dolor específico",
-    "gain_creators": "Cómo genera valor específico"
-  }
+  "idea": {"title": "TÍTULO ESPECÍFICO", "description": "MÍNIMO 600 CARACTERES - Análisis detallado", "target_market": "MÍNIMO 400 CARACTERES - Mercado específico", "unique_value": "MÍNIMO 400 CARACTERES"},
+  "step1": {"who_i_am": "MÍNIMO 600 CARACTERES - Perfil profesional completo", "what_i_know": "MÍNIMO 600 CARACTERES - Conocimientos detallados", "who_i_know": "MÍNIMO 600 CARACTERES - Red completa", "what_i_have": "MÍNIMO 600 CARACTERES - Recursos detallados"},
+  "step2": {"title": "TÍTULO ESPECÍFICO", "description": "MÍNIMO 600 CARACTERES - Problema detallado", "affected": "MÍNIMO 600 CARACTERES - Población afectada", "relevance": "MÍNIMO 600 CARACTERES - Relevancia económica", "link_to_means": "MÍNIMO 600 CARACTERES - Conexión con medios"},
+  "step3": [{"name": "...", "type": "Social", "brief": "MÍNIMO 400 CARACTERES", "example": "MÍNIMO 300 CARACTERES", "source_apa": "...", "comment": "MÍNIMO 300 CARACTERES"}, {...}, {...}, {...}],
+  "step4": {"strengths": "MÍNIMO 600 CARACTERES - Análisis profundo", "weaknesses": "MÍNIMO 600 CARACTERES - Análisis profundo", "opportunities": "MÍNIMO 600 CARACTERES - Análisis profundo", "threats": "MÍNIMO 600 CARACTERES - Análisis profundo", "success_factors": "MÍNIMO 600 CARACTERES - Factores críticos", "risk_mitigation": "MÍNIMO 600 CARACTERES - Estrategias específicas"},
+  "step5Buyer": {"name": "...", "age": 30, "occupation": "MÍNIMO 600 CARACTERES - Ocupación detallada", "motivations": "MÍNIMO 600 CARACTERES - Motivaciones profundas", "pains": "MÍNIMO 600 CARACTERES - Pain points detallados", "needs": "MÍNIMO 600 CARACTERES - Necesidades específicas"},
+  "step5VP": {"customer_jobs": "MÍNIMO 600 CARACTERES", "customer_pains": "MÍNIMO 600 CARACTERES", "customer_gains": "MÍNIMO 600 CARACTERES", "products_services": "MÍNIMO 600 CARACTERES", "pain_relievers": "MÍNIMO 600 CARACTERES", "gain_creators": "MÍNIMO 600 CARACTERES"},
+  "step8SustainableCanvas": {"customer_segments": "MÍNIMO 600 CARACTERES", "value_propositions": "MÍNIMO 600 CARACTERES", "products_services": "MÍNIMO 600 CARACTERES", "channels": "MÍNIMO 600 CARACTERES", "customer_relationships": "MÍNIMO 600 CARACTERES", "revenue_streams": "MÍNIMO 600 CARACTERES", "social_benefits": "MÍNIMO 600 CARACTERES", "environmental_benefits": "MÍNIMO 600 CARACTERES", "key_resources": "MÍNIMO 600 CARACTERES", "key_activities": "MÍNIMO 600 CARACTERES", "key_partnerships": "MÍNIMO 600 CARACTERES", "cost_structure": "MÍNIMO 600 CARACTERES", "social_costs": "MÍNIMO 600 CARACTERES", "environmental_costs": "MÍNIMO 600 CARACTERES", "sustainability_reflection": "MÍNIMO 600 CARACTERES"},
+  "step9InnovationPatterns": [{"pattern_name": "...", "pattern_description": "MÍNIMO 600 CARACTERES", "justification": "MÍNIMO 500 CARACTERES", "expected_impact": "MÍNIMO 500 CARACTERES", "is_primary": true}, {...}, {...}, {...}],
+  "step10Prototype": {"name": "...", "type": "digital", "description": "MÍNIMO 600 CARACTERES", "hypothesis_to_validate": "MÍNIMO 500 CARACTERES", "expected_learning_metrics": "MÍNIMO 500 CARACTERES", "ai_mvp_suggestion": "MÍNIMO 600 CARACTERES"},
+  "step11ValidationStrategy": {"hypothesis": "MÍNIMO 600 CARACTERES", "target_segments": "MÍNIMO 600 CARACTERES", "validation_methods": ["interview", "survey", "prototype_test"], "expected_learnings": "MÍNIMO 600 CARACTERES", "success_criteria": "MÍNIMO 600 CARACTERES", "timeline_weeks": 8, "budget_estimate": 15000},
+  "step12EcosystemActors": [{"actor_name": "...", "actor_type": "financial", "role_description": "MÍNIMO 600 CARACTERES", "support_types": ["funding"], "benefit_to_venture": "MÍNIMO 600 CARACTERES", "benefit_to_actor": "MÍNIMO 600 CARACTERES", "relationship_status": "MÍNIMO 400 CARACTERES"}, {...}, {...}, {...}],
+  "step13SustainabilityReflection": {"social_impact_balance": "MÍNIMO 600 CARACTERES", "sustainability_decisions": "MÍNIMO 600 CARACTERES", "scaling_strategy": "MÍNIMO 600 CARACTERES", "ai_generated_reflection": "MÍNIMO 800 CARACTERES - EVALUACIÓN FINAL IA COMPLETA"}
 }
 `
   }
@@ -400,10 +294,12 @@ Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
           comment: trend.comment || 'Comentario no disponible'
         })) : [],
         step4: {
-          strengths: Array.isArray(parsed.step4?.strengths) ? parsed.step4.strengths : [],
-          weaknesses: Array.isArray(parsed.step4?.weaknesses) ? parsed.step4.weaknesses : [],
-          opportunities: Array.isArray(parsed.step4?.opportunities) ? parsed.step4.opportunities : [],
-          threats: Array.isArray(parsed.step4?.threats) ? parsed.step4.threats : []
+          strengths: parsed.step4?.strengths || 'Fortalezas no especificadas',
+          weaknesses: parsed.step4?.weaknesses || 'Debilidades no especificadas',
+          opportunities: parsed.step4?.opportunities || 'Oportunidades no especificadas',
+          threats: parsed.step4?.threats || 'Amenazas no especificadas',
+          success_factors: parsed.step4?.success_factors || 'Factores críticos no especificados',
+          risk_mitigation: parsed.step4?.risk_mitigation || 'Mitigación de riesgos no especificada'
         },
         step5Buyer: {
           name: parsed.step5Buyer?.name || 'Persona no definida',
@@ -422,6 +318,68 @@ Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
           products_services: parsed.step5VP?.products_services || 'Productos/servicios no definidos',
           pain_relievers: parsed.step5VP?.pain_relievers || 'Aliviadores no especificados',
           gain_creators: parsed.step5VP?.gain_creators || 'Generadores de valor no definidos'
+        },
+        step8SustainableCanvas: {
+          customer_segments: parsed.step8SustainableCanvas?.customer_segments || 'Segmentos no definidos',
+          value_propositions: parsed.step8SustainableCanvas?.value_propositions || 'Propuestas de valor no definidas',
+          products_services: parsed.step8SustainableCanvas?.products_services || 'Productos/servicios no definidos',
+          channels: parsed.step8SustainableCanvas?.channels || 'Canales no definidos',
+          customer_relationships: parsed.step8SustainableCanvas?.customer_relationships || 'Relaciones no definidas',
+          revenue_streams: parsed.step8SustainableCanvas?.revenue_streams || 'Ingresos no definidos',
+          social_benefits: parsed.step8SustainableCanvas?.social_benefits || 'Beneficios sociales no definidos',
+          environmental_benefits: parsed.step8SustainableCanvas?.environmental_benefits || 'Beneficios ambientales no definidos',
+          key_resources: parsed.step8SustainableCanvas?.key_resources || 'Recursos clave no definidos',
+          key_activities: parsed.step8SustainableCanvas?.key_activities || 'Actividades clave no definidas',
+          key_partnerships: parsed.step8SustainableCanvas?.key_partnerships || 'Alianzas clave no definidas',
+          cost_structure: parsed.step8SustainableCanvas?.cost_structure || 'Estructura de costos no definida',
+          social_costs: parsed.step8SustainableCanvas?.social_costs || 'Costos sociales no definidos',
+          environmental_costs: parsed.step8SustainableCanvas?.environmental_costs || 'Costos ambientales no definidos',
+          sustainability_reflection: parsed.step8SustainableCanvas?.sustainability_reflection || 'Reflexión de sostenibilidad no definida'
+        },
+        step9InnovationPatterns: Array.isArray(parsed.step9InnovationPatterns) ? parsed.step9InnovationPatterns.map((pattern: any) => ({
+          pattern_name: pattern.pattern_name || 'Patrón sin nombre',
+          pattern_description: pattern.pattern_description || 'Descripción no disponible',
+          justification: pattern.justification || 'Justificación no proporcionada',
+          expected_impact: pattern.expected_impact || 'Impacto no especificado',
+          is_primary: Boolean(pattern.is_primary)
+        })) : [],
+        step10Prototype: {
+          name: parsed.step10Prototype?.name || 'Prototipo no definido',
+          type: ['concept', 'wireframe', 'mockup', 'mvp', 'physical', 'digital', 'service'].includes(parsed.step10Prototype?.type) 
+            ? parsed.step10Prototype.type : 'concept',
+          description: parsed.step10Prototype?.description || 'Descripción no disponible',
+          hypothesis_to_validate: parsed.step10Prototype?.hypothesis_to_validate || 'Hipótesis no definida',
+          expected_learning_metrics: parsed.step10Prototype?.expected_learning_metrics || 'Métricas no especificadas',
+          ai_mvp_suggestion: parsed.step10Prototype?.ai_mvp_suggestion || 'Sugerencia de MVP no disponible'
+        },
+        step11ValidationStrategy: {
+          hypothesis: parsed.step11ValidationStrategy?.hypothesis || 'Hipótesis no definida',
+          target_segments: parsed.step11ValidationStrategy?.target_segments || 'Segmentos objetivo no especificados',
+          validation_methods: Array.isArray(parsed.step11ValidationStrategy?.validation_methods) 
+            ? parsed.step11ValidationStrategy.validation_methods 
+            : ['interview'],
+          expected_learnings: parsed.step11ValidationStrategy?.expected_learnings || 'Aprendizajes no especificados',
+          success_criteria: parsed.step11ValidationStrategy?.success_criteria || 'Criterios de éxito no definidos',
+          timeline_weeks: typeof parsed.step11ValidationStrategy?.timeline_weeks === 'number' 
+            ? parsed.step11ValidationStrategy.timeline_weeks : 4,
+          budget_estimate: typeof parsed.step11ValidationStrategy?.budget_estimate === 'number' 
+            ? parsed.step11ValidationStrategy.budget_estimate : 1000
+        },
+        step12EcosystemActors: Array.isArray(parsed.step12EcosystemActors) ? parsed.step12EcosystemActors.map((actor: any) => ({
+          actor_name: actor.actor_name || 'Actor sin nombre',
+          actor_type: ['financial', 'academic', 'business', 'social', 'institutional'].includes(actor.actor_type) 
+            ? actor.actor_type : 'business',
+          role_description: actor.role_description || 'Rol no definido',
+          support_types: Array.isArray(actor.support_types) ? actor.support_types : ['funding'],
+          benefit_to_venture: actor.benefit_to_venture || 'Beneficio al emprendimiento no especificado',
+          benefit_to_actor: actor.benefit_to_actor || 'Beneficio al actor no especificado',
+          relationship_status: actor.relationship_status || 'Estado de relación no definido'
+        })) : [],
+        step13SustainabilityReflection: {
+          social_impact_balance: parsed.step13SustainabilityReflection?.social_impact_balance || 'Balance de impacto social no definido',
+          sustainability_decisions: parsed.step13SustainabilityReflection?.sustainability_decisions || 'Decisiones de sostenibilidad no especificadas',
+          scaling_strategy: parsed.step13SustainabilityReflection?.scaling_strategy || 'Estrategia de escalamiento no definida',
+          ai_generated_reflection: parsed.step13SustainabilityReflection?.ai_generated_reflection || 'Reflexión de IA no disponible'
         }
       }
     } catch (error) {
@@ -431,6 +389,7 @@ Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
   }
 
   private getMockCompleteIdea(ideaPrompt: string): CompleteIdeaData {
+    console.log('📝 Usando mock data porque la IA no funcionó correctamente')
     return {
       idea: {
         title: "EcoScore - App de Impacto Ambiental de Productos",
@@ -494,34 +453,12 @@ Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
         }
       ],
       step4: {
-        strengths: [
-          "Expertise técnico específico en desarrollo móvil y tecnología verde que pocos competidores combinan",
-          "Red de contactos privilegiada en certificadoras ambientales que proporcionan acceso a datos verificados",
-          "Recursos técnicos y financieros suficientes para desarrollar MVP sin financiación externa",
-          "Timing perfecto con convergencia de conciencia ambiental, adopción QR, y presión regulatoria",
-          "Modelo de negocio escalable con múltiples streams de revenue (freemium, B2B, partnerships)"
-        ],
-        weaknesses: [
-          "Dependencia inicial de APIs y datos de terceros que podrían cambiar términos o precios",
-          "Falta de experiencia en marketing B2C masivo y adquisición de usuarios a escala",
-          "Complejidad técnica de integrar múltiples fuentes de datos ambientales de manera confiable",
-          "Necesidad de educación del mercado sobre la importancia de verificación ambiental",
-          "Riesgo de que grandes players (Amazon, Google) desarrollen funcionalidad similar"
-        ],
-        opportunities: [
-          "Expansión a mercados B2B ayudando retailers a comunicar sostenibilidad de productos",
-          "Partnerships con supermercados y e-commerce para integración nativa en apps existentes",
-          "Licenciamiento de tecnología a certificadoras ambientales para distribución",
-          "Expansión internacional comenzando por mercados regulados (EU, Canada)",
-          "Desarrollo de API para que otras apps integren scoring ambiental"
-        ],
-        threats: [
-          "Google o Amazon podrían integrar funcionalidad similar en sus apps dominantes",
-          "Certificadoras podrían desarrollar sus propias apps directas al consumidor",
-          "Regulaciones podrían cambiar estándares de certificación afectando nuestra base de datos",
-          "Economic downturn podría reducir prioridad del consumidor en sostenibilidad",
-          "Greenwashing sofisticado podría erosionar confianza del consumidor en verificación digital"
-        ]
+        strengths: "Expertise técnico específico en desarrollo móvil y tecnología verde que pocos competidores combinan, con 8+ años de experiencia demostrable en React Native y arquitecturas escalables. Red de contactos privilegiada en certificadoras ambientales (B-Corp, Carbon Trust, ISO 14001) que proporcionan acceso exclusivo a datos verificados y metodologías de evaluación. Recursos técnicos y financieros robustos ($45K capital inicial + acceso a créditos AWS $10K) suficientes para desarrollar MVP completo sin financiación externa, incluyendo infraestructura cloud y equipo de desarrollo freelance confiable. Timing perfecto con convergencia de múltiples trends favorables: conciencia ambiental creciendo 130% anual, adopción masiva de códigos QR post-COVID, presión regulatoria EU Taxonomy y Carbon Border Adjustments. Modelo de negocio escalable validado con múltiples streams de revenue diversificados (freemium $4.99/mes, licensing B2B $0.10/consulta, partnerships 10% fee) que mitigan riesgo de dependencia de una sola fuente de ingresos.",
+        weaknesses: "Dependencia inicial de APIs y datos de terceros que podrían cambiar términos o precios. Falta de experiencia en marketing B2C masivo y adquisición de usuarios a escala. Complejidad técnica de integrar múltiples fuentes de datos ambientales de manera confiable. Necesidad de educación del mercado sobre la importancia de verificación ambiental. Riesgo de que grandes players (Amazon, Google) desarrollen funcionalidad similar.",
+        opportunities: "Expansión a mercados B2B ayudando retailers a comunicar sostenibilidad de productos. Partnerships con supermercados y e-commerce para integración nativa en apps existentes. Licenciamiento de tecnología a certificadoras ambientales para distribución. Expansión internacional comenzando por mercados regulados (EU, Canada). Desarrollo de API para que otras apps integren scoring ambiental.",
+        threats: "Google o Amazon podrían integrar funcionalidad similar en sus apps dominantes. Certificadoras podrían desarrollar sus propias apps directas al consumidor. Regulaciones podrían cambiar estándares de certificación afectando nuestra base de datos. Economic downturn podría reducir prioridad del consumidor en sostenibilidad. Greenwashing sofisticado podría erosionar confianza del consumidor en verificación digital.",
+        success_factors: "Acceso privilegiado a datos verificados de certificadoras ambientales. Partnerships estratégicos con retailers y e-commerce para distribución. UI/UX excepcional que simplifique información compleja. Timing correcto con convergencia de trends favorables. Modelo freemium que genere adoption masiva antes de monetizar.",
+        risk_mitigation: "Diversificación de fuentes de datos para reducir dependencia de APIs específicas. Desarrollo de relaciones directas con certificadoras para asegurar acceso a largo plazo. Focus en mercados B2B enterprise para reducir riesgo de competencia de Big Tech. Construcción de moats mediante network effects y data exclusiva."
       },
       step5Buyer: {
         name: "Sofia Martinez",
@@ -538,6 +475,107 @@ Responde ÚNICAMENTE en formato JSON con esta estructura EXACTA:
         products_services: "App móvil gratuita con scanner de códigos de barras que proporciona EcoScore instantáneo, base de datos de +1M productos con información verificada, recomendaciones personalizadas, comparador de productos, y contenido educativo sobre sostenibilidad. Versión premium incluye análisis detallado y tracking personal de impacto.",
         pain_relievers: "Información verificada por certificadoras reduce desconfianza, scanner instantáneo elimina tiempo de investigación, scoring simple (1-100) reduce confusión, alertas de greenwashing protegen de marketing engañoso, y comparador side-by-side facilita decisiones entre productos similares.",
         gain_creators: "Dashboard personal muestra impacto ambiental acumulado de compras, badges y achievements gamifican comportamiento sostenible, sharing social permite influenciar red personal, recomendaciones inteligentes descubren productos sostenibles nuevos, y content educativo aumenta conocimiento ambiental."
+      },
+      step8SustainableCanvas: {
+        customer_segments: "Consumidores eco-conscientes urbanos de 25-45 años con ingresos medios-altos, padres jóvenes preocupados por el futuro, millennials y Gen Z que priorizan sostenibilidad, y early adopters de tecnología verde interesados en transparencia ambiental.",
+        value_propositions: "Transparencia instantánea sobre impacto ambiental de productos mediante scoring verificado, educación ambiental accesible que empodera decisiones sostenibles, y herramientas para tracking personal del impacto ambiental positivo.",
+        products_services: "App móvil freemium con scanner QR/código de barras, base de datos colaborativa de productos verificados, API para retailers, dashboards de impacto personal, content educativo, y servicios de consultoría B2B para transparencia ambiental.",
+        channels: "App stores móviles, partnerships con retailers sostenibles, marketing de influencers eco-conscientes, eventos de sostenibilidad, colaboraciones con ONGs ambientales, y distribution a través de certificadoras partner.",
+        customer_relationships: "Comunidad gamificada de usuarios sostenibles, soporte personalizado vía chat, contenido educativo regular, newsletters con tips ambientales, y programas de rewards por comportamiento sostenible.",
+        revenue_streams: "Freemium app con premium subscriptions ($4.99/mes), licensing de API a retailers ($0.10 por consulta), partnerships revenue con certificadoras (10% fee), y servicios de consulting B2B ($5K-$50K por proyecto).",
+        social_benefits: "Educación masiva sobre sostenibilidad que accelera adoption de productos verdes, empoderamiento del consumidor para tomar decisiones informadas, y pressión social positiva para que empresas mejoren transparencia ambiental.",
+        environmental_benefits: "Reducción agregada de footprint ambiental a través de mejor consumer choice, incentivos de mercado para empresas sostenibles, y data collection que identifica productos más problemáticos ambientalmente para targeted improvements.",
+        key_resources: "Base de datos proprietaria de productos verificados, relationships exclusivas con certificadoras ambientales, algoritmos de scoring ambiental, equipo técnico especializado, y intellectual property en metodología de verificación.",
+        key_activities: "Continuous data collection y verification de productos, desarrollo de algoritmos de scoring, partnerships development con retailers y certificadoras, community building, y product development para nuevas features.",
+        key_partnerships: "Certificadoras ambientales (B-Corp, Carbon Trust), retailers sostenibles (Whole Foods, Patagonia), ONGs ambientales para credibilidad, universidades para research, e inversores ESG para funding y network.",
+        cost_structure: "Development team salaries (40%), data acquisition y verification costs (25%), marketing y customer acquisition (20%), infraestructura cloud y APIs (10%), y legal/compliance costs (5%).",
+        social_costs: "Potential job displacement en industrias menos sostenibles, exclusión digital de usuarios sin smartphones, y posible eco-anxiety incrementado por awareness de impacto ambiental negativo de productos.",
+        environmental_costs: "Footprint de infraestructura digital y servers, lifecycle impact de increased smartphone usage, y potential for increased consumption driven by 'green' marketing si no es usado responsablemente.",
+        sustainability_reflection: "El modelo prioriza impact measurement y transparency como core values. Scaling strategy incluye carbon neutrality certificada, reinvestment de profits en environmental projects, y governance structure que incluye stakeholders ambientales en decision making para mantener mission alignment durante growth."
+      },
+      step9InnovationPatterns: [
+        {
+          pattern_name: "Democratización del Acceso a Información",
+          pattern_description: "Hacer accesible a consumidores masivos información especializada que antes solo estaba disponible para expertos o empresas, utilizando interfaces simples y tecnología móvil ubicua.",
+          justification: "La información sobre impacto ambiental está fragmentada en múltiples fuentes técnicas. Este patrón permite que cualquier consumidor acceda instantáneamente a evaluaciones ambientales complejas mediante un simple scan.",
+          expected_impact: "Transformación del mercado hacia mayor transparencia, presión competitiva para mejora ambiental, y empoderamiento del consumidor para decisiones sostenibles informadas.",
+          is_primary: true
+        },
+        {
+          pattern_name: "Gamificación para Cambio de Comportamiento",
+          pattern_description: "Uso de mecánicas de juego (scores, badges, leaderboards) para motivar y sostener comportamientos pro-ambientales a largo plazo en decisiones de consumo cotidiano.",
+          justification: "El cambio de comportamiento sostenible requiere motivación continua. La gamificación hace que las decisiones ambientales sean rewarding y socialmente visible, creando hábitos positivos.",
+          expected_impact: "Adoption rates más altas, retention mejorada, y network effects mediante sharing social de achievements ambientales, amplificando el impacto individual.",
+          is_primary: false
+        },
+        {
+          pattern_name: "Plataforma de Dos Lados (Two-Sided Market)",
+          pattern_description: "Conectar consumidores que buscan productos sostenibles con empresas que necesitan comunicar su impacto ambiental, creando value para ambos lados del mercado.",
+          justification: "Existe asimetría informacional: consumidores no pueden evaluar fácilmente sustainability, y empresas sostenibles luchan por diferenciarse. La plataforma resuelve ambos problemas simultáneamente.",
+          expected_impact: "Network effects que fortalecen la plataforma, revenue diversificado de múltiples streams, y creation de nuevo mercado para transparency-as-a-service.",
+          is_primary: false
+        }
+      ],
+      step10Prototype: {
+        name: "EcoScore MVP Scanner",
+        type: "digital",
+        description: "App móvil minimalista que permite escanear códigos de barras y obtener un score ambiental simple (1-100) con explicación básica. Incluye funcionalidad de búsqueda manual, favoritos, y sharing social. Backend conectado a 3 certificadoras ambientales para validation inicial de ~1000 productos comunes en supermercados.",
+        hypothesis_to_validate: "Los consumidores cambiarán sus decisiones de compra cuando tengan acceso fácil e instantáneo a scoring ambiental verificado de productos durante su shopping experience normal.",
+        expected_learning_metrics: "Frequency de uso por usuario/semana, percentage de scans que resultan en purchase decision change, time spent in app por session, y willingness to pay for premium features medido via surveys post-uso.",
+        ai_mvp_suggestion: "Comenzar con categoría específica (productos de limpieza) donde impact ambiental es más obvio y consumer awareness mayor. Usar partnership con una sola certificadora respetada para credibilidad inicial. Focus en UX ultra-simple: scan -> score -> brief explanation. Medir todas las interactions para optimizar conversion."
+      },
+      step11ValidationStrategy: {
+        hypothesis: "Los consumidores eco-conscientes cambiarán sus patrones de compra cuando tengan acceso instantáneo a scoring ambiental verificado durante su proceso normal de shopping, y estarán dispuestos a pagar por features premium que les ayuden a maximizar su impacto positivo.",
+        target_segments: "Millennials urbanos de ingresos medios-altos (25-40 años) con children que priorizan sostenibilidad, early adopters de apps de lifestyle que ya usan apps como HappyCow o Think Dirty, y households que ya compran products orgánicos/sostenibles regularmente.",
+        validation_methods: ["prototype_test", "interview", "survey", "observation"],
+        expected_learnings: "Validation de product-market fit mediante usage metrics, identificación de features más valorados por users, understanding de willingness to pay y price sensitivity, behavioral patterns de uso real vs. stated preferences, y feedback sobre accuracy y credibilidad del scoring system.",
+        success_criteria: "70%+ de test users usan la app al menos 2x por semana durante grocery shopping, 40%+ reportan haber cambiado al menos una purchasing decision basada en app recommendations, 60%+ consideran el scoring system trustworthy y accurate, y 25%+ expresan willingness to pay $2.99-$4.99/mes por premium features.",
+        timeline_weeks: 8,
+        budget_estimate: 15000
+      },
+      step12EcosystemActors: [
+        {
+          actor_name: "B-Corporation Certification",
+          actor_type: "institutional",
+          role_description: "Organización global que certifica empresas que cumplen standards rigurosos de performance social y ambiental. Proporcionan framework de assessment y credibilidad institucional para consumer-facing sustainability claims.",
+          support_types: ["technical", "networking"],
+          benefit_to_venture: "Acceso a database de companies certificadas, credibilidad through association, technical expertise en sustainability metrics, y potential endorsement que aumenta consumer trust en nuestra platform.",
+          benefit_to_actor: "Increased visibility de B-Corps certificadas hacia consumers, nueva channel para communicar impact de companies certificadas, y data insights sobre consumer preferences que pueden inform future certification criteria.",
+          relationship_status: "Preliminary discussions initiated. Positive response to partnership concept. Need to develop formal proposal para data access y co-marketing opportunities."
+        },
+        {
+          actor_name: "Whole Foods Market",
+          actor_type: "business",
+          role_description: "Retailer líder en productos naturales y orgánicos con strong brand association con sustainability y conscious consumption. Target demographic alineado perfecto con nuestro user base.",
+          support_types: ["marketing", "infrastructure"],
+          benefit_to_venture: "Distribution channel para customer acquisition, validation through partnership con trusted brand, potential integration en shopping app, y access a customer base ya committed a sustainable shopping.",
+          benefit_to_actor: "Differentiation de competitors through innovative sustainability features, enhanced customer engagement y loyalty, data insights sobre customer preferences, y positioning como innovation leader en retail sustainability.",
+          relationship_status: "Target for outreach. Research indicates innovation team activo en sustainability tech partnerships. Plan initial meeting través de existing network contacts en retail sustainability space."
+        },
+        {
+          actor_name: "Climate Tech VC Fund (Breakthrough Energy Ventures)",
+          actor_type: "financial",
+          role_description: "Venture capital fund específicamente focused en climate solutions con track record de successful exits en consumer climate tech. Portfolio incluye companies con similar mission-driven approach.",
+          support_types: ["funding", "mentorship", "networking"],
+          benefit_to_venture: "Series A funding potential ($2M-$5M), access a portfolio de climate tech companies para partnerships, strategic guidance en scaling climate solutions, y credibility que facilita future fundraising rounds.",
+          benefit_to_actor: "Investment opportunity en high-growth consumer climate tech con clear path to profitability, potential portfolio synergies con existing investments, y diversification dentro de consumer-facing climate solutions segment.",
+          relationship_status: "Research phase completed. Fund thesis alignment confirmed. Plan warm introduction através de existing portfolio company founder durante Q2 para initial pitch meeting."
+        },
+        {
+          actor_name: "Environmental Defense Fund (EDF)",
+          actor_type: "social",
+          role_description: "Leading environmental advocacy organization con expertise en market-based environmental solutions y strong reputation entre consumers y corporations para trusted environmental guidance.",
+          support_types: ["mentorship", "technical", "marketing"],
+          benefit_to_venture: "Scientific credibility para methodology validation, potential endorsement que builds consumer trust, access a research sobre consumer behavior ambiental, y guidance en environmental impact measurement best practices.",
+          benefit_to_actor: "Amplification de environmental education mission através de consumer technology, new channel para reaching younger demographics, data insights sobre consumer environmental preferences para policy advocacy, y demonstration de innovative approaches to environmental awareness.",
+          relationship_status: "Initial contact established através de conference networking. Expressed interest en reviewing our environmental methodology. Scheduled follow-up meeting to explore formal advisory relationship."
+        }
+      ],
+      step13SustainabilityReflection: {
+        social_impact_balance: "El venture create value social através de education y empowerment, pero debe carefully balance accessibility con exclusivity. Pricing strategy debe ensure que tools no estén available solo para high-income consumers. Plan incluye free tier robusto, partnerships con community organizations, y eventual expansion a mercados emerging para democratizar access a environmental information globally.",
+        sustainability_decisions: "Core business model alineado con environmental mission: revenue streams incentivan behavior positivo, no dependency en advertising que podría create perverse incentives, y governance structure que protege mission durante scaling. Key decisions include: carbon neutrality commitment desde día 1, sustainable office practices, remote-first team para reduce commuting impact, y commitment para reinvest 15% de profits en environmental restoration projects.",
+        scaling_strategy: "Scaling approach priori impact preservation: international expansion comenzará con markets que tienen similar regulatory frameworks y consumer awareness (Canada, EU), partnerships strategy foca en organizations con aligned values en lugar de pure revenue maximization, y technology development mantendrá open-source components para enable industry-wide improvement en sustainability measurement.",
+        ai_generated_reflection: "EVALUACIÓN FINAL IA (Pilot-in-the-Plane): Este emprendimiento presenta alta viabilidad debido a convergencia de trends favorables (consumer awareness, regulatory pressure, technology readiness), unique competitive position através de partnerships con certificadoras, y scalable business model con multiple revenue streams. Riesgos críticos incluyen dependency en third-party data sources y potential competition de tech giants, mitigados através de exclusive partnerships y focus en trust/credibility. Próximos pasos sugeridos: 1) Secure initial partnership con certificadora respetada para data access, 2) Develop MVP con 1000+ productos en categoría focused, 3) Run validation study con 100+ target users durante 8 semanas, 4) Prepare Series A materials focusing en market size y social impact metrics para climate tech investors. Success probability estimada: 75% para achieving product-market fit, 60% para scaling sustainably while maintaining mission alignment."
       }
     }
   }

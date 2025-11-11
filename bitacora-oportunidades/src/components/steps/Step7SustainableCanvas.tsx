@@ -269,7 +269,7 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">🌱 Canvas Sostenible</h2>
+            <h2 className="text-2xl text-stone-900 mb-2">🌱 CANVAS SOSTENIBLE CORRECTO</h2>
             <p className="text-stone-600">
               Diseña un modelo de negocio que equilibre impacto social, ambiental y económico
             </p>

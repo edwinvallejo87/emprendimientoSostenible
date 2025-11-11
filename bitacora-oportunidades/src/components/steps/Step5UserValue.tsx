@@ -34,14 +34,49 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
 
   const [saving, setSaving] = useState(false)
 
+  // Debug: Check data loading for current idea
+  if (currentIdea && !step5BuyerData) {
+    console.log('Step5 - No buyer data for idea:', currentIdea.title)
+  }
+
+  // Helper function to convert array data to formatted string
+  const formatFieldValue = (value: any): string => {
+    if (!value) return ''
+    if (typeof value === 'string') {
+      try {
+        // Try to parse as JSON array
+        const parsed = JSON.parse(value)
+        if (Array.isArray(parsed)) {
+          return parsed.join('\n• ')
+        }
+        return value
+      } catch {
+        // If not JSON, return as string
+        return value
+      }
+    }
+    if (Array.isArray(value)) {
+      return value.join('\n• ')
+    }
+    return String(value)
+  }
+
   const {
     control: buyerControl,
     watch: watchBuyer,
     handleSubmit: handleBuyerSubmit,
+    reset: resetBuyer,
     formState: { errors: buyerErrors, isValid: isBuyerValid },
   } = useForm<Step5BuyerData>({
     resolver: zodResolver(step5BuyerSchema),
-    values: step5BuyerData || {},
+    defaultValues: {
+      name: '',
+      age: undefined,
+      occupation: '',
+      motivations: '',
+      pains: '',
+      needs: '',
+    },
     mode: 'onChange'
   })
 
@@ -49,15 +84,59 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     control: vpControl,
     watch: watchVP,
     handleSubmit: handleVPSubmit,
+    reset: resetVP,
     formState: { errors: vpErrors, isValid: isVPValid },
   } = useForm<Step5VPCanvasData>({
     resolver: zodResolver(step5VPCanvasSchema),
-    values: step5VPData || {},
+    defaultValues: {
+      customer_jobs: '',
+      customer_pains: '',
+      customer_gains: '',
+      products_services: '',
+      pain_relievers: '',
+      gain_creators: '',
+    },
     mode: 'onChange'
   })
 
   const buyerValues = watchBuyer()
   const vpValues = watchVP()
+
+  // Reset buyer form when step5BuyerData changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (step5BuyerData) {
+        resetBuyer({
+          name: formatFieldValue(step5BuyerData.name),
+          age: typeof step5BuyerData.age === 'number' ? step5BuyerData.age : undefined,
+          occupation: formatFieldValue(step5BuyerData.occupation),
+          motivations: formatFieldValue(step5BuyerData.motivations),
+          pains: formatFieldValue(step5BuyerData.pains),
+          needs: formatFieldValue(step5BuyerData.needs),
+        })
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [step5BuyerData, resetBuyer])
+
+  // Reset VP form when step5VPData changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (step5VPData) {
+        resetVP({
+          customer_jobs: formatFieldValue(step5VPData.customer_jobs),
+          customer_pains: formatFieldValue(step5VPData.customer_pains),
+          customer_gains: formatFieldValue(step5VPData.customer_gains),
+          products_services: formatFieldValue(step5VPData.products_services),
+          pain_relievers: formatFieldValue(step5VPData.pain_relievers),
+          gain_creators: formatFieldValue(step5VPData.gain_creators),
+        })
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [step5VPData, resetVP])
 
   // Calculate if all steps are complete for PDF export
   const overallProgress = calculateOverallProgress({

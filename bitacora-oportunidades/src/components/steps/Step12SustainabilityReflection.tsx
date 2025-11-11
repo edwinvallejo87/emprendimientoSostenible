@@ -122,47 +122,7 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
     loadData()
   }, [currentIdea])
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!currentIdea || loading) return
-
-    const hasContent = REFLECTION_PROMPTS.some(prompt => {
-      const value = reflection[prompt.key as keyof SustainabilityReflection]
-      return value && String(value).trim().length > 0
-    })
-
-    if (!hasContent) return
-
-    const saveReflection = async () => {
-      setSaving(true)
-      try {
-        const updateData: SustainabilityReflectionUpdate = {
-          idea_id: currentIdea.id,
-          ...reflection,
-          updated_at: new Date().toISOString()
-        }
-
-        const { data, error } = await supabase
-          .from('sustainability_reflections')
-          .upsert(updateData, { onConflict: 'idea_id' })
-          .select()
-          .single()
-
-        if (error) {
-          console.error('Error saving reflection:', error)
-        } else if (data) {
-          setReflection(data)
-        }
-      } catch (error) {
-        console.error('Error saving reflection:', error)
-      } finally {
-        setSaving(false)
-      }
-    }
-
-    const timeoutId = setTimeout(saveReflection, 1000)
-    return () => clearTimeout(timeoutId)
-  }, [reflection, currentIdea, loading])
+  // Manual save only
 
   const handleFieldChange = (field: string, value: string) => {
     setReflection(prev => ({
@@ -251,6 +211,120 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
     }
   }
 
+  const generateBasicReflections = async () => {
+    if (!currentIdea) return
+
+    setGenerating(true)
+    try {
+      // Generate basic content for the three main reflection fields
+      let socialImpactBalance = ''
+      let sustainabilityDecisions = ''
+      let scalingStrategy = ''
+
+      if (contextData.canvas) {
+        const canvas = contextData.canvas
+        
+        // Social Impact Balance (600+ chars)
+        socialImpactBalance = `${currentIdea.title} integra un modelo de triple impacto que equilibra viabilidad económica con beneficios sociales y ambientales. `
+        
+        if (canvas.social_benefits) {
+          socialImpactBalance += `En el aspecto social, nuestro proyecto genera valor a través de: ${canvas.social_benefits.substring(0, 200)}... `
+        }
+        
+        if (canvas.environmental_benefits) {
+          socialImpactBalance += `Ambientalmente, contribuimos mediante: ${canvas.environmental_benefits.substring(0, 200)}... `
+        }
+        
+        if (canvas.revenue_streams) {
+          socialImpactBalance += `Económicamente, mantenemos sostenibilidad financiera a través de flujos de ingresos diversificados que incluyen ${canvas.revenue_streams.substring(0, 150)}... `
+        }
+        
+        socialImpactBalance += `Esta integración asegura que el crecimiento empresarial amplifique el impacto positivo social y ambiental, creando un círculo virtuoso de valor compartido que beneficia a todos los stakeholders involucrados.`
+        
+        // Sustainability Decisions (600+ chars)
+        sustainabilityDecisions = `Las decisiones estratégicas que hacen nuestro modelo inherentemente sostenible incluyen múltiples aspectos operativos y estratégicos. `
+        
+        if (contextData.patterns && contextData.patterns.length > 0) {
+          sustainabilityDecisions += `Implementamos patrones de innovación específicos como "${contextData.patterns[0]?.pattern_name}", que nos permite optimizar el uso de recursos y generar valor a largo plazo. `
+        }
+        
+        if (canvas.key_resources) {
+          sustainabilityDecisions += `En términos de recursos, priorizamos aquellos que apoyan la sostenibilidad: ${canvas.key_resources.substring(0, 150)}... `
+        }
+        
+        if (contextData.ecosystem && contextData.ecosystem.length > 0) {
+          const socialCount = contextData.ecosystem.filter((a: any) => a.actor_type === 'social').length
+          sustainabilityDecisions += `Establecemos alianzas estratégicas con ${contextData.ecosystem.length} actores del ecosistema, incluyendo ${socialCount} organizaciones sociales, lo que refuerza nuestro compromiso con la sostenibilidad. `
+        }
+        
+        sustainabilityDecisions += `Estas decisiones están integradas en nuestra operación diaria como elementos fundamentales del modelo de negocio, no como iniciativas complementarias.`
+        
+        // Scaling Strategy (600+ chars)
+        scalingStrategy = `Nuestra estrategia de escalabilidad mantiene el propósito sostenible mediante mecanismos específicos de gobernanza y operación. `
+        scalingStrategy += `Implementamos métricas de impacto escalables que crecen proporcionalmente con el negocio, asegurando que el crecimiento amplifica el impacto positivo en lugar de diluirlo. `
+        scalingStrategy += `Establecemos una cultura organizacional que mantiene la sostenibilidad como eje central independientemente del tamaño de la empresa. `
+        
+        if (contextData.ecosystem) {
+          scalingStrategy += `Nuestra red de ${contextData.ecosystem.length} actores del ecosistema proporciona accountability continuo y apoyo para mantener estándares sostenibles durante el crecimiento. `
+        }
+        
+        scalingStrategy += `Implementamos salvaguardas contra la deriva de misión (mission drift) mediante sistemas de gobernanza que protegen el propósito sostenible, incluyendo métricas balanceadas entre rentabilidad e impacto, y participación activa de stakeholders en decisiones estratégicas clave. Esta aproximación asegura que el escalamiento fortalece nuestro impacto sostenible.`
+      } else {
+        // Fallback content if no canvas data available
+        socialImpactBalance = `${currentIdea.title} busca generar un impacto social positivo significativo en su mercado objetivo mientras mantiene viabilidad económica sólida. Nuestro modelo integra consideraciones sociales, ambientales y económicas desde el diseño inicial, asegurando que cada decisión empresarial contribuya al triple impacto. Esta integración estratégica permite que el crecimiento financiero amplique el beneficio social y ambiental, creando valor sostenible para todos los stakeholders. Implementamos métricas de impacto que nos permiten monitorear y optimizar constantemente nuestro equilibrio entre rentabilidad y propósito social.`
+        
+        sustainabilityDecisions = `Las decisiones que hacen nuestro modelo inherentemente sostenible incluyen la selección cuidadosa de procesos eficientes en recursos, el diseño de un modelo de negocio circular que minimiza desperdicios, y la consideración prioritaria del impacto en comunidades locales. Priorizamos proveedores y socios que comparten nuestros valores sostenibles, implementamos tecnologías que reducen nuestra huella ambiental, y diseñamos productos/servicios que educan y empoderan a nuestros usuarios hacia comportamientos más sostenibles. Estas decisiones están integradas en nuestra operación diaria como elementos fundamentales, no como iniciativas complementarias.`
+        
+        scalingStrategy = `Nuestra estrategia de escalamiento prioriza la preservación del impacto mediante certificaciones ambientales reconocidas, alianzas estratégicas con organizaciones que comparten nuestra misión, y un marco de gobernanza que protege nuestro propósito durante el crecimiento. Implementamos métricas de impacto escalables, mantenemos una cultura organizacional sostenible, y establecemos salvaguardas contra la deriva de misión. La expansión geográfica considerará mercados con marcos regulatorios similares y conciencia ambiental establecida, asegurando que el crecimiento fortalezca nuestro impacto sostenible en lugar de diluirlo.`
+      }
+
+      const updatedReflection = {
+        ...reflection,
+        social_impact_balance: socialImpactBalance,
+        sustainability_decisions: sustainabilityDecisions,
+        scaling_strategy: scalingStrategy
+      }
+
+      setReflection(updatedReflection)
+
+      // Save to database
+      await saveReflection(updatedReflection)
+      
+    } catch (error) {
+      console.error('Error generating basic reflections:', error)
+      alert('Error al generar reflexiones básicas. Intenta de nuevo.')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const saveReflection = async (dataToSave: Partial<SustainabilityReflection>) => {
+    if (!currentIdea) return
+
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from('sustainability_reflections')
+        .upsert({
+          idea_id: currentIdea.id,
+          social_impact_balance: dataToSave.social_impact_balance,
+          sustainability_decisions: dataToSave.sustainability_decisions,
+          scaling_strategy: dataToSave.scaling_strategy,
+          ai_generated_reflection: dataToSave.ai_generated_reflection
+        })
+
+      if (error) {
+        console.error('Error saving reflection:', error)
+        alert('Error al guardar la reflexión. Intenta de nuevo.')
+      }
+    } catch (error) {
+      console.error('Error saving reflection:', error)
+      alert('Error al guardar la reflexión. Intenta de nuevo.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   // Calculate completion percentage
   const getCompletionPercentage = () => {
     const requiredFields = REFLECTION_PROMPTS.map(p => p.key)
@@ -315,7 +389,26 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
       <div className="space-y-8">
         {/* Context Summary */}
         <div className="bg-teal-50 p-6 rounded-lg border border-teal-200">
-          <h3 className="text-lg font-semibold text-teal-900 mb-4">📊 Contexto de tu Modelo</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-teal-900">📊 Contexto de tu Modelo</h3>
+            <button
+              onClick={generateBasicReflections}
+              disabled={generating}
+              className="btn btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            >
+              {generating ? (
+                <>
+                  <RefreshCw size={16} className="mr-2 animate-spin" />
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} className="mr-2" />
+                  Completar campos básicos
+                </>
+              )}
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="bg-white p-3 rounded border border-teal-200">
               <h4 className="font-medium text-teal-800 mb-1">Canvas Sostenible</h4>
@@ -336,6 +429,9 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               </p>
             </div>
           </div>
+          <p className="text-sm text-teal-600 mt-3">
+            💡 Utiliza "Completar campos básicos" para generar automáticamente las tres reflexiones principales basadas en tu canvas sostenible y datos existentes.
+          </p>
         </div>
 
         {/* Reflection Prompts */}

@@ -136,11 +136,12 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
       .from('step4_idea_evaluation')
       .insert({
         idea_id: idea.id,
-        strengths: completeData.step4.strengths.join('\n'),
-        weaknesses: completeData.step4.weaknesses.join('\n'),
-        opportunities: completeData.step4.opportunities.join('\n'),
-        threats: completeData.step4.threats.join('\n')
-        // success_factors y risk_mitigation son opcionales
+        strengths: completeData.step4.strengths || '',
+        weaknesses: completeData.step4.weaknesses || '',
+        opportunities: completeData.step4.opportunities || '',
+        threats: completeData.step4.threats || '',
+        success_factors: completeData.step4.success_factors || '',
+        risk_mitigation: completeData.step4.risk_mitigation || ''
       })
 
     if (step4Error) {
@@ -192,26 +193,45 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
 
     // 10. Crear Step 8 - Canvas Sostenible
     console.log('🌱 Creando Step 8 - Canvas Sostenible...')
+    const canvasData = completeData.step8SustainableCanvas ? {
+      idea_id: idea.id,
+      customer_segments: completeData.step8SustainableCanvas.customer_segments,
+      value_propositions: completeData.step8SustainableCanvas.value_propositions,
+      products_services: completeData.step8SustainableCanvas.products_services,
+      channels: completeData.step8SustainableCanvas.channels,
+      customer_relationships: completeData.step8SustainableCanvas.customer_relationships,
+      revenue_streams: completeData.step8SustainableCanvas.revenue_streams,
+      social_benefits: completeData.step8SustainableCanvas.social_benefits,
+      environmental_benefits: completeData.step8SustainableCanvas.environmental_benefits,
+      key_resources: completeData.step8SustainableCanvas.key_resources,
+      key_activities: completeData.step8SustainableCanvas.key_activities,
+      key_partnerships: completeData.step8SustainableCanvas.key_partnerships,
+      cost_structure: completeData.step8SustainableCanvas.cost_structure,
+      social_costs: completeData.step8SustainableCanvas.social_costs,
+      environmental_costs: completeData.step8SustainableCanvas.environmental_costs,
+      sustainability_reflection: completeData.step8SustainableCanvas.sustainability_reflection
+    } : {
+      idea_id: idea.id,
+      customer_segments: generateBasicCanvasData(completeData.idea, 'customer_segments'),
+      value_propositions: generateBasicCanvasData(completeData.idea, 'value_propositions'),
+      products_services: generateBasicCanvasData(completeData.idea, 'products_services'),
+      channels: generateBasicCanvasData(completeData.idea, 'channels'),
+      customer_relationships: generateBasicCanvasData(completeData.idea, 'customer_relationships'),
+      revenue_streams: generateBasicCanvasData(completeData.idea, 'revenue_streams'),
+      social_benefits: generateBasicCanvasData(completeData.idea, 'social_benefits'),
+      environmental_benefits: generateBasicCanvasData(completeData.idea, 'environmental_benefits'),
+      key_resources: generateBasicCanvasData(completeData.idea, 'key_resources'),
+      key_activities: generateBasicCanvasData(completeData.idea, 'key_activities'),
+      key_partnerships: generateBasicCanvasData(completeData.idea, 'key_partnerships'),
+      cost_structure: generateBasicCanvasData(completeData.idea, 'cost_structure'),
+      social_costs: generateBasicCanvasData(completeData.idea, 'social_costs'),
+      environmental_costs: generateBasicCanvasData(completeData.idea, 'environmental_costs'),
+      sustainability_reflection: `Reflexión generada automáticamente: ${completeData.idea.title} busca crear valor sostenible equilibrando impacto económico, social y ambiental.`
+    }
+
     const { error: step8Error } = await supabase
       .from('sustainable_canvas')
-      .insert({
-        idea_id: idea.id,
-        customer_segments: generateBasicCanvasData(completeData.idea, 'customer_segments'),
-        value_propositions: generateBasicCanvasData(completeData.idea, 'value_propositions'),
-        products_services: generateBasicCanvasData(completeData.idea, 'products_services'),
-        channels: generateBasicCanvasData(completeData.idea, 'channels'),
-        customer_relationships: generateBasicCanvasData(completeData.idea, 'customer_relationships'),
-        revenue_streams: generateBasicCanvasData(completeData.idea, 'revenue_streams'),
-        social_benefits: generateBasicCanvasData(completeData.idea, 'social_benefits'),
-        environmental_benefits: generateBasicCanvasData(completeData.idea, 'environmental_benefits'),
-        key_resources: generateBasicCanvasData(completeData.idea, 'key_resources'),
-        key_activities: generateBasicCanvasData(completeData.idea, 'key_activities'),
-        key_partnerships: generateBasicCanvasData(completeData.idea, 'key_partnerships'),
-        cost_structure: generateBasicCanvasData(completeData.idea, 'cost_structure'),
-        social_costs: generateBasicCanvasData(completeData.idea, 'social_costs'),
-        environmental_costs: generateBasicCanvasData(completeData.idea, 'environmental_costs'),
-        sustainability_reflection: `Reflexión generada automáticamente: ${completeData.idea.title} busca crear valor sostenible equilibrando impacto económico, social y ambiental a través de ${completeData.idea.description}`
-      })
+      .insert(canvasData)
 
     if (step8Error) {
       console.warn('⚠️ Error creando Step 8 (Canvas Sostenible):', step8Error)
@@ -220,38 +240,66 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
       console.log('✅ Step 8 (Canvas Sostenible) creado')
     }
 
-    // 11. Crear Step 9 - Patrón de Innovación
-    console.log('💡 Creando Step 9 - Patrón de Innovación...')
-    const { error: step9Error } = await supabase
-      .from('innovation_patterns')
-      .insert({
+    // 11. Crear Step 9 - Patrones de Innovación (múltiples)
+    console.log('💡 Creando Step 9 - Patrones de Innovación...')
+    if (completeData.step9InnovationPatterns && completeData.step9InnovationPatterns.length > 0) {
+      const innovationPatternsToInsert = completeData.step9InnovationPatterns.map(pattern => ({
         idea_id: idea.id,
-        pattern_name: 'Innovación Sostenible',
-        pattern_description: `Patrón de innovación aplicado a ${completeData.idea.title} enfocado en sostenibilidad y triple impacto.`,
-        justification: `Este patrón es ideal para ${completeData.idea.title} porque combina viabilidad económica con beneficio social y ambiental, creando valor para múltiples stakeholders.`,
-        expected_impact: `Se espera generar impacto positivo en el mercado objetivo de ${completeData.idea.target_market} mediante soluciones innovadoras y sostenibles.`,
-        is_primary: true
-      })
+        pattern_name: pattern.pattern_name,
+        pattern_description: pattern.pattern_description,
+        justification: pattern.justification,
+        expected_impact: pattern.expected_impact,
+        is_primary: pattern.is_primary
+      }))
 
-    if (step9Error) {
-      console.warn('⚠️ Error creando Step 9 (Patrón de Innovación):', step9Error)
+      const { error: step9Error } = await supabase
+        .from('innovation_patterns')
+        .insert(innovationPatternsToInsert)
+
+      if (step9Error) {
+        console.warn('⚠️ Error creando Step 9 (Patrones de Innovación):', step9Error)
+      } else {
+        console.log(`✅ Step 9 (${innovationPatternsToInsert.length} Patrones de Innovación) creado`)
+      }
     } else {
-      console.log('✅ Step 9 (Patrón de Innovación) creado')
+      // Fallback si no hay patrones de IA
+      console.log('⚠️ No se encontraron patrones de IA, creando patrón básico')
+      const { error: step9Error } = await supabase
+        .from('innovation_patterns')
+        .insert({
+          idea_id: idea.id,
+          pattern_name: 'Innovación Sostenible',
+          pattern_description: `Patrón de innovación aplicado a ${completeData.idea.title} enfocado en sostenibilidad y triple impacto.`,
+          justification: `Este patrón es ideal para ${completeData.idea.title} porque combina viabilidad económica con beneficio social y ambiental.`,
+          expected_impact: `Se espera generar impacto positivo en el mercado objetivo de ${completeData.idea.target_market}.`,
+          is_primary: true
+        })
+      if (step9Error) console.warn('⚠️ Error creando patrón básico:', step9Error)
     }
 
     // 12. Crear Step 10 - Prototipo
     console.log('🔧 Creando Step 10 - Prototipo...')
+    const prototypeData = completeData.step10Prototype ? {
+      idea_id: idea.id,
+      name: completeData.step10Prototype.name,
+      type: completeData.step10Prototype.type,
+      description: completeData.step10Prototype.description,
+      hypothesis_to_validate: completeData.step10Prototype.hypothesis_to_validate,
+      expected_learning_metrics: completeData.step10Prototype.expected_learning_metrics,
+      ai_mvp_suggestion: completeData.step10Prototype.ai_mvp_suggestion
+    } : {
+      idea_id: idea.id,
+      name: `Prototipo de ${completeData.idea.title}`,
+      type: 'concept' as const,
+      description: `Prototipo inicial conceptual para validar la viabilidad de ${completeData.idea.title} en el mercado de ${completeData.idea.target_market}.`,
+      hypothesis_to_validate: `Los usuarios del segmento ${completeData.idea.target_market} están dispuestos a adoptar ${completeData.idea.title} por su propuesta de valor única.`,
+      expected_learning_metrics: 'Tasa de adopción, feedback de usuarios, tiempo de uso, satisfacción del cliente, disposición a pagar.',
+      ai_mvp_suggestion: `Para ${completeData.idea.title}, se recomienda comenzar con un MVP digital que permita validar la propuesta de valor con inversión mínima.`
+    }
+
     const { error: step10Error } = await supabase
       .from('prototypes')
-      .insert({
-        idea_id: idea.id,
-        name: `Prototipo de ${completeData.idea.title}`,
-        type: 'concept',
-        description: `Prototipo inicial conceptual para validar la viabilidad de ${completeData.idea.title} en el mercado de ${completeData.idea.target_market}.`,
-        hypothesis_to_validate: `Los usuarios del segmento ${completeData.idea.target_market} están dispuestos a adoptar ${completeData.idea.title} por su propuesta de valor única.`,
-        expected_learning_metrics: 'Tasa de adopción, feedback de usuarios, tiempo de uso, satisfacción del cliente, disposición a pagar.',
-        ai_mvp_suggestion: `Para ${completeData.idea.title}, se recomienda comenzar con un MVP digital que permita validar la propuesta de valor con inversión mínima, escalando gradualmente según el feedback del mercado.`
-      })
+      .insert(prototypeData)
 
     if (step10Error) {
       console.warn('⚠️ Error creando Step 10 (Prototipo):', step10Error)
@@ -261,19 +309,31 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
 
     // 13. Crear Step 11 - Estrategia de Validación
     console.log('🎯 Creando Step 11 - Estrategia de Validación...')
+    const validationData = completeData.step11ValidationStrategy ? {
+      idea_id: idea.id,
+      hypothesis: completeData.step11ValidationStrategy.hypothesis,
+      target_segments: completeData.step11ValidationStrategy.target_segments,
+      validation_methods: completeData.step11ValidationStrategy.validation_methods,
+      expected_learnings: completeData.step11ValidationStrategy.expected_learnings,
+      success_criteria: completeData.step11ValidationStrategy.success_criteria,
+      timeline_weeks: completeData.step11ValidationStrategy.timeline_weeks,
+      budget_estimate: completeData.step11ValidationStrategy.budget_estimate,
+      progress_percentage: 0
+    } : {
+      idea_id: idea.id,
+      hypothesis: `${completeData.idea.title} resolverá el problema principal del mercado ${completeData.idea.target_market} de manera sostenible y rentable.`,
+      target_segments: completeData.idea.target_market,
+      validation_methods: ['interview', 'survey', 'prototype_test'],
+      expected_learnings: 'Validar aceptación del mercado, identificar mejoras al producto, confirmar modelo de negocio sostenible.',
+      success_criteria: 'Al menos 70% de entrevistados expresa interés en el producto, 80% considera valiosa la propuesta sostenible.',
+      timeline_weeks: 8,
+      budget_estimate: 5000,
+      progress_percentage: 0
+    }
+
     const { error: step11Error } = await supabase
       .from('validation_strategies')
-      .insert({
-        idea_id: idea.id,
-        hypothesis: `${completeData.idea.title} resolverá el problema principal del mercado ${completeData.idea.target_market} de manera sostenible y rentable.`,
-        target_segments: completeData.idea.target_market,
-        validation_methods: ['interview', 'survey', 'prototype_test'],
-        expected_learnings: 'Validar aceptación del mercado, identificar mejoras al producto, confirmar modelo de negocio sostenible.',
-        success_criteria: 'Al menos 70% de entrevistados expresa interés en el producto, 80% considera valiosa la propuesta sostenible.',
-        timeline_weeks: 8,
-        budget_estimate: 5000,
-        progress_percentage: 0
-      })
+      .insert(validationData)
 
     if (step11Error) {
       console.warn('⚠️ Error creando Step 11 (Estrategia de Validación):', step11Error)
@@ -281,52 +341,85 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
       console.log('✅ Step 11 (Estrategia de Validación) creado')
     }
 
-    // 14. Crear Step 12 - Actores del Ecosistema (2 actores básicos)
+    // 14. Crear Step 12 - Actores del Ecosistema (múltiples)
     console.log('🤝 Creando Step 12 - Actores del Ecosistema...')
-    const ecosystemActors = [
-      {
+    if (completeData.step12EcosystemActors && completeData.step12EcosystemActors.length > 0) {
+      const ecosystemActorsToInsert = completeData.step12EcosystemActors.map(actor => ({
         idea_id: idea.id,
-        actor_name: 'Universidad o Centro de Investigación',
-        actor_type: 'academic' as const,
-        role_description: `Institución académica que puede proveer investigación y validación científica para ${completeData.idea.title}.`,
-        support_types: ['technical' as const, 'infrastructure' as const],
-        benefit_to_venture: 'Acceso a investigación, laboratorios, estudiantes talentosos y validación científica.',
-        benefit_to_actor: 'Casos de estudio reales, proyectos aplicados para estudiantes, publicaciones académicas.',
-        relationship_status: 'Potencial'
-      },
-      {
-        idea_id: idea.id,
-        actor_name: 'Inversionista de Impacto',
-        actor_type: 'financial' as const,
-        role_description: `Fondo o inversor enfocado en proyectos de triple impacto que podrían financiar ${completeData.idea.title}.`,
-        support_types: ['funding' as const, 'mentorship' as const, 'networking' as const],
-        benefit_to_venture: 'Capital para crecimiento, mentoría estratégica, acceso a red de contactos.',
-        benefit_to_actor: 'Retorno financiero con impacto social y ambiental positivo.',
-        relationship_status: 'Por contactar'
+        actor_name: actor.actor_name,
+        actor_type: actor.actor_type,
+        role_description: actor.role_description,
+        support_types: actor.support_types,
+        benefit_to_venture: actor.benefit_to_venture,
+        benefit_to_actor: actor.benefit_to_actor,
+        relationship_status: actor.relationship_status
+      }))
+
+      const { error: step12Error } = await supabase
+        .from('ecosystem_actors')
+        .insert(ecosystemActorsToInsert)
+
+      if (step12Error) {
+        console.warn('⚠️ Error creando Step 12 (Actores del Ecosistema):', step12Error)
+      } else {
+        console.log(`✅ Step 12 (${ecosystemActorsToInsert.length} Actores del Ecosistema) creado`)
       }
-    ]
-
-    const { error: step12Error } = await supabase
-      .from('ecosystem_actors')
-      .insert(ecosystemActors)
-
-    if (step12Error) {
-      console.warn('⚠️ Error creando Step 12 (Actores del Ecosistema):', step12Error)
     } else {
-      console.log('✅ Step 12 (Actores del Ecosistema) creado')
+      // Fallback si no hay actores de IA
+      console.log('⚠️ No se encontraron actores de IA, creando actores básicos')
+      const ecosystemActors = [
+        {
+          idea_id: idea.id,
+          actor_name: 'Universidad o Centro de Investigación',
+          actor_type: 'academic' as const,
+          role_description: `Institución académica que puede proveer investigación y validación científica para ${completeData.idea.title}.`,
+          support_types: ['technical' as const, 'infrastructure' as const],
+          benefit_to_venture: 'Acceso a investigación, laboratorios, estudiantes talentosos y validación científica.',
+          benefit_to_actor: 'Casos de estudio reales, proyectos aplicados para estudiantes, publicaciones académicas.',
+          relationship_status: 'Potencial'
+        },
+        {
+          idea_id: idea.id,
+          actor_name: 'Inversionista de Impacto',
+          actor_type: 'financial' as const,
+          role_description: `Fondo o inversor enfocado en proyectos de triple impacto que podrían financiar ${completeData.idea.title}.`,
+          support_types: ['funding' as const, 'mentorship' as const, 'networking' as const],
+          benefit_to_venture: 'Capital para crecimiento, mentoría estratégica, acceso a red de contactos.',
+          benefit_to_actor: 'Retorno financiero con impacto social y ambiental positivo.',
+          relationship_status: 'Por contactar'
+        }
+      ]
+
+      const { error: step12Error } = await supabase
+        .from('ecosystem_actors')
+        .insert(ecosystemActors)
+
+      if (step12Error) {
+        console.warn('⚠️ Error creando actores básicos:', step12Error)
+      } else {
+        console.log('✅ Actores básicos del ecosistema creados')
+      }
     }
 
     // 15. Crear Step 13 - Reflexión de Sostenibilidad
     console.log('🌍 Creando Step 13 - Reflexión de Sostenibilidad...')
+    const reflectionData = completeData.step13SustainabilityReflection ? {
+      idea_id: idea.id,
+      social_impact_balance: completeData.step13SustainabilityReflection.social_impact_balance,
+      sustainability_decisions: completeData.step13SustainabilityReflection.sustainability_decisions,
+      scaling_strategy: completeData.step13SustainabilityReflection.scaling_strategy,
+      ai_generated_reflection: completeData.step13SustainabilityReflection.ai_generated_reflection
+    } : {
+      idea_id: idea.id,
+      social_impact_balance: `${completeData.idea.title} busca generar impacto social positivo en ${completeData.idea.target_market} mientras mantiene viabilidad económica.`,
+      sustainability_decisions: `Las decisiones clave incluyen: procesos eficientes en recursos, modelo de negocio circular, y consideración del impacto en comunidades.`,
+      scaling_strategy: `La estrategia mantendrá el foco en sostenibilidad mediante certificaciones ambientales y alianzas estratégicas.`,
+      ai_generated_reflection: `Análisis integral: ${completeData.idea.title} representa una oportunidad de emprendimiento sostenible que equilibra la creación de valor económico con impacto social y ambiental positivo.`
+    }
+
     const { error: step13Error } = await supabase
       .from('sustainability_reflections')
-      .insert({
-        idea_id: idea.id,
-        social_impact_balance: `${completeData.idea.title} busca generar impacto social positivo en ${completeData.idea.target_market} mientras mantiene viabilidad económica a través de ${completeData.idea.unique_value}.`,
-        sustainability_decisions: `Las decisiones clave de sostenibilidad incluyen: priorizar materiales eco-amigables, procesos eficientes en recursos, modelo de negocio circular, y consideración del impacto en comunidades locales.`,
-        scaling_strategy: `La estrategia de escalamiento mantendrá el foco en sostenibilidad mediante: certificaciones ambientales, alianzas estratégicas con organizaciones de impacto, medición continua de métricas ESG, y reinversión de beneficios en mejoras sostenibles.`,
-        ai_generated_reflection: `Análisis integral: ${completeData.idea.title} representa una oportunidad de emprendimiento sostenible que equilibra la creación de valor económico con impacto social y ambiental positivo. La propuesta se alinea con tendencias globales hacia la sostenibilidad y puede contribuir significativamente al desarrollo sostenible del sector ${completeData.idea.target_market}.`
-      })
+      .insert(reflectionData)
 
     if (step13Error) {
       console.warn('⚠️ Error creando Step 13 (Reflexión de Sostenibilidad):', step13Error)

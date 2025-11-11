@@ -57,40 +57,7 @@ export default function Step9PrototypeMVP({ onNext }: Props) {
     loadPrototype()
   }, [currentIdea])
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!currentIdea || loading || !prototype.name) return
-
-    const savePrototype = async () => {
-      setSaving(true)
-      try {
-        const updateData: PrototypeUpdate = {
-          idea_id: currentIdea.id,
-          ...prototype,
-          updated_at: new Date().toISOString()
-        }
-
-        const { data, error } = await supabase
-          .from('prototypes')
-          .upsert(updateData, { onConflict: 'idea_id' })
-          .select()
-          .single()
-
-        if (error) {
-          console.error('Error saving prototype:', error)
-        } else if (data) {
-          setPrototype(data)
-        }
-      } catch (error) {
-        console.error('Error saving prototype:', error)
-      } finally {
-        setSaving(false)
-      }
-    }
-
-    const timeoutId = setTimeout(savePrototype, 1000)
-    return () => clearTimeout(timeoutId)
-  }, [prototype, currentIdea, loading])
+  // Manual save only
 
   const handleFieldChange = (field: string, value: any) => {
     setPrototype(prev => ({

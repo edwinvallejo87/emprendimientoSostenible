@@ -107,40 +107,7 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
     loadStrategy()
   }, [currentIdea])
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!currentIdea || loading || !strategy.hypothesis) return
-
-    const saveStrategy = async () => {
-      setSaving(true)
-      try {
-        const updateData: ValidationStrategyUpdate = {
-          idea_id: currentIdea.id,
-          ...strategy,
-          updated_at: new Date().toISOString()
-        }
-
-        const { data, error } = await supabase
-          .from('validation_strategies')
-          .upsert(updateData, { onConflict: 'idea_id' })
-          .select()
-          .single()
-
-        if (error) {
-          console.error('Error saving validation strategy:', error)
-        } else if (data) {
-          setStrategy(data)
-        }
-      } catch (error) {
-        console.error('Error saving validation strategy:', error)
-      } finally {
-        setSaving(false)
-      }
-    }
-
-    const timeoutId = setTimeout(saveStrategy, 1000)
-    return () => clearTimeout(timeoutId)
-  }, [strategy, currentIdea, loading])
+  // Manual save only
 
   const handleFieldChange = (field: string, value: any) => {
     setStrategy(prev => ({
