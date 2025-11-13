@@ -3,7 +3,7 @@ import { useJournalStore } from '../../store/journal'
 import { supabase } from '../../lib/supabase'
 import { Sparkles, RefreshCw, Save, BookOpen, FileText, Download } from 'lucide-react'
 import type { Database } from '../../lib/database.types'
-import PptxExportButton from '../export/PptxExportButton'
+import ExportButtons from '../export/ExportButtons'
 import { calculateOverallProgress } from '../../lib/progress/calcProgress'
 
 type SustainabilityReflection = Database['public']['Tables']['sustainability_reflections']['Row']
@@ -303,18 +303,41 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
 
     setSaving(true)
     try {
-      const { error } = await supabase
+      // Check if record exists first
+      const { data: existingData, error: checkError } = await supabase
         .from('sustainability_reflections')
-        .upsert({
-          idea_id: currentIdea.id,
-          social_impact_balance: dataToSave.social_impact_balance,
-          sustainability_decisions: dataToSave.sustainability_decisions,
-          scaling_strategy: dataToSave.scaling_strategy,
-          ai_generated_reflection: dataToSave.ai_generated_reflection
-        })
+        .select('*')
+        .eq('idea_id', currentIdea.id)
+        .single()
 
-      if (error) {
-        console.error('Error saving reflection:', error)
+      let result
+      if (existingData && !checkError) {
+        // Update existing record
+        result = await supabase
+          .from('sustainability_reflections')
+          .update({
+            social_impact_balance: dataToSave.social_impact_balance,
+            sustainability_decisions: dataToSave.sustainability_decisions,
+            scaling_strategy: dataToSave.scaling_strategy,
+            ai_generated_reflection: dataToSave.ai_generated_reflection,
+            updated_at: new Date().toISOString()
+          })
+          .eq('idea_id', currentIdea.id)
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('sustainability_reflections')
+          .insert({
+            idea_id: currentIdea.id,
+            social_impact_balance: dataToSave.social_impact_balance,
+            sustainability_decisions: dataToSave.sustainability_decisions,
+            scaling_strategy: dataToSave.scaling_strategy,
+            ai_generated_reflection: dataToSave.ai_generated_reflection
+          })
+      }
+
+      if (result.error) {
+        console.error('Error saving reflection:', result.error)
         alert('Error al guardar la reflexión. Intenta de nuevo.')
       }
     } catch (error) {
@@ -544,8 +567,8 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               Has completado exitosamente los 13 pasos del análisis efectual y emprendimiento sostenible.
             </p>
             
-            <div className="flex justify-center space-x-4 mb-4">
-              <PptxExportButton disabled={false} />
+            <div className="flex flex-col items-center space-y-4 mb-4">
+              <ExportButtons disabled={false} />
               
               {onNext && (
                 <button onClick={onNext} className="btn btn-secondary">
@@ -554,8 +577,8 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               )}
             </div>
             
-            <div className="text-sm text-green-700">
-              📄 <strong>Tu presentación incluirá:</strong> Todos los módulos desde análisis efectual hasta reflexión de sostenibilidad
+            <div className="text-sm text-green-700 text-center">
+              Tu análisis está completo. Puedes exportar una presentación profesional con todos los hallazgos.
             </div>
           </div>
         </div>

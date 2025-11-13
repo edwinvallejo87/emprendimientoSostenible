@@ -125,7 +125,14 @@ export const useJournalStore = create<JournalState>()(
 
       setCurrentTeam: (team) => set({ currentTeam: team }),
       setCurrentJournal: (journal) => set({ currentJournal: journal }),
-      setCurrentIdea: (idea) => set({ currentIdea: idea }),
+      setCurrentIdea: (idea) => {
+        console.log('🎯 Setting current idea:', idea)
+        set({ currentIdea: idea })
+        if (idea) {
+          console.log('🔄 Loading data for idea:', idea.id)
+          get().loadIdeaData(idea.id)
+        }
+      },
 
       loadTeams: async () => {
         set({ loading: true })
@@ -306,13 +313,34 @@ export const useJournalStore = create<JournalState>()(
         console.log('🔍 Loading idea data for ideaId:', ideaId)
         set({ loading: true })
         try {
-          const [step1Result, step2Result, step3Result, step4EvalResult, step5BuyerResult, step5VPResult] = await Promise.all([
+          const [
+            step1Result, 
+            step2Result, 
+            step3Result, 
+            step4EvalResult, 
+            step5BuyerResult, 
+            step5VPResult,
+            // Sustainability module data
+            sustainableCanvasResult,
+            innovationPatternsResult,
+            prototypeResult,
+            validationStrategyResult,
+            ecosystemActorsResult,
+            sustainabilityReflectionResult
+          ] = await Promise.all([
             supabase.from('step1_means').select('*').eq('idea_id', ideaId),
             supabase.from('step2_problem').select('*').eq('idea_id', ideaId).maybeSingle(),
             supabase.from('step3_trends').select('*').eq('idea_id', ideaId).order('created_at'),
             supabase.from('step4_idea_evaluation').select('*').eq('idea_id', ideaId).maybeSingle(),
             supabase.from('step5_buyer').select('*').eq('idea_id', ideaId).maybeSingle(),
             supabase.from('step5_vpcanvas').select('*').eq('idea_id', ideaId).maybeSingle(),
+            // Sustainability module queries
+            supabase.from('sustainable_canvas').select('*').eq('idea_id', ideaId).maybeSingle(),
+            supabase.from('innovation_patterns').select('*').eq('idea_id', ideaId).order('created_at'),
+            supabase.from('prototypes').select('*').eq('idea_id', ideaId).maybeSingle(),
+            supabase.from('validation_strategies').select('*').eq('idea_id', ideaId).maybeSingle(),
+            supabase.from('ecosystem_actors').select('*').eq('idea_id', ideaId).order('created_at'),
+            supabase.from('sustainability_reflections').select('*').eq('idea_id', ideaId).maybeSingle()
           ])
 
           console.log('📊 Loaded step data:', {
@@ -321,8 +349,24 @@ export const useJournalStore = create<JournalState>()(
             step3Count: step3Result.data?.length || 0,
             step4Found: !!step4EvalResult.data,
             step5BuyerFound: !!step5BuyerResult.data,
-            step5VPFound: !!step5VPResult.data
+            step5VPFound: !!step5VPResult.data,
+            // Sustainability data
+            sustainableCanvasFound: !!sustainableCanvasResult.data,
+            innovationPatternsCount: innovationPatternsResult.data?.length || 0,
+            prototypeFound: !!prototypeResult.data,
+            validationStrategyFound: !!validationStrategyResult.data,
+            ecosystemActorsCount: ecosystemActorsResult.data?.length || 0,
+            sustainabilityReflectionFound: !!sustainabilityReflectionResult.data
           })
+
+          // Detailed sustainability logging
+          console.log('🌱 SUSTAINABILITY DATA LOADED:')
+          console.log('- sustainableCanvas:', sustainableCanvasResult.data)
+          console.log('- innovationPatterns:', innovationPatternsResult.data)
+          console.log('- prototype:', prototypeResult.data)
+          console.log('- validationStrategy:', validationStrategyResult.data)
+          console.log('- ecosystemActors:', ecosystemActorsResult.data)
+          console.log('- sustainabilityReflection:', sustainabilityReflectionResult.data)
 
           set({
             step1Data: step1Result.data || [],
@@ -331,6 +375,13 @@ export const useJournalStore = create<JournalState>()(
             step4EvaluationData: step4EvalResult.data || null,
             step5BuyerData: step5BuyerResult.data || null,
             step5VPData: step5VPResult.data || null,
+            // Sustainability module data
+            sustainableCanvasData: sustainableCanvasResult.data || null,
+            innovationPatternsData: innovationPatternsResult.data || [],
+            prototypeData: prototypeResult.data || null,
+            validationStrategyData: validationStrategyResult.data || null,
+            ecosystemActorsData: ecosystemActorsResult.data || [],
+            sustainabilityReflectionData: sustainabilityReflectionResult.data || null,
             loading: false,
           })
         } catch (error) {

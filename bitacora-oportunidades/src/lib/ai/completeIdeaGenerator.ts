@@ -157,9 +157,9 @@ export class CompleteIdeaGenerator {
       console.log('🤖 Generando idea completa con IA...')
       console.log('📝 Prompt length:', this.buildCompleteIdeaPrompt(ideaPrompt, userProfile).length)
       
-      // Create timeout promise (2 minutes)
+      // Create timeout promise (10 minutes for complex AI generation)
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout after 120 seconds')), 120000)
+        setTimeout(() => reject(new Error('Request timeout after 600 seconds')), 600000)
       )
       
       // Create fetch promise

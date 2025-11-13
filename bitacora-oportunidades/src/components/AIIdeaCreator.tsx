@@ -46,18 +46,13 @@ export default function AIIdeaCreator() {
         // Load idea data and specifically load sustainability data
         await loadIdeaData(result.idea.id)
         
-        // Additional load for sustainability data with extra delay
+        // Additional delay and reload to ensure all sustainability data is loaded
         await new Promise(resolve => setTimeout(resolve, 1000))
-        const sustainabilityData = await loadSustainabilityData(result.idea.id)
         
         // Final reload to ensure all data is in the store
         await loadIdeaData(result.idea.id)
         
-        if (sustainabilityData) {
-          setMessage(`🎉 ¡Listo! Análisis completo de 13 pasos generado por IA`)
-        } else {
-          setMessage(`🎉 ¡Listo! Análisis efectual generado - datos de sostenibilidad cargándose...`)
-        }
+        setMessage(`🎉 ¡Listo! Análisis completo de 13 pasos generado por IA`)
         setIdeaInput('')
         
         // Auto-hide después de 5 segundos
