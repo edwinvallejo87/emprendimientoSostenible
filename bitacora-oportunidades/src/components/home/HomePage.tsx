@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useJournalStore } from '../../store/journal'
-import { Plus, Trash2, ArrowRight, Target, TrendingUp, Users, Lightbulb, Layers, Network, Leaf, Zap } from 'lucide-react'
+import { Plus, Trash2, ArrowRight, Target, TrendingUp, Users, Lightbulb, Layers, Network, Leaf, Zap, Sprout } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -65,23 +65,24 @@ export default function HomePage() {
 
       {/* ===== HERO ===== */}
       <section className="relative bg-gray-950 overflow-hidden">
-        <div className="absolute top-[-40%] left-[20%] w-[600px] h-[600px] bg-emerald-500/6 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-[-50%] right-[10%] w-[400px] h-[400px] bg-primary-600/6 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-[-40%] left-[15%] w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[-50%] right-[5%] w-[400px] h-[400px] bg-cyan-500/6 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="relative max-w-4xl mx-auto px-6 pt-10 pb-12">
+        <div className="relative max-w-4xl mx-auto px-6 pt-12 pb-14">
           <div className="animate-slide-up">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white leading-[1.15] mb-3">
-              Valida tu idea de negocio{' '}
-              <span className="text-gradient bg-gradient-to-r from-emerald-400 to-primary-400">
-                sostenible
+            {/* Hero headline */}
+            <h1 className="text-3xl sm:text-[2.75rem] font-black tracking-tight text-white leading-[1.1] mb-4">
+              Tu idea merece{' '}
+              <span className="text-gradient bg-gradient-to-r from-emerald-400 via-cyan-400 to-primary-400">
+                un plan real
               </span>
             </h1>
-            <p className="text-base text-gray-400 max-w-lg mb-8">
-              7 pasos estructurados con inteligencia artificial para ir de la idea al plan de accion.
+            <p className="text-base text-gray-400 max-w-lg mb-10 leading-relaxed">
+              Analiza, valida y construye negocios sostenibles en 7 pasos con inteligencia artificial.
             </p>
 
             {/* Method pipeline */}
-            <div className="hidden sm:flex items-center gap-0.5 mb-8">
+            <div className="hidden sm:flex items-center gap-0.5 mb-10">
               {STEPS.map((step, i) => (
                 <div key={i} className="flex items-center">
                   <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white/[0.04] border border-white/[0.06]">
@@ -160,24 +161,15 @@ export default function HomePage() {
           )}
 
           {journals.length === 0 ? (
-            /* Empty state */
             <div className="rounded-xl border border-dashed border-gray-300 bg-white py-16 text-center">
-              <div className="flex items-center justify-center gap-1 mb-6">
-                {STEPS.map((step, i) => (
-                  <div key={i} className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    i === 0 ? 'bg-amber-100' : 'bg-gray-100'
-                  }`}>
-                    <step.icon className={`h-4 w-4 ${
-                      i === 0 ? 'text-amber-500' : 'text-gray-300'
-                    }`} />
-                  </div>
-                ))}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center mx-auto mb-5">
+                <Sprout className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-base font-semibold text-gray-800 mb-2">
-                Comienza tu primera bitacora
+              <h3 className="text-base font-bold text-gray-800 mb-2">
+                Tu primera idea empieza aqui
               </h3>
               <p className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
-                Cada bitacora te guia por 7 pasos para transformar una idea en un plan de negocio sostenible y validado
+                Cada bitacora te guia por 7 pasos para ir de la idea cruda a un plan de negocio validado
               </p>
               <button
                 onClick={() => setShowCreateJournal(true)}
@@ -188,7 +180,6 @@ export default function HomePage() {
               </button>
             </div>
           ) : (
-            /* Journal cards */
             <div className="space-y-3">
               {journals.map((journal) => {
                 const progress = journal.progress || 0
@@ -203,7 +194,6 @@ export default function HomePage() {
                       setCurrentJournal(journal)
                     }}
                   >
-                    {/* Color accent strip */}
                     <div className="h-1 flex">
                       {STEPS.map((step, i) => (
                         <div
@@ -229,7 +219,7 @@ export default function HomePage() {
                             </span>
                             {progress > 0 && (
                               <>
-                                <span className="text-gray-200">·</span>
+                                <span className="text-gray-200">&middot;</span>
                                 <span className="text-xs font-medium text-gray-500">
                                   Paso {currentStep} de 7
                                 </span>
@@ -253,7 +243,6 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* 7-step pipeline dots */}
                       <div className="flex items-center gap-1">
                         {STEPS.map((step, i) => {
                           const isCompleted = progress > 0 && i < currentStep

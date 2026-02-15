@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuthStore } from '../../store/auth'
-import { Mail, Lock, Eye, EyeOff, Rocket, Leaf, ArrowRight } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Sprout, ArrowRight } from 'lucide-react'
 
 const loginSchema = z.object({
   email: z.string().email('Email invalido'),
@@ -53,7 +53,7 @@ export default function LoginForm() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 relative">
         <div className="relative z-10 max-w-md w-full p-4">
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 text-center animate-fade-in">
-            <div className="w-16 h-16 bg-primary-600 rounded-md flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center mx-auto mb-6">
               <Mail className="h-8 w-8 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
@@ -79,44 +79,47 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left: Hero panel */}
+      {/* Left: Brand panel */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gray-950">
-        {/* Atmospheric orbs */}
-        <div className="absolute top-[10%] left-[15%] w-[400px] h-[400px] bg-primary-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[5%] right-[10%] w-[300px] h-[300px] bg-primary-600/8 rounded-full blur-[100px]" />
+        {/* Ambient orbs */}
+        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[5%] right-[10%] w-[300px] h-[300px] bg-cyan-500/8 rounded-full blur-[100px]" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
-          <div>
-            <div className="p-2.5 bg-primary-600 rounded-md inline-flex">
-              <Rocket className="h-6 w-6 text-white" />
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center">
+              <Sprout className="h-5 w-5 text-white" />
             </div>
+            <span className="text-xl font-black tracking-tight lowercase">brota</span>
           </div>
 
+          {/* Hero text */}
           <div className="animate-slide-up">
-            <h1 className="text-5xl font-bold tracking-tight leading-[1.1] mb-5">
-              Emprende con<br />
-              <span className="text-gradient bg-gradient-to-r from-primary-400 to-primary-300">
-                proposito
+            <h1 className="text-5xl font-black tracking-tight leading-[1.1] mb-5">
+              De la idea<br />
+              <span className="text-gradient bg-gradient-to-r from-emerald-400 via-cyan-400 to-primary-400">
+                al impacto
               </span>
             </h1>
             <p className="text-lg text-gray-400 max-w-md leading-relaxed">
-              Transforma tus ideas en negocios sostenibles. Analiza, valida y construye
-              oportunidades que generan impacto positivo.
+              Valida y construye negocios sostenibles con una metodologia de 7 pasos potenciada por inteligencia artificial.
             </p>
           </div>
 
+          {/* Footer features */}
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span>7 Pasos</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-              <span>Sostenibilidad</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              <span>IA Integrada</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-              <span>IA Integrada</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+              <span>Sostenibilidad</span>
             </div>
           </div>
         </div>
@@ -127,19 +130,14 @@ export default function LoginForm() {
         <div className="w-full max-w-md">
           {/* Mobile-only branding */}
           <div className="lg:hidden text-center mb-8 animate-fade-in">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-primary-600 rounded-md">
-                <Rocket className="h-6 w-6 text-white" />
-              </div>
-              <div className="p-2 bg-primary-600 rounded-md">
-                <Leaf className="h-5 w-5 text-white" />
-              </div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center mx-auto mb-3">
+              <Sprout className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Emprendimiento Sostenible
+            <h1 className="text-2xl font-black text-gray-900 lowercase mb-1">
+              brota
             </h1>
             <p className="text-sm text-gray-500">
-              Bitacora de Oportunidades
+              de idea a impacto
             </p>
           </div>
 
@@ -150,8 +148,8 @@ export default function LoginForm() {
               </h2>
               <p className="text-gray-500">
                 {isSignUp
-                  ? 'Unete para crear bitacoras de oportunidades'
-                  : 'Accede a tus bitacoras de oportunidades'
+                  ? 'Unete y empieza a validar tus ideas'
+                  : 'Continua construyendo tu negocio'
                 }
               </p>
             </div>
