@@ -9,11 +9,9 @@ function App() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
+      <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="relative">
-          {currentJournal ? <WizardLayout /> : <HomePage />}
-        </main>
+        {currentJournal ? <WizardLayout /> : <HomePage />}
       </div>
     </AuthGuard>
   )

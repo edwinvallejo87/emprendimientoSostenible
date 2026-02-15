@@ -58,6 +58,7 @@ interface JournalState {
   setCurrentTeam: (team: Team | null) => void
   setCurrentJournal: (journal: Journal | null) => void
   setCurrentIdea: (idea: Idea | null) => void
+  ensureDefaultTeam: () => Promise<void>
   loadTeams: () => Promise<void>
   loadJournals: (teamId: string) => Promise<void>
   loadIdeas: (journalId: string) => Promise<void>
@@ -131,6 +132,31 @@ export const useJournalStore = create<JournalState>()(
         if (idea) {
           console.log('🔄 Loading data for idea:', idea.id)
           get().loadIdeaData(idea.id)
+        }
+      },
+
+      ensureDefaultTeam: async () => {
+        const { currentTeam, loadTeams, loadJournals, setCurrentTeam, createTeam } = get()
+
+        // If we already have a team selected, just load journals
+        if (currentTeam) {
+          await loadJournals(currentTeam.id)
+          return
+        }
+
+        // Load all teams
+        await loadTeams()
+        const { teams } = get()
+
+        if (teams.length > 0) {
+          // Use the first team
+          setCurrentTeam(teams[0])
+          await loadJournals(teams[0].id)
+        } else {
+          // Create a default team
+          const newTeam = await createTeam('Mi Workspace')
+          setCurrentTeam(newTeam)
+          await loadJournals(newTeam.id)
         }
       },
 

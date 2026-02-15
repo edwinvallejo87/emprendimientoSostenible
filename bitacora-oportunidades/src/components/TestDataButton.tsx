@@ -50,23 +50,26 @@ export default function TestDataButton() {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200 shadow-sm">
+    <div className="card shadow-sm p-6">
       <div className="text-center">
-        <h3 className="text-blue-900 font-semibold mb-2 text-lg">🧪 Datos de Prueba</h3>
-        <p className="text-blue-800 text-sm mb-4">
-          Crea un equipo completo con bitácora y contenido realista para todos los pasos
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 mb-4">
+          Datos de Prueba
+        </div>
+        <h3 className="text-gray-900 font-semibold mb-2 text-lg">Generar Contenido de Prueba</h3>
+        <p className="text-gray-500 text-sm mb-5">
+          Crea un equipo completo con bitacora y contenido realista para todos los pasos
         </p>
-        
+
         <button
           onClick={handleCreateTestData}
           disabled={loading}
-          className="btn btn-primary text-base px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-transform"
+          className="btn btn-secondary btn-lg"
         >
-          {loading ? '🚀 Creando...' : '✨ Crear Datos de Prueba'}
+          {loading ? 'Creando...' : 'Crear Datos de Prueba'}
         </button>
-        
+
         {message && (
-          <div className="mt-4 p-3 bg-white rounded-lg border shadow-sm">
+          <div className="mt-5 p-3 bg-white rounded-md border border-gray-200 text-center">
             <p className="text-sm text-gray-700 font-medium">{message}</p>
           </div>
         )}

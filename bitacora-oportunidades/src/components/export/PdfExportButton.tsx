@@ -30,7 +30,7 @@ export default function PdfExportButton({ disabled = false }: PdfExportButtonPro
   } = useJournalStore()
 
   const handleExport = async () => {
-    if (!currentJournal || !currentTeam || disabled) return
+    if (!currentJournal || disabled) return
 
     setIsExporting(true)
     try {
@@ -73,7 +73,7 @@ export default function PdfExportButton({ disabled = false }: PdfExportButtonPro
     }
   }
 
-  if (!currentJournal || !currentTeam) {
+  if (!currentJournal) {
     return null
   }
 
@@ -84,8 +84,8 @@ export default function PdfExportButton({ disabled = false }: PdfExportButtonPro
       className={`
         flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200
         ${disabled 
-          ? 'bg-stone-200 text-stone-500 cursor-not-allowed' 
-          : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:scale-105'
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+          : 'bg-green-600 text-white hover:bg-green-700'
         }
         ${isExporting ? 'opacity-75' : ''}
       `}

@@ -24,56 +24,56 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
     // Customer Side (Left) - 8 blocks
     {
       key: 'customer_segments',
-      title: '1. Segmentos de Clientes',
+      title: 'Clientes',
       description: '¿Quiénes son nuestros clientes más importantes?',
       placeholder: 'Ej: Consumidores eco-conscientes, empresas B2B sostenibles...',
       section: 'customer'
     },
     {
       key: 'value_propositions',
-      title: '2. Propuestas de Valor',
+      title: 'Propuesta de Valor',
       description: '¿Qué valor entregamos a cada segmento?',
       placeholder: 'Ej: Productos eco-friendly con impacto positivo...',
       section: 'customer'
     },
     {
       key: 'products_services',
-      title: '3. Productos y Servicios',
+      title: 'Productos / Servicios',
       description: '¿Qué productos/servicios ofrecemos específicamente?',
       placeholder: 'Ej: App de tracking de huella de carbono, consultorías...',
       section: 'customer'
     },
     {
       key: 'channels',
-      title: '4. Canales',
+      title: 'Canales',
       description: '¿Cómo llegamos y entregamos valor a nuestros clientes?',
       placeholder: 'Ej: Plataforma digital, tiendas físicas, partners...',
       section: 'customer'
     },
     {
       key: 'customer_relationships',
-      title: '5. Relaciones con Clientes',
+      title: 'Relacion con Clientes',
       description: '¿Qué tipo de relación establecemos?',
       placeholder: 'Ej: Comunidad activa, soporte personalizado, self-service...',
       section: 'customer'
     },
     {
       key: 'revenue_streams',
-      title: '6. Flujos de Ingresos',
+      title: 'Ingresos',
       description: '¿Cómo generamos ingresos?',
       placeholder: 'Ej: Suscripciones, comisiones, licencias, ventas directas...',
       section: 'customer'
     },
     {
       key: 'social_benefits',
-      title: '7. Beneficios Sociales',
+      title: 'Impacto Social +',
       description: '¿Qué impacto social positivo generamos?',
       placeholder: 'Ej: Empleos dignos, educación ambiental, inclusión social...',
       section: 'customer'
     },
     {
       key: 'environmental_benefits',
-      title: '8. Beneficios Ambientales',
+      title: 'Impacto Ambiental +',
       description: '¿Qué impacto ambiental positivo creamos?',
       placeholder: 'Ej: Reducción CO2, economía circular, conservación...',
       section: 'customer'
@@ -81,42 +81,42 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
     // Business Side (Right) - 6 blocks
     {
       key: 'key_resources',
-      title: '9. Recursos Clave',
+      title: 'Recursos Clave',
       description: '¿Qué recursos son indispensables?',
       placeholder: 'Ej: Tecnología, equipo especializado, certificaciones...',
       section: 'business'
     },
     {
       key: 'key_activities',
-      title: '10. Actividades Clave',
+      title: 'Actividades Clave',
       description: '¿Qué actividades son más importantes?',
       placeholder: 'Ej: I+D sostenible, marketing digital, operaciones...',
       section: 'business'
     },
     {
       key: 'key_partnerships',
-      title: '11. Alianzas Clave',
+      title: 'Alianzas Clave',
       description: '¿Quiénes son nuestros socios estratégicos?',
       placeholder: 'Ej: ONGs, proveedores sostenibles, instituciones...',
       section: 'business'
     },
     {
       key: 'cost_structure',
-      title: '12. Estructura de Costos',
+      title: 'Costos',
       description: '¿Cuáles son nuestros costos más importantes?',
       placeholder: 'Ej: Desarrollo tecnológico, marketing, operaciones...',
       section: 'business'
     },
     {
       key: 'social_costs',
-      title: '13. Costos Sociales',
+      title: 'Riesgo Social',
       description: '¿Qué costos sociales pueden surgir?',
       placeholder: 'Ej: Capacitación, cambio cultural, resistencia al cambio...',
       section: 'business'
     },
     {
       key: 'environmental_costs',
-      title: '14. Costos Ambientales',
+      title: 'Riesgo Ambiental',
       description: '¿Qué costos ambientales debemos considerar?',
       placeholder: 'Ej: Certificaciones verdes, materiales eco-friendly...',
       section: 'business'
@@ -256,7 +256,7 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar en el Canvas Sostenible</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar en el Canvas Sostenible</p>
       </div>
     )
   }
@@ -269,9 +269,9 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">🌱 CANVAS SOSTENIBLE CORRECTO</h2>
-            <p className="text-stone-600">
-              Diseña un modelo de negocio que equilibre impacto social, ambiental y económico
+            <h2 className="text-2xl text-gray-900 mb-2">Modelo de Negocio Sostenible</h2>
+            <p className="text-gray-600">
+              Como creas, entregas y capturas valor de forma sostenible
             </p>
           </div>
           <div className="flex items-center space-x-4">
@@ -293,14 +293,14 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
               )}
             </button>
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{completion}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{completion}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
             className="h-2 bg-green-500 rounded transition-all duration-300"
             style={{ width: `${completion}%` }}
@@ -332,20 +332,20 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Customer Side */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-stone-900 border-b pb-2">
-            👥 Lado del Cliente
+          <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            Valor para el Cliente
           </h3>
           {canvasBlocks
             .filter(block => block.section === 'customer')
             .map((block) => (
-              <div key={block.key} className="bg-white p-4 rounded-lg border border-stone-300">
-                <h4 className="font-medium text-stone-900 mb-2">{block.title}</h4>
-                <p className="text-sm text-stone-600 mb-3">{block.description}</p>
+              <div key={block.key} className="bg-white p-4 rounded-lg border border-gray-300">
+                <h4 className="font-medium text-gray-900 mb-2">{block.title}</h4>
+                <p className="text-sm text-gray-600 mb-3">{block.description}</p>
                 <textarea
                   value={String(canvas[block.key as keyof SustainableCanvas] || '')}
                   onChange={(e) => handleFieldChange(block.key, e.target.value)}
                   placeholder={block.placeholder}
-                  className="w-full p-3 border border-stone-300 rounded-lg text-sm resize-none"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none"
                   rows={3}
                 />
               </div>
@@ -354,20 +354,20 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
 
         {/* Business Side */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-stone-900 border-b pb-2">
-            🏢 Lado del Negocio
+          <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            Operaciones del Negocio
           </h3>
           {canvasBlocks
             .filter(block => block.section === 'business')
             .map((block) => (
-              <div key={block.key} className="bg-white p-4 rounded-lg border border-stone-300">
-                <h4 className="font-medium text-stone-900 mb-2">{block.title}</h4>
-                <p className="text-sm text-stone-600 mb-3">{block.description}</p>
+              <div key={block.key} className="bg-white p-4 rounded-lg border border-gray-300">
+                <h4 className="font-medium text-gray-900 mb-2">{block.title}</h4>
+                <p className="text-sm text-gray-600 mb-3">{block.description}</p>
                 <textarea
                   value={String(canvas[block.key as keyof SustainableCanvas] || '')}
                   onChange={(e) => handleFieldChange(block.key, e.target.value)}
                   placeholder={block.placeholder}
-                  className="w-full p-3 border border-stone-300 rounded-lg text-sm resize-none"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none"
                   rows={3}
                 />
               </div>
@@ -375,54 +375,6 @@ export default function Step7SustainableCanvas({ onNext }: Props) {
         </div>
       </div>
 
-      {/* Sustainability Reflection */}
-      <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-green-900">
-            💭 Reflexión de Sostenibilidad
-          </h3>
-          <button
-            onClick={generateSustainabilityReflection}
-            disabled={generating || completion < 40}
-            className="btn btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-          >
-            {generating ? (
-              <>
-                <RefreshCw size={16} className="mr-2 animate-spin" />
-                Generando...
-              </>
-            ) : (
-              <>
-                <Sparkles size={16} className="mr-2" />
-                Generar Reflexión IA
-              </>
-            )}
-          </button>
-        </div>
-        
-        <textarea
-          value={canvas.sustainability_reflection || ''}
-          onChange={(e) => handleFieldChange('sustainability_reflection', e.target.value)}
-          placeholder="Explica cómo tu modelo equilibra viabilidad financiera, impacto ambiental y beneficio social..."
-          className="w-full p-4 border border-green-300 rounded-lg text-sm bg-white"
-          rows={6}
-        />
-        
-        {completion < 40 && (
-          <p className="text-sm text-green-700 mt-2">
-            💡 Completa al menos 6 bloques del canvas (40%) para usar la generación automática
-          </p>
-        )}
-      </div>
-
-      {/* Navigation */}
-      {onNext && completion >= 80 && (
-        <div className="flex justify-end mt-8">
-          <button onClick={onNext} className="btn btn-primary">
-            Continuar al siguiente paso →
-          </button>
-        </div>
-      )}
     </div>
   )
 }

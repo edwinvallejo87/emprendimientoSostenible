@@ -90,7 +90,7 @@ export default function Step9PrototypeMVP({ onNext }: Props) {
       
       switch (prototype.type) {
         case 'concept':
-          suggestion = `Tu PMV ideal es un **landing page** que valide el interés inicial mediante:
+          suggestion = `Tu MVP ideal es un **landing page** que valide el interés inicial mediante:
           
 • Registro de emails con descripción del concepto
 • Encuesta corta sobre necesidades del problema
@@ -102,7 +102,7 @@ Tiempo estimado: 1-2 semanas, Presupuesto: $50-200`
           
         case 'digital':
         case 'mvp':
-          suggestion = `Tu PMV ideal es una **versión simplificada funcional** con:
+          suggestion = `Tu MVP ideal es una **versión simplificada funcional** con:
           
 • Una funcionalidad core que resuelva el problema principal
 • Onboarding básico y métricas de uso
@@ -114,7 +114,7 @@ Tiempo estimado: 4-8 semanas, Presupuesto: $500-2000`
           break
           
         case 'service':
-          suggestion = `Tu PMV ideal es un **piloto manual** del servicio:
+          suggestion = `Tu MVP ideal es un **piloto manual** del servicio:
           
 • Atención personalizada a 10-20 clientes iniciales
 • Proceso manual simulando la experiencia final
@@ -126,7 +126,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
           break
           
         case 'physical':
-          suggestion = `Tu PMV ideal es un **prototipo funcional limitado**:
+          suggestion = `Tu MVP ideal es un **prototipo funcional limitado**:
           
 • Versión simplificada con materiales básicos
 • Testing con 5-10 usuarios target
@@ -138,7 +138,7 @@ Tiempo estimado: 3-6 semanas, Presupuesto: $200-1000`
           break
           
         default:
-          suggestion = `Tu PMV ideal debería **validar las hipótesis más riesgosas** mediante:
+          suggestion = `Tu MVP ideal debería **validar las hipótesis más riesgosas** mediante:
           
 • Experimento de bajo costo y rápida ejecución
 • Interacción directa con usuarios target
@@ -155,7 +155,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
       }
 
       if (patternsData?.pattern_name) {
-        suggestion += `\n\n**Consideración del patrón:** Tu patrón principal "${patternsData.pattern_name}" sugiere validar la mecánica de monetización desde el PMV.`
+        suggestion += `\n\n**Consideración del patrón:** Tu patrón principal "${patternsData.pattern_name}" sugiere validar la mecánica de monetización desde el MVP.`
       }
 
       setPrototype(prev => ({
@@ -164,7 +164,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
       }))
     } catch (error) {
       console.error('Error generating MVP suggestion:', error)
-      alert('Error al generar sugerencia de PMV. Intenta de nuevo.')
+      alert('Error al generar sugerencia de MVP. Intenta de nuevo.')
     } finally {
       setGenerating(false)
     }
@@ -189,7 +189,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar en Prototipo y PMV</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar en tu MVP</p>
       </div>
     )
   }
@@ -202,29 +202,29 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">🧠 Prototipo y PMV</h2>
-            <p className="text-stone-600">
-              Diseña tu prototipo y define el Producto Mínimo Viable para validar hipótesis
+            <h2 className="text-2xl text-gray-900 mb-2">Tu Producto Minimo Viable</h2>
+            <p className="text-gray-600">
+              La version mas simple de tu producto para validar tu idea
             </p>
           </div>
           <div className="flex items-center space-x-4">
             {saving && (
-              <span className="text-stone-500 text-sm flex items-center">
+              <span className="text-gray-500 text-sm flex items-center">
                 <Save size={16} className="mr-1" />
                 Guardando...
               </span>
             )}
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{completion}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{completion}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
-            className="h-2 bg-purple-500 rounded transition-all duration-300"
+            className="h-2 bg-primary-500 rounded transition-all duration-300"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -232,14 +232,14 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
 
       <div className="space-y-8">
         {/* Basic Information */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            📋 Información Básica del Prototipo
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Descripcion del MVP
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
+              <label className="block text-gray-700 font-medium mb-2">
                 Nombre del Prototipo *
               </label>
               <input
@@ -252,7 +252,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
+              <label className="block text-gray-700 font-medium mb-2">
                 Tipo de Prototipo *
               </label>
               <select
@@ -268,7 +268,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
                 ))}
               </select>
               {prototype.type && (
-                <p className="text-xs text-stone-600 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   {PROTOTYPE_TYPES.find(t => t.value === prototype.type)?.description}
                 </p>
               )}
@@ -276,7 +276,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
           </div>
 
           <div className="mt-6">
-            <label className="block text-stone-700 font-medium mb-2">
+            <label className="block text-gray-700 font-medium mb-2">
               Descripción del Prototipo *
             </label>
             <textarea
@@ -290,14 +290,14 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
         </div>
 
         {/* Validation Hypotheses */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            🎯 Hipótesis de Validación
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Que vas a validar?
           </h3>
           
           <div className="space-y-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
+              <label className="block text-gray-700 font-medium mb-2">
                 Hipótesis a Validar *
               </label>
               <textarea
@@ -310,7 +310,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
+              <label className="block text-gray-700 font-medium mb-2">
                 Métricas de Aprendizaje Esperadas
               </label>
               <textarea
@@ -325,14 +325,14 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
         </div>
 
         {/* Media Attachments */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            📎 Materiales del Prototipo
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Archivos y Enlaces
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <FileImage size={16} className="mr-2" />
                 URL de Imagen
               </label>
@@ -348,7 +348,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
                   href={prototype.image_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 flex items-center mt-1"
+                  className="text-xs text-primary-600 hover:text-primary-700 flex items-center mt-1"
                 >
                   <ExternalLink size={12} className="mr-1" />
                   Ver imagen
@@ -357,7 +357,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <Video size={16} className="mr-2" />
                 URL de Video
               </label>
@@ -373,7 +373,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
                   href={prototype.video_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 flex items-center mt-1"
+                  className="text-xs text-primary-600 hover:text-primary-700 flex items-center mt-1"
                 >
                   <ExternalLink size={12} className="mr-1" />
                   Ver video
@@ -382,7 +382,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <Link size={16} className="mr-2" />
                 Enlace Externo
               </label>
@@ -405,7 +405,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
                   href={prototype.external_link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 flex items-center mt-1"
+                  className="text-xs text-primary-600 hover:text-primary-700 flex items-center mt-1"
                 >
                   <ExternalLink size={12} className="mr-1" />
                   {prototype.link_description || 'Abrir enlace'}
@@ -416,10 +416,10 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
         </div>
 
         {/* AI MVP Suggestion */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200">
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-purple-900">
-              🤖 Sugerencia de PMV por IA
+            <h3 className="text-lg font-semibold text-gray-900">
+              Sugerencia de MVP con IA
             </h3>
             <button
               onClick={generateMVPSuggestion}
@@ -434,7 +434,7 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
               ) : (
                 <>
                   <Sparkles size={16} className="mr-2" />
-                  Generar PMV IA
+                  Generar MVP IA
                 </>
               )}
             </button>
@@ -444,13 +444,13 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
             value={prototype.ai_mvp_suggestion || ''}
             onChange={(e) => handleFieldChange('ai_mvp_suggestion', e.target.value)}
             placeholder="La IA generará una sugerencia personalizada de Producto Mínimo Viable basada en tu tipo de prototipo y contexto..."
-            className="w-full p-4 border border-purple-300 rounded-lg text-sm bg-white"
+            className="w-full p-4 border border-gray-300 rounded-lg text-sm bg-white"
             rows={8}
             readOnly={generating}
           />
           
           {!prototype.type && (
-            <p className="text-sm text-purple-700 mt-2">
+            <p className="text-sm text-gray-600 mt-2">
               💡 Selecciona un tipo de prototipo para generar sugerencias personalizadas
             </p>
           )}
@@ -466,14 +466,6 @@ Tiempo estimado: 2-4 semanas, Presupuesto: $100-500`
         )}
       </div>
 
-      {/* Navigation */}
-      {onNext && completion >= 80 && (
-        <div className="flex justify-end mt-8">
-          <button onClick={onNext} className="btn btn-primary">
-            Continuar al siguiente paso →
-          </button>
-        </div>
-      )}
     </div>
   )
 }

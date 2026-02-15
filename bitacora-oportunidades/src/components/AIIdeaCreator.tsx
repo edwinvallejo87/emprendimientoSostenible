@@ -3,70 +3,53 @@ import { CompleteIdeaGenerator } from '../lib/ai/completeIdeaGenerator'
 import { createCompleteIdeaFromAI } from '../scripts/createCompleteIdeaFromAI'
 import { useJournalStore } from '../store/journal'
 import { loadSustainabilityData } from '../utils/loadSustainabilityData'
+import { Sparkles, ArrowRight, Loader2, Check } from 'lucide-react'
 
 export default function AIIdeaCreator() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [ideaInput, setIdeaInput] = useState('')
-  const { loadTeams, loadJournals, loadIdeas, loadIdeaData, setCurrentTeam, setCurrentJournal, setCurrentIdea } = useJournalStore()
+  const { currentTeam, loadTeams, loadJournals, loadIdeas, loadIdeaData, setCurrentTeam, setCurrentJournal, setCurrentIdea } = useJournalStore()
 
   const handleCreateAIIdea = async () => {
     if (!ideaInput.trim()) {
-      setMessage('❌ Por favor describe tu idea primero')
+      setMessage('Por favor describe tu idea primero')
       setTimeout(() => setMessage(''), 3000)
       return
     }
 
     setLoading(true)
-    setMessage('🤖 Generando análisis completo con IA...')
+    setMessage('Generando analisis completo con IA...')
 
     try {
       const result = await createCompleteIdeaFromAI(ideaInput.trim())
-      
+
       if (result?.success && result.team && result.journal && result.idea) {
-        setMessage('✅ Idea creada! Cargando en la interfaz...')
-        
-        // Recargar equipos y seleccionar el nuevo
-        await loadTeams()
-        setCurrentTeam(result.team)
-        
-        // Cargar bitácoras del equipo
+        setMessage('Idea creada. Cargando en la interfaz...')
+
+        const team = useJournalStore.getState().currentTeam || result.team
+        if (result.team.id !== team.id) {
+          setCurrentTeam(result.team)
+        }
         await loadJournals(result.team.id)
         setCurrentJournal(result.journal)
-        
-        // Cargar ideas de la bitácora
         await loadIdeas(result.journal.id)
-        
-        // Establecer la idea actual y cargar sus datos específicos
         setCurrentIdea(result.idea)
-        
-        // Extended delay to ensure all database transactions are committed (including sustainability data)
+
         await new Promise(resolve => setTimeout(resolve, 2000))
-        
-        // Load idea data and specifically load sustainability data
         await loadIdeaData(result.idea.id)
-        
-        // Additional delay and reload to ensure all sustainability data is loaded
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Final reload to ensure all data is in the store
         await loadIdeaData(result.idea.id)
-        
-        setMessage(`🎉 ¡Listo! Análisis completo de 13 pasos generado por IA`)
+
+        setMessage('Listo. Analisis completo de 7 pasos generado.')
         setIdeaInput('')
-        
-        // Auto-hide después de 5 segundos
-        setTimeout(() => {
-          setMessage('')
-        }, 5000)
+        setTimeout(() => setMessage(''), 5000)
       } else {
-        setMessage('❌ Error generando idea con IA')
+        setMessage('Error generando idea con IA')
         setTimeout(() => setMessage(''), 3000)
       }
     } catch (error) {
       console.error('Error completo creando idea con IA:', error)
-      
-      // More detailed error reporting
       let errorMessage = 'Error desconocido'
       if (error instanceof Error) {
         errorMessage = error.message
@@ -76,69 +59,86 @@ export default function AIIdeaCreator() {
       } else {
         errorMessage = JSON.stringify(error, null, 2)
       }
-      
-      setMessage(`❌ Error creando idea: ${errorMessage}`)
+      setMessage(`Error: ${errorMessage}`)
       setTimeout(() => setMessage(''), 10000)
     } finally {
       setLoading(false)
     }
   }
 
+  const steps = [
+    'Recursos y problema',
+    'Tendencias y FODA',
+    'Cliente y propuesta',
+    'Modelo de negocio',
+    'MVP y validacion',
+    'Red de aliados',
+    'Impacto sostenible',
+  ]
+
   return (
-    <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 shadow-sm">
-      <div className="text-center">
-        <h3 className="text-blue-900 font-semibold mb-2 text-lg">🤖 Generador IA de Ideas</h3>
-        <p className="text-blue-800 text-sm mb-4">
-          Describe tu idea básica y la IA creará un análisis completo de 13 pasos con metodología efectual y emprendimiento sostenible
-        </p>
-        
-        <div className="mb-4">
-          <textarea
-            value={ideaInput}
-            onChange={(e) => setIdeaInput(e.target.value)}
-            placeholder="Ejemplo: Una app para conectar agricultores con consumidores locales de forma sostenible..."
-            className="w-full p-3 border border-blue-300 rounded-lg text-sm"
-            rows={3}
-            disabled={loading}
-          />
+    <div className="rounded-lg overflow-hidden border border-gray-200">
+      {/* Dark header */}
+      <div className="relative bg-gray-950 px-6 py-6 overflow-hidden">
+        <div className="absolute top-[-50%] right-[-10%] w-[200px] h-[200px] bg-primary-500/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="relative flex items-start gap-4">
+          <div className="p-2.5 bg-primary-600 rounded-md flex-shrink-0 shadow-glow-sm">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-white">Genera tu Plan de Negocio con IA</h3>
+            <p className="text-xs text-gray-400 mt-1">
+              Describe tu idea y la IA completara automaticamente los 7 pasos del analisis.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Input area */}
+      <div className="bg-white px-6 py-5">
+        <textarea
+          value={ideaInput}
+          onChange={(e) => setIdeaInput(e.target.value)}
+          placeholder="Ej: Una plataforma para conectar agricultores locales con restaurantes, reduciendo intermediarios y desperdicio de alimentos..."
+          className="textarea text-sm"
+          rows={3}
+          disabled={loading}
+        />
+
+        {/* Steps that will be generated */}
+        <div className="flex flex-wrap gap-1.5 mt-4">
+          {steps.map((step, i) => (
+            <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-500">
+              <Check className="h-3 w-3 text-primary-500" />
+              {step}
+            </span>
+          ))}
         </div>
 
-        <div className="text-xs text-blue-700 mb-4 space-y-1">
-          <p>🎯 <strong>La IA generará análisis completo de 13 pasos:</strong></p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left">
-            <div>
-              <p className="font-semibold mb-1">📊 Metodología Efectual (Pasos 1-7):</p>
-              <p>• Medios personales del equipo</p>
-              <p>• Problema y relevancia</p>
-              <p>• Tendencias del mercado</p>
-              <p>• Evaluación FODA</p>
-              <p>• Usuario objetivo y propuesta de valor</p>
-            </div>
-            <div>
-              <p className="font-semibold mb-1">🌱 Emprendimiento Sostenible (Pasos 8-13):</p>
-              <p>• Canvas sostenible interactivo</p>
-              <p>• Patrones de innovación</p>
-              <p>• Prototipo y MVP</p>
-              <p>• Estrategia de validación</p>
-              <p>• Mapa del ecosistema</p>
-              <p>• Reflexión de sostenibilidad</p>
-            </div>
-          </div>
+        <div className="flex items-center justify-between mt-5">
+          <button
+            onClick={handleCreateAIIdea}
+            disabled={loading || !ideaInput.trim()}
+            className="btn btn-glow group"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Generando...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generar Plan Completo
+                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+              </>
+            )}
+          </button>
+
+          {message && (
+            <p className="text-sm text-gray-500 animate-fade-in">{message}</p>
+          )}
         </div>
-        
-        <button
-          onClick={handleCreateAIIdea}
-          disabled={loading || !ideaInput.trim()}
-          className="btn btn-primary text-base px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-transform bg-blue-600 hover:bg-blue-700"
-        >
-          {loading ? '🤖 Generando con IA...' : '🚀 Crear Análisis Completo'}
-        </button>
-        
-        {message && (
-          <div className="mt-4 p-3 bg-white rounded-lg border shadow-sm">
-            <p className="text-sm text-gray-700 font-medium">{message}</p>
-          </div>
-        )}
       </div>
     </div>
   )

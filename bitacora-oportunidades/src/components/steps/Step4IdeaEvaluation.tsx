@@ -7,12 +7,12 @@ import { supabase } from '../../lib/supabase'
 import { Target, TrendingUp, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react'
 
 const step4EvaluationSchema = z.object({
-  strengths: z.string().min(50, 'Describe al menos 50 caracteres sobre las fortalezas'),
-  weaknesses: z.string().min(50, 'Describe al menos 50 caracteres sobre las debilidades'),
-  opportunities: z.string().min(50, 'Describe al menos 50 caracteres sobre las oportunidades'),
-  threats: z.string().min(50, 'Describe al menos 50 caracteres sobre las amenazas'),
-  success_factors: z.string().min(50, 'Describe al menos 50 caracteres sobre los factores de éxito'),
-  risk_mitigation: z.string().min(50, 'Describe al menos 50 caracteres sobre la mitigación de riesgos'),
+  strengths: z.string().min(20, 'Describe al menos 20 caracteres sobre las fortalezas'),
+  weaknesses: z.string().min(20, 'Describe al menos 20 caracteres sobre las debilidades'),
+  opportunities: z.string().min(20, 'Describe al menos 20 caracteres sobre las oportunidades'),
+  threats: z.string().min(20, 'Describe al menos 20 caracteres sobre las amenazas'),
+  success_factors: z.string().min(20, 'Describe al menos 20 caracteres sobre los factores de éxito'),
+  risk_mitigation: z.string().min(20, 'Describe al menos 20 caracteres sobre la mitigación de riesgos'),
 })
 
 type Step4EvaluationData = z.infer<typeof step4EvaluationSchema>
@@ -30,9 +30,6 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
   } = useJournalStore()
 
   const [saving, setSaving] = useState(false)
-
-  // Debug: Check current status
-  console.log(`📊 Step4 - Idea: "${currentIdea?.title}" | Loading: ${loading} | HasData: ${!!step4EvaluationData}`)
 
   const {
     control,
@@ -57,9 +54,6 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
   useEffect(() => {
     // Only reset if we have actual data to load
     if (step4EvaluationData && currentIdea) {
-      console.log('🔄 Loading existing data for:', currentIdea.title)
-      console.log('📊 Raw step4EvaluationData:', step4EvaluationData)
-      
       // Fix arrays stored as strings
       const parseField = (field: string | null | undefined) => {
         if (!field) return ''
@@ -84,11 +78,8 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
         risk_mitigation: parseField(step4EvaluationData.risk_mitigation),
       }
       
-      console.log('📝 Form data to load:', formData)
-      
       const timer = setTimeout(() => {
         reset(formData)
-        console.log('✅ Form reset completed')
       }, 100)
 
       return () => clearTimeout(timer)
@@ -122,7 +113,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
     return (
       <div className="max-w-4xl mx-auto px-6 text-center py-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        <p className="mt-4 text-stone-600">Cargando datos de evaluación...</p>
+        <p className="mt-4 text-gray-600">Cargando datos de evaluación...</p>
       </div>
     )
   }
@@ -153,9 +144,9 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
         <div className="flex items-center gap-4 mb-6">
           <Target className="w-8 h-8 text-green-600" />
           <div>
-            <h2 className="text-3xl text-stone-900 mb-2">Evaluación (Lemonade)</h2>
-            <p className="text-stone-600">
-              Analiza tu idea "{currentIdea.title}". ¿Cómo puedes convertir contingencias y sorpresas en oportunidades?
+            <h2 className="text-3xl text-gray-900 mb-2">Analisis FODA</h2>
+            <p className="text-gray-600">
+              Evalua fortalezas, debilidades, oportunidades y amenazas de tu idea
             </p>
           </div>
         </div>
@@ -163,10 +154,10 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-stone-600">Progreso de evaluación</span>
-            <span className="text-sm font-medium text-stone-900">{progressPercentage}%</span>
+            <span className="text-sm text-gray-600">Progreso de evaluación</span>
+            <span className="text-sm font-medium text-gray-900">{progressPercentage}%</span>
           </div>
-          <div className="w-full h-2 bg-stone-200 rounded">
+          <div className="w-full h-2 bg-gray-200 rounded">
             <div
               className="h-2 bg-green-600 rounded transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
@@ -175,21 +166,10 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
         </div>
 
         {/* Idea Summary */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-          <h3 className="font-semibold text-blue-900 mb-2">Idea a Evaluar:</h3>
-          <p className="text-blue-800 mb-2"><strong>{currentIdea.title}</strong></p>
-          <p className="text-blue-700 text-sm">{currentIdea.description}</p>
-          <div className="flex gap-4 mt-3 text-xs">
-            <span className="bg-blue-100 px-2 py-1 rounded">
-              Mercado: {currentIdea.market_potential}
-            </span>
-            <span className="bg-blue-100 px-2 py-1 rounded">
-              Complejidad: {currentIdea.implementation_complexity}
-            </span>
-            <span className="bg-blue-100 px-2 py-1 rounded">
-              Alineación: {currentIdea.alignment_score}%
-            </span>
-          </div>
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-8">
+          <h3 className="font-semibold text-gray-900 mb-2">Idea a Evaluar:</h3>
+          <p className="text-gray-800 mb-2"><strong>{currentIdea.title}</strong></p>
+          <p className="text-gray-700 text-sm">{currentIdea.description}</p>
         </div>
       </div>
 
@@ -249,10 +229,10 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
           </div>
 
           {/* Opportunities */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-primary-50 border border-primary-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <h3 className="text-lg font-semibold text-blue-900">Oportunidades</h3>
+              <TrendingUp className="w-5 h-5 text-primary-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Oportunidades</h3>
               {fieldStatuses.opportunities === 'complete' && (
                 <CheckCircle className="w-4 h-4 text-green-500 ml-auto" />
               )}
@@ -264,7 +244,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
                 <textarea
                   {...field}
                   rows={4}
-                  className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="¿Qué tendencias favorecen tu idea? ¿Qué cambios en el mercado son positivos? ¿Qué oportunidades externas existen?"
                 />
               )}
@@ -304,10 +284,10 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
         {/* Success Factors and Risk Mitigation */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Success Factors */}
-          <div className="bg-white border border-stone-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
               <Target className="w-5 h-5 text-purple-600" />
-              <h3 className="text-lg font-semibold text-stone-900">Factores Críticos de Éxito</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Factores Críticos de Éxito</h3>
               {fieldStatuses.success_factors === 'complete' && (
                 <CheckCircle className="w-4 h-4 text-green-500 ml-auto" />
               )}
@@ -319,7 +299,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
                 <textarea
                   {...field}
                   rows={4}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="¿Qué debe ocurrir para que tu idea sea exitosa? ¿Qué factores son absolutamente críticos?"
                 />
               )}
@@ -330,10 +310,10 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
           </div>
 
           {/* Risk Mitigation */}
-          <div className="bg-white border border-stone-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-5 h-5 text-orange-600" />
-              <h3 className="text-lg font-semibold text-stone-900">Mitigación de Riesgos</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Mitigación de Riesgos</h3>
               {fieldStatuses.risk_mitigation === 'complete' && (
                 <CheckCircle className="w-4 h-4 text-green-500 ml-auto" />
               )}
@@ -345,7 +325,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
                 <textarea
                   {...field}
                   rows={4}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="¿Cómo vas a reducir los riesgos identificados? ¿Qué estrategias tienes para mitigar amenazas?"
                 />
               )}
@@ -364,8 +344,7 @@ export default function Step4IdeaEvaluation({ onNext }: Step4IdeaEvaluationProps
             disabled={!isValid || saving}
             className="btn btn-primary flex items-center gap-2 px-8 py-3 disabled:opacity-50"
           >
-            {saving ? 'Guardando...' : 'Continuar al siguiente paso'}
-            <ArrowRight className="w-4 h-4" />
+            {saving ? 'Guardando...' : 'Guardar evaluacion'}
           </button>
         </div>
       </form>

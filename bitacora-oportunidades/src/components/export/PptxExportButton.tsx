@@ -29,7 +29,7 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
   } = useJournalStore()
 
   const handleExport = async () => {
-    if (!currentJournal || !currentTeam || disabled) return
+    if (!currentJournal || disabled) return
 
     setIsExporting(true)
     try {
@@ -62,7 +62,7 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
     }
   }
 
-  if (!currentJournal || !currentTeam) {
+  if (!currentJournal) {
     return null
   }
 
@@ -73,8 +73,8 @@ export default function PptxExportButton({ disabled = false }: PptxExportButtonP
       className={`
         flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200
         ${disabled 
-          ? 'bg-stone-200 text-stone-500 cursor-not-allowed' 
-          : 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105'
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+          : 'bg-primary-600 text-white hover:bg-primary-700'
         }
         ${isExporting ? 'opacity-75' : ''}
       `}

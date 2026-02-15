@@ -14,7 +14,7 @@ interface Props {
 const ACTOR_TYPES = [
   { 
     value: 'financial', 
-    label: 'Financieros', 
+    label: 'Financiadores',
     icon: Building,
     color: 'green',
     description: 'Inversores, bancos, fondos, microfinancieras',
@@ -22,7 +22,7 @@ const ACTOR_TYPES = [
   },
   { 
     value: 'academic', 
-    label: 'Académicos', 
+    label: 'Educacion e Investigacion',
     icon: GraduationCap,
     color: 'blue',
     description: 'Universidades, centros de investigación, think tanks',
@@ -30,7 +30,7 @@ const ACTOR_TYPES = [
   },
   { 
     value: 'business', 
-    label: 'Empresariales', 
+    label: 'Aliados de Negocio',
     icon: Building,
     color: 'purple',
     description: 'Empresas, corporaciones, cámaras de comercio',
@@ -38,7 +38,7 @@ const ACTOR_TYPES = [
   },
   { 
     value: 'social', 
-    label: 'Sociales', 
+    label: 'Impacto Social',
     icon: Heart,
     color: 'pink',
     description: 'ONGs, fundaciones, comunidades, movimientos',
@@ -46,7 +46,7 @@ const ACTOR_TYPES = [
   },
   { 
     value: 'institutional', 
-    label: 'Institucionales', 
+    label: 'Gobierno y Reguladores',
     icon: Landmark,
     color: 'indigo',
     description: 'Gobierno, entidades públicas, reguladores',
@@ -226,7 +226,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar en el Mapa del Ecosistema</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar en el Mapa del Ecosistema</p>
       </div>
     )
   }
@@ -240,27 +240,27 @@ export default function Step11EcosystemMap({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">🌍 Mapa del Ecosistema</h2>
-            <p className="text-stone-600">
-              Identifica y mapea los actores clave que pueden apoyar tu emprendimiento (Modelo de Daniel Isenberg)
+            <h2 className="text-2xl text-gray-900 mb-2">Red de Aliados y Soporte</h2>
+            <p className="text-gray-600">
+              Organizaciones y personas clave que pueden ayudarte a crecer
             </p>
           </div>
           <div className="flex items-center space-x-4">
             {saving && (
-              <span className="text-stone-500 text-sm flex items-center">
+              <span className="text-gray-500 text-sm flex items-center">
                 <Save size={16} className="mr-1" />
                 Guardando...
               </span>
             )}
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{completion}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{completion}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
             className="h-2 bg-orange-500 rounded transition-all duration-300"
             style={{ width: `${completion}%` }}
@@ -270,7 +270,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
 
       {/* Ecosystem Insights */}
       <div className="bg-orange-50 p-6 rounded-lg border border-orange-200 mb-8">
-        <h3 className="text-lg font-semibold text-orange-900 mb-4">📊 Insights del Ecosistema</h3>
+        <h3 className="text-lg font-semibold text-orange-900 mb-4">Resumen de tu Red</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-700">{insights.totalActors}</div>
@@ -285,8 +285,8 @@ export default function Step11EcosystemMap({ onNext }: Props) {
             <div className="text-sm text-yellow-600">Contactados</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-700">{insights.typeCoverage}/5</div>
-            <div className="text-sm text-blue-600">Tipos Cubiertos</div>
+            <div className="text-2xl font-bold text-primary-700">{insights.typeCoverage}/5</div>
+            <div className="text-sm text-primary-600">Tipos Cubiertos</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-700">{insights.coveragePercentage}%</div>
@@ -300,14 +300,14 @@ export default function Step11EcosystemMap({ onNext }: Props) {
         {actorsByType.map((typeGroup) => {
           const IconComponent = typeGroup.icon
           return (
-            <div key={typeGroup.value} className="bg-white p-6 rounded-lg border border-stone-300">
+            <div key={typeGroup.value} className="bg-white p-6 rounded-lg border border-gray-300">
               <div className="flex items-center mb-4">
                 <div className={`p-2 rounded-lg bg-${typeGroup.color}-100 mr-3`}>
                   <IconComponent size={20} className={`text-${typeGroup.color}-600`} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-stone-900">{typeGroup.label}</h3>
-                  <p className="text-xs text-stone-600">{typeGroup.examples}</p>
+                  <h3 className="font-semibold text-gray-900">{typeGroup.label}</h3>
+                  <p className="text-xs text-gray-600">{typeGroup.examples}</p>
                 </div>
               </div>
               
@@ -315,12 +315,12 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                 {typeGroup.actors.map((actor) => (
                   <div
                     key={actor.id}
-                    className="p-3 bg-stone-50 rounded-lg border border-stone-200"
+                    className="p-3 bg-gray-50 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center mb-1">
-                          <h4 className="font-medium text-stone-900 text-sm">{actor.actor_name}</h4>
+                          <h4 className="font-medium text-gray-900 text-sm">{actor.actor_name}</h4>
                           <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
                             actor.relationship_status === 'committed' 
                               ? 'bg-green-100 text-green-700'
@@ -332,13 +332,13 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                           </span>
                         </div>
                         {actor.role_description && (
-                          <p className="text-xs text-stone-600 mb-2">{actor.role_description}</p>
+                          <p className="text-xs text-gray-600 mb-2">{actor.role_description}</p>
                         )}
                         <div className="flex flex-wrap gap-1">
                           {actor.support_types.map((type) => {
                             const supportType = SUPPORT_TYPES.find(s => s.value === type)
                             return (
-                              <span key={type} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                              <span key={type} className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded">
                                 {supportType?.label}
                               </span>
                             )
@@ -348,14 +348,14 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                       <div className="flex space-x-1 ml-2">
                         <button
                           onClick={() => setEditingActor(actor)}
-                          className="p-1 text-stone-400 hover:text-blue-600 rounded transition-colors"
+                          className="p-1 text-gray-400 hover:text-primary-600 rounded transition-colors"
                           title="Editar actor"
                         >
                           <Users size={14} />
                         </button>
                         <button
                           onClick={() => deleteActor(actor.id)}
-                          className="p-1 text-stone-400 hover:text-red-600 rounded transition-colors"
+                          className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
                           title="Eliminar actor"
                         >
                           <Trash2 size={14} />
@@ -373,7 +373,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                   support_types: [],
                   relationship_status: 'potential'
                 })}
-                className="w-full text-sm text-stone-600 border border-dashed border-stone-300 rounded-lg py-2 hover:border-stone-400 hover:text-stone-700 transition-colors flex items-center justify-center"
+                className="w-full text-sm text-gray-600 border border-dashed border-gray-300 rounded-lg py-2 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center"
               >
                 <Plus size={16} className="mr-1" />
                 Agregar {typeGroup.label}
@@ -388,7 +388,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
-              <h3 className="text-xl font-semibold text-stone-900">
+              <h3 className="text-xl font-semibold text-gray-900">
                 {editingActor.id ? 'Editar Actor' : 'Nuevo Actor del Ecosistema'}
               </h3>
             </div>
@@ -396,7 +396,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Nombre del Actor *
                   </label>
                   <input
@@ -412,7 +412,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                 </div>
                 
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Tipo de Actor *
                   </label>
                   <select
@@ -433,7 +433,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
               </div>
               
               <div>
-                <label className="block text-stone-700 font-medium mb-2">
+                <label className="block text-gray-700 font-medium mb-2">
                   Rol y Descripción
                 </label>
                 <textarea
@@ -449,7 +449,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
               </div>
               
               <div>
-                <label className="block text-stone-700 font-medium mb-3">
+                <label className="block text-gray-700 font-medium mb-3">
                   Tipos de Apoyo que Proporciona *
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -458,13 +458,13 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                       key={support.value}
                       className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
                         editingActor.support_types?.includes(support.value as any)
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-stone-300 bg-white hover:border-blue-300'
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-300 bg-white hover:border-primary-300'
                       }`}
                       onClick={() => handleSupportTypeToggle(support.value)}
                     >
-                      <h4 className="text-sm font-medium text-stone-900">{support.label}</h4>
-                      <p className="text-xs text-stone-600">{support.description}</p>
+                      <h4 className="text-sm font-medium text-gray-900">{support.label}</h4>
+                      <p className="text-xs text-gray-600">{support.description}</p>
                     </div>
                   ))}
                 </div>
@@ -472,7 +472,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Beneficio para el Emprendimiento
                   </label>
                   <textarea
@@ -488,7 +488,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                 </div>
                 
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Beneficio para el Actor (Reciprocidad)
                   </label>
                   <textarea
@@ -506,7 +506,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Información de Contacto
                   </label>
                   <input
@@ -522,7 +522,7 @@ export default function Step11EcosystemMap({ onNext }: Props) {
                 </div>
                 
                 <div>
-                  <label className="block text-stone-700 font-medium mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
                     Estado de la Relación
                   </label>
                   <select
@@ -566,20 +566,12 @@ export default function Step11EcosystemMap({ onNext }: Props) {
       {actors.length < 5 && (
         <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-8">
           <p className="text-yellow-800 text-sm">
-            📋 <strong>Objetivo:</strong> Identifica al menos 5 actores del ecosistema, idealmente 1-2 por cada tipo.
-            Actualmente tienes {actors.length} actores mapeados.
+            Mapea al menos 5 contactos o organizaciones que puedan apoyarte.
+            Actualmente tienes {actors.length} mapeados.
           </p>
         </div>
       )}
 
-      {/* Navigation */}
-      {onNext && actors.length >= 5 && (
-        <div className="flex justify-end">
-          <button onClick={onNext} className="btn btn-primary">
-            Continuar al siguiente paso →
-          </button>
-        </div>
-      )}
     </div>
   )
 }

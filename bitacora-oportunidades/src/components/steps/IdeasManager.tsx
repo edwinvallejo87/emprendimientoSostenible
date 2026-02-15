@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useJournalStore } from '../../store/journal'
-import { Plus, Lightbulb, ArrowRight, Edit, Trash2 } from 'lucide-react'
+import { Plus, ArrowRight, Sparkles, Check } from 'lucide-react'
 import CreateIdeaForm from './CreateIdeaForm'
+import AIIdeaCreator from '../AIIdeaCreator'
 
 interface IdeasManagerProps {
   onNext?: () => void
@@ -19,7 +20,7 @@ export default function IdeasManager({ onNext }: IdeasManagerProps) {
   const [showCreateForm, setShowCreateForm] = useState(false)
 
   if (!currentJournal) {
-    return <div>Selecciona una bitácora primero</div>
+    return <div className="text-sm text-gray-500">Selecciona una bitacora primero</div>
   }
 
   const handleSelectIdea = (idea: any) => {
@@ -38,19 +39,15 @@ export default function IdeasManager({ onNext }: IdeasManagerProps) {
     return (
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl text-stone-900 flex items-center gap-3">
-            <Lightbulb className="w-8 h-8 text-yellow-500" />
-            Nueva Idea
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Nueva Idea</h2>
           <button
             onClick={() => setShowCreateForm(false)}
-            className="btn btn-outline"
+            className="btn btn-ghost btn-sm"
           >
             Cancelar
           </button>
         </div>
-        
-        <CreateIdeaForm 
+        <CreateIdeaForm
           onSuccess={handleIdeaCreated}
           onCancel={() => setShowCreateForm(false)}
         />
@@ -59,120 +56,97 @@ export default function IdeasManager({ onNext }: IdeasManagerProps) {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl text-stone-900 flex items-center gap-3">
-          <Lightbulb className="w-8 h-8 text-yellow-500" />
-          Gestión de Ideas (Bird in Hand)
-        </h2>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Nueva Idea
-        </button>
+    <div className="space-y-6">
+      {/* AI Generator */}
+      <AIIdeaCreator />
+
+      {/* Divider */}
+      <div className="relative flex items-center">
+        <div className="flex-1 border-t border-gray-200" />
+        <span className="px-3 text-xs text-gray-400 uppercase tracking-wider">o selecciona una idea existente</span>
+        <div className="flex-1 border-t border-gray-200" />
       </div>
 
-      <div className="bg-white rounded-lg border border-stone-200 p-6">
-        {ideas.length === 0 ? (
-          <div className="text-center py-12">
-            <Lightbulb className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-            <h3 className="text-lg text-stone-600 mb-2">No hay ideas todavía</h3>
-            <p className="text-stone-500 mb-6">
-              Crea tu primera idea para comenzar el análisis efectual
+      {/* Ideas list */}
+      {ideas.length === 0 ? (
+        <div className="border border-dashed border-gray-300 rounded-lg py-12 text-center">
+          <p className="text-sm text-gray-400 mb-4">No hay ideas todavia</p>
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="btn btn-outline btn-sm"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Crear manualmente
+          </button>
+        </div>
+      ) : (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">
+              {ideas.length} {ideas.length === 1 ? 'idea' : 'ideas'}
             </p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="btn btn-primary flex items-center gap-2 mx-auto"
+              className="btn btn-ghost btn-sm"
             >
-              <Plus className="w-4 h-4" />
-              Crear Primera Idea
+              <Plus className="w-4 h-4 mr-1" />
+              Nueva
             </button>
           </div>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-stone-600 mb-4">
-              Selecciona una idea para continuar con el análisis efectual:
-            </p>
-            
-            {ideas.map((idea) => (
-              <div
-                key={idea.id}
-                className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
-                  currentIdea?.id === idea.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-stone-200 hover:border-stone-300'
-                }`}
-                onClick={() => handleSelectIdea(idea)}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-stone-900 mb-2">
+
+          <div className="border border-gray-200 rounded-lg divide-y divide-gray-200 bg-white">
+            {ideas.map((idea) => {
+              const isSelected = currentIdea?.id === idea.id
+
+              return (
+                <div
+                  key={idea.id}
+                  className={`flex items-center px-5 py-4 cursor-pointer transition-colors group ${
+                    isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleSelectIdea(idea)}
+                >
+                  {/* Selection indicator */}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 transition-colors ${
+                    isSelected
+                      ? 'border-primary-600 bg-primary-600'
+                      : 'border-gray-300 group-hover:border-gray-400'
+                  }`}>
+                    {isSelected && <Check className="h-3 w-3 text-white" />}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-gray-900 truncate">
                       {idea.title}
                     </h3>
-                    <p className="text-stone-600 text-sm mb-3">
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">
                       {idea.description}
                     </p>
-                    
-                    <div className="flex items-center gap-4 text-xs">
-                      <span className="flex items-center gap-1">
-                        <span className="font-medium">Mercado:</span>
-                        <span className={`px-2 py-1 rounded ${
-                          idea.market_potential === 'High' ? 'bg-green-100 text-green-800' :
-                          idea.market_potential === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {idea.market_potential}
-                        </span>
-                      </span>
-                      
-                      <span className="flex items-center gap-1">
-                        <span className="font-medium">Complejidad:</span>
-                        <span className={`px-2 py-1 rounded ${
-                          idea.implementation_complexity === 'Low' ? 'bg-green-100 text-green-800' :
-                          idea.implementation_complexity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {idea.implementation_complexity}
-                        </span>
-                      </span>
-                      
-                      <span className="flex items-center gap-1">
-                        <span className="font-medium">Alineación:</span>
-                        <span className="text-stone-700">
-                          {idea.alignment_score}%
-                        </span>
-                      </span>
-                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2 ml-4">
-                    {currentIdea?.id === idea.id && (
-                      <span className="text-blue-600 text-sm font-medium">
-                        Seleccionada
-                      </span>
-                    )}
-                    <ArrowRight className="w-5 h-5 text-stone-400" />
+
+                  {/* Badges */}
+                  <div className="hidden sm:flex items-center gap-2 ml-4">
+                    <span className={`badge text-xs ${
+                      idea.market_potential === 'High' ? 'badge-success' :
+                      idea.market_potential === 'Medium' ? 'badge-warning' :
+                      'badge-error'
+                    }`}>
+                      {idea.market_potential}
+                    </span>
+                    <span className="text-xs text-gray-400 tabular-nums">
+                      {idea.alignment_score}%
+                    </span>
                   </div>
+
+                  <ArrowRight className="h-4 w-4 text-gray-300 ml-3 flex-shrink-0" />
                 </div>
-              </div>
-            ))}
-            
-            {currentIdea && (
-              <div className="pt-4 border-t border-stone-200">
-                <button
-                  onClick={onNext}
-                  className="btn btn-primary flex items-center gap-2 mx-auto"
-                >
-                  Continuar con "{currentIdea.title}"
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+              )
+            })}
           </div>
-        )}
-      </div>
+
+        </div>
+      )}
     </div>
   )
 }

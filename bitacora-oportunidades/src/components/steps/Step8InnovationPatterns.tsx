@@ -224,7 +224,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar con Patrones de Innovación</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar con Patrones de Innovación</p>
       </div>
     )
   }
@@ -237,49 +237,49 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">💡 Patrones de Innovación</h2>
-            <p className="text-stone-600">
-              Aplica patrones del Business Model Navigator para innovar tu modelo de negocio
+            <h2 className="text-2xl text-gray-900 mb-2">Patrones de Innovacion</h2>
+            <p className="text-gray-600">
+              Selecciona estrategias probadas para potenciar tu modelo
             </p>
           </div>
           <div className="flex items-center space-x-4">
             {saving && (
-              <span className="text-stone-500 text-sm flex items-center">
+              <span className="text-gray-500 text-sm flex items-center">
                 <Save size={16} className="mr-1" />
                 Guardando...
               </span>
             )}
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{Math.round(completionPercentage)}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{Math.round(completionPercentage)}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
-            className="h-2 bg-blue-500 rounded transition-all duration-300"
+            className="h-2 bg-primary-500 rounded transition-all duration-300"
             style={{ width: `${completionPercentage}%` }}
           />
         </div>
-        <p className="text-xs text-stone-600 mt-1">Objetivo: Al menos 3 patrones aplicados</p>
+        <p className="text-xs text-gray-600 mt-1">Recomendamos aplicar al menos 3 patrones</p>
       </div>
 
       {/* Suggested Patterns */}
       {patterns.length === 0 && (
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-8">
-          <h3 className="text-lg font-semibold text-blue-900 mb-4">
-            🎯 Patrones Sugeridos para tu Idea
+        <div className="bg-primary-50 p-6 rounded-lg border border-primary-200 mb-8">
+          <h3 className="text-lg font-semibold text-primary-900 mb-4">
+            Patrones Sugeridos para tu Idea
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {getSuggestedPatterns().map((pattern, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg border border-blue-200">
-                <h4 className="font-medium text-blue-900 mb-2">{pattern.name}</h4>
-                <p className="text-sm text-blue-700 mb-3">{pattern.description}</p>
+              <div key={index} className="bg-white p-4 rounded-lg border border-primary-200">
+                <h4 className="font-medium text-primary-900 mb-2">{pattern.name}</h4>
+                <p className="text-sm text-primary-700 mb-3">{pattern.description}</p>
                 <button
                   onClick={() => addPatternFromLibrary(pattern)}
-                  className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
+                  className="text-xs bg-primary-600 text-white px-3 py-1 rounded hover:bg-primary-700 transition-colors"
                 >
                   Aplicar Patrón
                 </button>
@@ -297,12 +297,12 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
             className={`p-6 rounded-lg border-2 ${
               pattern.is_primary
                 ? 'border-yellow-400 bg-yellow-50'
-                : 'border-stone-300 bg-white'
+                : 'border-gray-300 bg-white'
             }`}
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center">
-                <h3 className="font-semibold text-stone-900">{pattern.pattern_name}</h3>
+                <h3 className="font-semibold text-gray-900">{pattern.pattern_name}</h3>
                 {pattern.is_primary && (
                   <Star size={16} className="ml-2 text-yellow-500 fill-current" />
                 )}
@@ -313,7 +313,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
                   className={`p-1 rounded transition-colors ${
                     pattern.is_primary
                       ? 'text-yellow-600 hover:text-yellow-700'
-                      : 'text-stone-400 hover:text-yellow-600'
+                      : 'text-gray-400 hover:text-yellow-600'
                   }`}
                   title="Marcar como patrón principal"
                 >
@@ -321,14 +321,14 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
                 </button>
                 <button
                   onClick={() => setEditingPattern(pattern)}
-                  className="p-1 text-stone-400 hover:text-blue-600 rounded transition-colors"
+                  className="p-1 text-gray-400 hover:text-primary-600 rounded transition-colors"
                   title="Editar patrón"
                 >
                   <Lightbulb size={16} />
                 </button>
                 <button
                   onClick={() => deletePattern(pattern.id)}
-                  className="p-1 text-stone-400 hover:text-red-600 rounded transition-colors"
+                  className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
                   title="Eliminar patrón"
                 >
                   <Trash2 size={16} />
@@ -338,18 +338,18 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
 
             <div className="space-y-3">
               <div>
-                <h4 className="text-sm font-medium text-stone-700 mb-1">Descripción</h4>
-                <p className="text-sm text-stone-600">{pattern.pattern_description || 'Sin descripción'}</p>
+                <h4 className="text-sm font-medium text-gray-700 mb-1">Descripción</h4>
+                <p className="text-sm text-gray-600">{pattern.pattern_description || 'Sin descripción'}</p>
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-stone-700 mb-1">Justificación</h4>
-                <p className="text-sm text-stone-600">{pattern.justification || 'Sin justificación'}</p>
+                <h4 className="text-sm font-medium text-gray-700 mb-1">Justificación</h4>
+                <p className="text-sm text-gray-600">{pattern.justification || 'Sin justificación'}</p>
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-stone-700 mb-1">Impacto Esperado</h4>
-                <p className="text-sm text-stone-600">{pattern.expected_impact || 'Sin impacto definido'}</p>
+                <h4 className="text-sm font-medium text-gray-700 mb-1">Impacto Esperado</h4>
+                <p className="text-sm text-gray-600">{pattern.expected_impact || 'Sin impacto definido'}</p>
               </div>
             </div>
           </div>
@@ -387,12 +387,12 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-stone-900">
+                <h3 className="text-xl font-semibold text-gray-900">
                   Biblioteca de Patrones de Innovación
                 </h3>
                 <button
                   onClick={() => setShowLibrary(false)}
-                  className="text-stone-400 hover:text-stone-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   ✕
                 </button>
@@ -402,13 +402,13 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {PATTERN_LIBRARY.map((pattern, index) => (
-                  <div key={index} className="border border-stone-300 rounded-lg p-4">
-                    <h4 className="font-semibold text-stone-900 mb-2">{pattern.name}</h4>
-                    <p className="text-sm text-stone-600 mb-3">{pattern.description}</p>
+                  <div key={index} className="border border-gray-300 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-2">{pattern.name}</h4>
+                    <p className="text-sm text-gray-600 mb-3">{pattern.description}</p>
                     
                     <div className="mb-3">
-                      <span className="text-xs font-medium text-stone-700">Ejemplo: </span>
-                      <span className="text-xs text-stone-600">{pattern.example}</span>
+                      <span className="text-xs font-medium text-gray-700">Ejemplo: </span>
+                      <span className="text-xs text-gray-600">{pattern.example}</span>
                     </div>
                     
                     <div className="mb-4">
@@ -435,14 +435,14 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
-              <h3 className="text-xl font-semibold text-stone-900">
+              <h3 className="text-xl font-semibold text-gray-900">
                 {editingPattern.id ? 'Editar Patrón' : 'Nuevo Patrón'}
               </h3>
             </div>
             
             <div className="p-6 space-y-6">
               <div>
-                <label className="block text-stone-700 font-medium mb-2">
+                <label className="block text-gray-700 font-medium mb-2">
                   Nombre del Patrón *
                 </label>
                 <input
@@ -458,7 +458,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
               </div>
               
               <div>
-                <label className="block text-stone-700 font-medium mb-2">
+                <label className="block text-gray-700 font-medium mb-2">
                   Descripción del Patrón
                 </label>
                 <textarea
@@ -474,7 +474,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
               </div>
               
               <div>
-                <label className="block text-stone-700 font-medium mb-2">
+                <label className="block text-gray-700 font-medium mb-2">
                   Justificación *
                 </label>
                 <textarea
@@ -490,7 +490,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
               </div>
               
               <div>
-                <label className="block text-stone-700 font-medium mb-2">
+                <label className="block text-gray-700 font-medium mb-2">
                   Impacto Esperado *
                 </label>
                 <textarea
@@ -516,7 +516,7 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
                   } : null)}
                   className="mr-2"
                 />
-                <label htmlFor="is_primary" className="text-stone-700">
+                <label htmlFor="is_primary" className="text-gray-700">
                   Marcar como patrón principal
                 </label>
               </div>
@@ -545,20 +545,12 @@ export default function Step8InnovationPatterns({ onNext }: Props) {
       {patterns.length < 3 && (
         <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-8">
           <p className="text-yellow-800 text-sm">
-            📋 <strong>Requisito:</strong> Aplica al menos 3 patrones de innovación para completar este paso.
-            Actualmente tienes {patterns.length} de 3 requeridos.
+            <strong>Recomendacion:</strong> Aplica al menos 3 patrones de innovacion para completar este paso.
+            Actualmente tienes {patterns.length} de 3.
           </p>
         </div>
       )}
 
-      {/* Navigation */}
-      {onNext && patterns.length >= 3 && (
-        <div className="flex justify-end">
-          <button onClick={onNext} className="btn btn-primary">
-            Continuar al siguiente paso →
-          </button>
-        </div>
-      )}
     </div>
   )
 }

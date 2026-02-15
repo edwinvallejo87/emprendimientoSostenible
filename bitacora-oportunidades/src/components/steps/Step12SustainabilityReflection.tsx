@@ -16,39 +16,27 @@ interface Props {
 const REFLECTION_PROMPTS = [
   {
     key: 'social_impact_balance',
-    title: '⚖️ Equilibrio de Impactos',
-    question: '¿Cómo tu modelo equilibra impacto social, ambiental y económico?',
-    placeholder: 'Explica cómo tu modelo de negocio integra los tres pilares de la sostenibilidad. Describe específicamente cómo el éxito financiero está alineado con el impacto social y ambiental positivo...',
-    minLength: 300,
-    tips: [
-      'Conecta beneficios sociales/ambientales con flujos de ingresos',
-      'Explica cómo los costos de sostenibilidad se justifican',
-      'Describe el círculo virtuoso entre rentabilidad e impacto'
-    ]
+    title: 'Triple Impacto: Social, Ambiental y Economico',
+    question: 'Como genera tu negocio beneficios sociales y ambientales, ademas de economicos?',
+    placeholder: 'Explica como tu negocio genera valor social y ambiental ademas de ingresos...',
+    minLength: 100,
+    tip: 'Conecta los beneficios sociales y ambientales con tus fuentes de ingresos.'
   },
   {
     key: 'sustainability_decisions',
-    title: '🎯 Decisiones Sostenibles',
-    question: '¿Qué decisiones específicas lo hacen sostenible?',
-    placeholder: 'Detalla las decisiones de diseño, operación y estrategia que hacen que tu modelo sea inherentemente sostenible. Incluye elecciones de materiales, procesos, alianzas, etc...',
-    minLength: 250,
-    tips: [
-      'Menciona decisiones de producto/servicio sostenibles',
-      'Incluye elecciones de proveedores y aliados',
-      'Explica procesos y operaciones responsables'
-    ]
+    title: 'Decisiones Clave de Sostenibilidad',
+    question: 'Que decisiones concretas tomaste para ser sostenible?',
+    placeholder: 'Describe las decisiones de diseño, operacion y estrategia que hacen tu modelo sostenible...',
+    minLength: 100,
+    tip: 'Piensa en materiales, proveedores, procesos y alianzas que elegiste.'
   },
   {
     key: 'scaling_strategy',
-    title: '📈 Escalabilidad con Propósito',
-    question: '¿Cómo puede escalar sin perder su propósito?',
-    placeholder: 'Describe tu estrategia para crecer manteniendo los valores y el impacto sostenible. ¿Cómo evitarás la "dilución del propósito" al escalar?...',
-    minLength: 250,
-    tips: [
-      'Define métricas de impacto que escalen con el negocio',
-      'Explica sistemas para mantener cultura sostenible',
-      'Describe salvaguardas contra mission drift'
-    ]
+    title: 'Crecer sin Perder el Proposito',
+    question: 'Como planeas crecer sin sacrificar tu impacto positivo?',
+    placeholder: 'Describe tu estrategia para crecer manteniendo los valores y el impacto sostenible...',
+    minLength: 100,
+    tip: 'Define metricas de impacto que crezcan junto con el negocio.'
   }
 ]
 
@@ -353,7 +341,7 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
     const requiredFields = REFLECTION_PROMPTS.map(p => p.key)
     const filledFields = requiredFields.filter(field => {
       const value = reflection[field as keyof SustainabilityReflection]
-      return value && String(value).trim().length >= 200 // Minimum meaningful length
+      return value && String(value).trim().length >= 50 // Minimum meaningful length
     })
     
     // Bonus for AI reflection
@@ -368,7 +356,7 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar en la Reflexión Final</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar en la Reflexión Final</p>
       </div>
     )
   }
@@ -381,29 +369,29 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">🔁 Reflexión Final de Sostenibilidad</h2>
-            <p className="text-stone-600">
-              Reflexiona sobre cómo tu modelo equilibra impacto social, ambiental y económico
+            <h2 className="text-2xl text-gray-900 mb-2">Impacto Sostenible</h2>
+            <p className="text-gray-600">
+              Como tu negocio equilibra crecimiento con responsabilidad social y ambiental
             </p>
           </div>
           <div className="flex items-center space-x-4">
             {saving && (
-              <span className="text-stone-500 text-sm flex items-center">
+              <span className="text-gray-500 text-sm flex items-center">
                 <Save size={16} className="mr-1" />
                 Guardando...
               </span>
             )}
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{completion}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{completion}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
-            className="h-2 bg-teal-500 rounded transition-all duration-300"
+            className="h-2 bg-primary-500 rounded transition-all duration-300"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -411,9 +399,9 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
 
       <div className="space-y-8">
         {/* Context Summary */}
-        <div className="bg-teal-50 p-6 rounded-lg border border-teal-200">
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-teal-900">📊 Contexto de tu Modelo</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Datos Disponibles</h3>
             <button
               onClick={generateBasicReflections}
               disabled={generating}
@@ -427,43 +415,43 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               ) : (
                 <>
                   <Sparkles size={16} className="mr-2" />
-                  Completar campos básicos
+                  Generar borrador con IA
                 </>
               )}
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-white p-3 rounded border border-teal-200">
-              <h4 className="font-medium text-teal-800 mb-1">Canvas Sostenible</h4>
-              <p className="text-teal-700">
+            <div className="bg-white p-3 rounded border border-gray-200">
+              <h4 className="font-medium text-gray-800 mb-1">Canvas Sostenible</h4>
+              <p className="text-gray-700">
                 {contextData.canvas ? '✅ Completo' : '⏳ Pendiente'} - 14 bloques de modelo sostenible
               </p>
             </div>
-            <div className="bg-white p-3 rounded border border-teal-200">
-              <h4 className="font-medium text-teal-800 mb-1">Patrones de Innovación</h4>
-              <p className="text-teal-700">
+            <div className="bg-white p-3 rounded border border-gray-200">
+              <h4 className="font-medium text-gray-800 mb-1">Patrones de Innovación</h4>
+              <p className="text-gray-700">
                 {contextData.patterns?.length > 0 ? `✅ ${contextData.patterns.length} patrones` : '⏳ Pendiente'}
               </p>
             </div>
-            <div className="bg-white p-3 rounded border border-teal-200">
-              <h4 className="font-medium text-teal-800 mb-1">Ecosistema</h4>
-              <p className="text-teal-700">
+            <div className="bg-white p-3 rounded border border-gray-200">
+              <h4 className="font-medium text-gray-800 mb-1">Ecosistema</h4>
+              <p className="text-gray-700">
                 {contextData.ecosystem?.length > 0 ? `✅ ${contextData.ecosystem.length} actores` : '⏳ Pendiente'}
               </p>
             </div>
           </div>
-          <p className="text-sm text-teal-600 mt-3">
-            💡 Utiliza "Completar campos básicos" para generar automáticamente las tres reflexiones principales basadas en tu canvas sostenible y datos existentes.
+          <p className="text-sm text-gray-600 mt-3">
+            Usa "Generar borrador con IA" para crear un borrador automatico basado en tus datos existentes.
           </p>
         </div>
 
         {/* Reflection Prompts */}
         {REFLECTION_PROMPTS.map((prompt) => (
-          <div key={prompt.key} className="bg-white p-6 rounded-lg border border-stone-300">
-            <h3 className="text-lg font-semibold text-stone-900 mb-3">
+          <div key={prompt.key} className="bg-white p-6 rounded-lg border border-gray-300">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
               {prompt.title}
             </h3>
-            <p className="text-stone-700 mb-4 font-medium">{prompt.question}</p>
+            <p className="text-gray-700 mb-4 font-medium">{prompt.question}</p>
             
             <textarea
               value={String(reflection[prompt.key as keyof SustainabilityReflection] || '')}
@@ -473,37 +461,15 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               rows={6}
             />
             
-            {/* Tips */}
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-medium text-blue-900 mb-2">💡 Tips para una reflexión profunda:</h4>
-              <ul className="list-disc list-inside text-sm text-blue-800 space-y-1">
-                {prompt.tips.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-            
-            {/* Character count */}
-            <div className="flex justify-between items-center mt-3">
-              <span className="text-xs text-stone-600">
-                Mínimo recomendado: {prompt.minLength} caracteres
-              </span>
-              <span className={`text-xs ${
-                String(reflection[prompt.key as keyof SustainabilityReflection] || '').length >= prompt.minLength
-                  ? 'text-green-600' 
-                  : 'text-orange-600'
-              }`}>
-                {String(reflection[prompt.key as keyof SustainabilityReflection] || '').length} caracteres
-              </span>
-            </div>
+            <p className="text-xs text-gray-500 mt-2">{prompt.tip}</p>
           </div>
         ))}
 
         {/* AI Enhanced Reflection */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200">
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-purple-900">
-              🤖 Reflexión Integral Generada por IA
+            <h3 className="text-lg font-semibold text-gray-900">
+              Resumen IA de tu Impacto
             </h3>
             <button
               onClick={generateAIReflection}
@@ -528,19 +494,19 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
             value={reflection.ai_generated_reflection || ''}
             onChange={(e) => handleFieldChange('ai_generated_reflection', e.target.value)}
             placeholder="La IA generará una reflexión integral en formato académico basada en todos los módulos completados..."
-            className="w-full p-4 border border-purple-300 rounded-lg text-sm bg-white font-mono"
+            className="w-full p-4 border border-gray-300 rounded-lg text-sm bg-white font-mono"
             rows={12}
             readOnly={generating}
           />
           
           {!contextData.canvas && (
-            <p className="text-sm text-purple-700 mt-2">
+            <p className="text-sm text-gray-600 mt-2">
               💡 Completa el Canvas Sostenible y otros módulos para generar una reflexión más rica
             </p>
           )}
           
           {reflection.ai_generated_reflection && (
-            <div className="mt-4 text-xs text-purple-700">
+            <div className="mt-4 text-xs text-gray-600">
               ✨ Esta reflexión integra datos de todos los módulos completados en formato APA-friendly
             </div>
           )}
@@ -550,7 +516,7 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
         {completion < 80 && (
           <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
             <p className="text-yellow-800 text-sm">
-              📋 <strong>Completa las tres reflexiones:</strong> cada una debe tener al menos 200 caracteres para aportar valor académico.
+              Completa las tres reflexiones para continuar.
             </p>
           </div>
         )}
@@ -564,17 +530,12 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
               🎉 ¡Bitácora Completa!
             </h3>
             <p className="text-green-800 mb-4">
-              Has completado exitosamente los 13 pasos del análisis efectual y emprendimiento sostenible.
+              Has completado el analisis de tu idea.
             </p>
             
             <div className="flex flex-col items-center space-y-4 mb-4">
               <ExportButtons disabled={false} />
               
-              {onNext && (
-                <button onClick={onNext} className="btn btn-secondary">
-                  Continuar explorando →
-                </button>
-              )}
             </div>
             
             <div className="text-sm text-green-700 text-center">
@@ -584,14 +545,6 @@ export default function Step12SustainabilityReflection({ onNext }: Props) {
         </div>
       )}
       
-      {/* Navigation for incomplete reflection */}
-      {onNext && completion < 80 && (
-        <div className="flex justify-end mt-8">
-          <button onClick={onNext} className="btn btn-primary" disabled>
-            Completa la reflexión para continuar
-          </button>
-        </div>
-      )}
     </div>
   )
 }

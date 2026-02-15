@@ -80,16 +80,16 @@ export default function AIAnalysisPanel() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200 shadow-lg">
-      <div className="p-6 border-b border-blue-200">
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-blue-600 rounded-lg">
+            <div className="p-3 bg-primary-600 rounded-md">
               <Brain className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-blue-900">Análisis IA</h3>
-              <p className="text-blue-700">Evaluación inteligente de tu bitácora</p>
+              <h3 className="text-xl font-semibold text-gray-900">Análisis IA</h3>
+              <p className="text-gray-600">Evaluación inteligente de tu bitácora</p>
             </div>
           </div>
           
@@ -128,11 +128,11 @@ export default function AIAnalysisPanel() {
 
         {!analysis && !loading && !error && (
           <div className="text-center py-12">
-            <Brain className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-            <h4 className="text-xl font-semibold text-blue-900 mb-2">
+            <Brain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h4 className="text-xl font-semibold text-gray-900 mb-2">
               Análisis IA Disponible
             </h4>
-            <p className="text-blue-700 mb-6 max-w-md mx-auto">
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
               Genera un análisis inteligente de tu bitácora que incluye evaluación de viabilidad, 
               fortalezas, oportunidades y recomendaciones personalizadas.
             </p>
@@ -160,7 +160,7 @@ export default function AIAnalysisPanel() {
             {/* Overall Assessment */}
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <CheckCircle className="h-5 w-5 text-blue-600 mr-2" />
+                <CheckCircle className="h-5 w-5 text-primary-600 mr-2" />
                 Evaluación General
               </h4>
               <div className="prose prose-gray max-w-none">
@@ -204,16 +204,16 @@ export default function AIAnalysisPanel() {
             </div>
 
             {/* Opportunities */}
-            <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-              <h4 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+            <div className="bg-primary-50 rounded-lg p-6 border border-primary-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Target className="h-5 w-5 mr-2" />
                 Oportunidades
               </h4>
               <ul className="grid md:grid-cols-2 gap-2">
                 {analysis.opportunities.map((opportunity, i) => (
                   <li key={i} className="flex items-start">
-                    <Target className="h-4 w-4 text-blue-600 mt-1 mr-2 flex-shrink-0" />
-                    <span className="text-blue-800">{opportunity}</span>
+                    <Target className="h-4 w-4 text-primary-600 mt-1 mr-2 flex-shrink-0" />
+                    <span className="text-gray-800">{opportunity}</span>
                   </li>
                 ))}
               </ul>
@@ -229,16 +229,16 @@ export default function AIAnalysisPanel() {
             </div>
 
             {/* Recommendations */}
-            <div className="bg-purple-50 rounded-lg p-6 border border-purple-200">
-              <h4 className="text-lg font-semibold text-purple-900 mb-4 flex items-center">
+            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Lightbulb className="h-5 w-5 mr-2" />
                 Recomendaciones
               </h4>
               <ul className="space-y-3">
                 {analysis.recommendations.map((rec, i) => (
                   <li key={i} className="flex items-start">
-                    <Lightbulb className="h-4 w-4 text-purple-600 mt-1 mr-2 flex-shrink-0" />
-                    <span className="text-purple-800">{rec}</span>
+                    <Lightbulb className="h-4 w-4 text-gray-500 mt-1 mr-2 flex-shrink-0" />
+                    <span className="text-gray-700">{rec}</span>
                   </li>
                 ))}
               </ul>

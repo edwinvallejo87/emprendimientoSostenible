@@ -72,17 +72,17 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg border border-stone-200 p-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="card p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Título */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Título de la Idea *
           </label>
           <input
             {...register('title')}
             type="text"
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
             placeholder="Ej: App de gestión de inventarios para pequeños comercios"
           />
           {errors.title && (
@@ -92,13 +92,13 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Descripción */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Descripción *
           </label>
           <textarea
             {...register('description')}
             rows={3}
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
             placeholder="Describe tu idea de manera detallada..."
           />
           {errors.description && (
@@ -108,13 +108,13 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Mercado Objetivo */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Mercado Objetivo *
           </label>
           <input
             {...register('target_market')}
             type="text"
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
             placeholder="Ej: Pequeños comerciantes, restaurantes"
           />
           {errors.target_market && (
@@ -124,13 +124,13 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Propuesta de Valor */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Propuesta de Valor Única *
           </label>
           <input
             {...register('unique_value')}
             type="text"
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
             placeholder="¿Qué hace única tu idea?"
           />
           {errors.unique_value && (
@@ -140,12 +140,12 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Complejidad de Implementación */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Complejidad de Implementación
           </label>
           <select
             {...register('implementation_complexity')}
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           >
             <option value="Low">Baja</option>
             <option value="Medium">Media</option>
@@ -155,12 +155,12 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Potencial de Mercado */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Potencial de Mercado
           </label>
           <select
             {...register('market_potential')}
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           >
             <option value="Low">Bajo</option>
             <option value="Medium">Medio</option>
@@ -170,7 +170,7 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
 
         {/* Alineación con Medios */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Alineación con tus Medios (0-100)
           </label>
           <div className="flex items-center gap-4">
@@ -181,24 +181,24 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
               max="100"
               className="flex-1"
             />
-            <span className="text-lg font-semibold text-stone-700 min-w-[60px]">
+            <span className="text-lg font-semibold text-gray-700 min-w-[60px]">
               {alignmentScore}%
             </span>
           </div>
-          <p className="text-sm text-stone-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             ¿Qué tan bien se alinea esta idea con tus conocimientos, recursos y contactos?
           </p>
         </div>
 
         {/* Razonamiento */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Razonamiento *
           </label>
           <textarea
             {...register('reasoning')}
             rows={3}
-            className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
             placeholder="Explica por qué crees que esta idea es viable y está alineada contigo..."
           />
           {errors.reasoning && (
@@ -208,7 +208,7 @@ export default function CreateIdeaForm({ onSuccess, onCancel }: CreateIdeaFormPr
       </div>
 
       {/* Botones */}
-      <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-stone-200">
+      <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
         <button
           type="button"
           onClick={onCancel}

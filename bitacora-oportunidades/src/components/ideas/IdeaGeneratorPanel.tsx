@@ -26,8 +26,8 @@ export default function IdeaGeneratorPanel() {
   const { currentTeam, currentJournal, step1Data, createIdea, setCurrentIdea } = useJournalStore()
 
   const handleGenerateIdeas = async () => {
-    if (!currentTeam || !currentJournal || !step1Data || step1Data.length === 0) {
-      setError('Se requiere un equipo con una bitácora activa y medios personales definidos')
+    if (!currentJournal || !step1Data || step1Data.length === 0) {
+      setError('Se requiere una bitácora activa y medios personales definidos')
       return
     }
 
@@ -45,7 +45,7 @@ export default function IdeaGeneratorPanel() {
       }))
 
       const generatedResult = await generator.generateIdeas(
-        currentTeam.name,
+        'Mi Equipo',
         teamMembers,
         focusArea || undefined,
         ideaCount
@@ -116,59 +116,52 @@ export default function IdeaGeneratorPanel() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 shadow-lg">
-      <div className="p-6 border-b border-purple-200">
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-purple-600 rounded-lg">
+            <div className="p-3 bg-primary-600 rounded-md">
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-purple-900">Generador de Ideas IA</h3>
-              <p className="text-purple-700">Oportunidades basadas en metodología efectual</p>
+              <h3 className="text-xl font-semibold text-gray-900">Generador de Ideas IA</h3>
+              <p className="text-gray-600">Genera oportunidades basadas en tus recursos</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="p-6">
-        {!currentTeam && (
-          <div className="text-center py-8">
-            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <p className="text-yellow-800">Selecciona un equipo para generar ideas</p>
-          </div>
-        )}
-
-        {currentTeam && !currentJournal && (
+        {!currentJournal && (
           <div className="text-center py-8">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <p className="text-yellow-800">Selecciona una bitácora para generar ideas</p>
           </div>
         )}
 
-        {currentTeam && currentJournal && (!step1Data || step1Data.length === 0) && (
+        {currentJournal && (!step1Data || step1Data.length === 0) && (
           <div className="text-center py-8">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <p className="text-yellow-800">Completa el Paso 1 (Medios Personales) para generar ideas</p>
           </div>
         )}
 
-        {currentTeam && currentJournal && step1Data && step1Data.length > 0 && !result && !loading && (
+        {currentJournal && step1Data && step1Data.length > 0 && !result && !loading && (
           <div className="space-y-6">
             <div className="text-center py-8">
-              <Lightbulb className="h-16 w-16 text-purple-400 mx-auto mb-4" />
-              <h4 className="text-xl font-semibold text-purple-900 mb-2">
+              <Lightbulb className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h4 className="text-xl font-semibold text-gray-900 mb-2">
                 Genera Ideas de Oportunidades
               </h4>
-              <p className="text-purple-700 mb-6 max-w-2xl mx-auto">
+              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                 Basándose en los medios personales de tu equipo, la IA generará oportunidades 
                 emprendedoriales alineadas con metodología efectual.
               </p>
             </div>
 
             {/* Configuration */}
-            <div className="bg-white rounded-lg p-6 border border-purple-200 space-y-4">
-              <h5 className="font-semibold text-purple-900 mb-4">Configuración de Generación</h5>
+            <div className="bg-white rounded-lg p-6 border border-gray-200 space-y-4">
+              <h5 className="font-semibold text-gray-900 mb-4">Configuración de Generación</h5>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -179,7 +172,7 @@ export default function IdeaGeneratorPanel() {
                   value={focusArea}
                   onChange={(e) => setFocusArea(e.target.value)}
                   placeholder="ej: tecnología, sostenibilidad, salud, educación..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Deja vacío para ideas en cualquier sector
@@ -219,11 +212,11 @@ export default function IdeaGeneratorPanel() {
 
         {loading && (
           <div className="text-center py-12">
-            <Loader2 className="h-12 w-12 text-purple-600 mx-auto mb-4 animate-spin" />
-            <h4 className="text-lg font-semibold text-purple-900 mb-2">
+            <Loader2 className="h-12 w-12 text-primary-600 mx-auto mb-4 animate-spin" />
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
               Generando ideas...
             </h4>
-            <p className="text-purple-700">
+            <p className="text-gray-600">
               La IA está analizando los medios de tu equipo y generando oportunidades únicas
             </p>
           </div>
@@ -242,8 +235,8 @@ export default function IdeaGeneratorPanel() {
         {result && (
           <div className="space-y-8">
             {/* Team Analysis */}
-            <div className="bg-white rounded-lg p-6 border border-purple-200">
-              <h4 className="text-lg font-semibold text-purple-900 mb-3 flex items-center">
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                 <Users className="h-5 w-5 mr-2" />
                 Análisis del Equipo
               </h4>
@@ -254,7 +247,7 @@ export default function IdeaGeneratorPanel() {
                   <h5 className="font-medium text-gray-900 mb-2">Áreas recomendadas de enfoque:</h5>
                   <div className="flex flex-wrap gap-2">
                     {result.recommendedFocus.map((focus, i) => (
-                      <span key={i} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                      <span key={i} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-md text-sm">
                         {focus}
                       </span>
                     ))}
@@ -265,7 +258,7 @@ export default function IdeaGeneratorPanel() {
 
             {/* Generated Ideas */}
             <div className="space-y-6">
-              <h4 className="text-lg font-semibold text-purple-900 flex items-center">
+              <h4 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Lightbulb className="h-5 w-5 mr-2" />
                 Ideas Generadas ({result.ideas.length})
               </h4>

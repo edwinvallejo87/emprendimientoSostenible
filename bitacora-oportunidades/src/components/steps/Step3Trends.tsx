@@ -110,28 +110,28 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Tendencias (Crazy Quilt)</h1>
-          <p className="text-lg text-stone-600">
-            Identifica tendencias y posibles alianzas que apoyen tu idea. ¿Qué colaboraciones puedes tejer?
+          <h1 className="text-3xl text-gray-900 mb-3">Tendencias de Mercado</h1>
+          <p className="text-lg text-gray-600">
+            Que esta cambiando en tu industria?
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
           {saving && (
-            <div className="text-center py-2 text-stone-500 text-sm">
+            <div className="text-center py-2 text-gray-500 text-sm">
               Guardando...
             </div>
           )}
 
           {fields.map((field, index) => (
-            <div key={field.id} className="space-y-8 p-6 bg-white border border-stone-200 rounded-lg">
+            <div key={field.id} className="space-y-8 p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl text-stone-900">Tendencia {index + 1}</h2>
+                <h2 className="text-xl text-gray-900">Tendencia {index + 1}</h2>
                 {fields.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeTrend(index)}
-                    className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     title="Eliminar tendencia"
                   >
                     <Trash2 size={16} />
@@ -142,7 +142,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre de la tendencia *
+                    Tendencia *
                   </label>
                   <Controller
                     name={`trends.${index}.name`}
@@ -165,7 +165,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tipo de tendencia *
+                    Categoria *
                   </label>
                   <Controller
                     name={`trends.${index}.type`}
@@ -187,7 +187,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Descripción breve *
+                    En que consiste *
                   </label>
                   <Controller
                     name={`trends.${index}.brief`}
@@ -210,7 +210,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ejemplo específico *
+                    Ejemplo real *
                   </label>
                   <Controller
                     name={`trends.${index}.example`}
@@ -243,7 +243,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
                         {...field}
                         type="text"
                         className="input"
-                        placeholder="Ej: García, J. (2024). El futuro del trabajo remoto. Revista de Innovación, 15(3), 45-62."
+                        placeholder="Ej: McKinsey Report 2024, Statista.com"
                       />
                     )}
                   />
@@ -256,7 +256,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Comentarios adicionales (opcional)
+                    Tu analisis (opcional)
                   </label>
                   <Controller
                     name={`trends.${index}.comment`}
@@ -280,7 +280,7 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
             <button
               type="button"
               onClick={addTrend}
-              className="flex items-center space-x-2 px-6 py-3 border-2 border-dashed border-stone-300 text-stone-600 rounded-lg hover:border-stone-400 hover:text-stone-900 transition-colors"
+              className="flex items-center space-x-2 px-6 py-3 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg hover:border-gray-400 hover:text-gray-900 transition-colors"
             >
               <Plus size={20} />
               <span>Agregar nueva tendencia</span>
@@ -301,46 +301,12 @@ export default function Step3Trends({ onNext }: Step3TrendsProps) {
             disabled={!isValid || saving}
             className="btn btn-primary"
           >
-            {saving ? 'Guardando...' : 'Siguiente'}
+            {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
 
         </form>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 bg-orange-50 rounded-lg">
-            <h4 className="font-medium text-orange-900 mb-2">📋 Criterios de validación:</h4>
-            <ul className="text-sm text-orange-800 space-y-1">
-              <li>• Al menos 3 tendencias (puedes agregar más si necesitas)</li>
-              <li>• Cada tendencia debe tener nombre, tipo, descripción y ejemplo</li>
-              <li>• La fuente es opcional pero recomendada para mayor credibilidad</li>
-              <li>• Deben ser tendencias actuales y relevantes</li>
-            </ul>
-          </div>
-
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">💡 Tipos de tendencias:</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• <strong>Social:</strong> Cambios en comportamientos y valores</li>
-              <li>• <strong>Tecnológica:</strong> Innovaciones y avances técnicos</li>
-              <li>• <strong>Ambiental:</strong> Sostenibilidad y medio ambiente</li>
-              <li>• <strong>Cultural:</strong> Evolución de costumbres y tradiciones</li>
-              <li>• <strong>Consumo:</strong> Patrones de compra y preferencias</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="p-4 bg-green-50 rounded-lg">
-          <h4 className="font-medium text-green-900 mb-2">📚 Fuentes recomendadas:</h4>
-          <p className="text-sm text-green-800 mb-2">
-            Consulta fuentes confiables como revistas académicas, informes de consultoras reconocidas, 
-            estudios de organizaciones internacionales, etc.
-          </p>
-          <p className="text-sm text-green-700">
-            <strong>Ejemplo de formato APA:</strong> Autor, A. (Año). Título del artículo. 
-            <em>Nombre de la revista</em>, volumen(número), páginas.
-          </p>
-        </div>
       </div>
     </div>
   )

@@ -202,15 +202,15 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Usuario y Valor (Pilot-in-the-Plane)</h1>
-          <p className="text-lg text-stone-600">
-            Define tu usuario y propuesta de valor. ¿Cómo vas a controlar el futuro en lugar de predecirlo?
+          <h1 className="text-3xl text-gray-900 mb-3">Tu Cliente y Propuesta de Valor</h1>
+          <p className="text-lg text-gray-600">
+            Define quien es tu cliente ideal y que valor unico le ofreces
           </p>
         </div>
 
         <form onSubmit={(e) => { e.preventDefault(); handleFormSubmit(); }} className="space-y-16">
           {saving && (
-            <div className="text-center py-2 text-stone-500 text-sm">
+            <div className="text-center py-2 text-gray-500 text-sm">
               Guardando...
             </div>
           )}
@@ -218,13 +218,13 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
           {/* Buyer Persona Section */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full">
-                <Users className="h-5 w-5 text-blue-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-md">
+                <Users className="h-5 w-5 text-gray-500" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">Buyer Persona</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Cliente Ideal</h3>
                 <p className="text-sm text-gray-600">
-                  Perfil detallado de tu usuario objetivo
+                  Describe el perfil de la persona que compraria tu producto
                 </p>
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                 <div className="flex items-center space-x-2 mb-2">
                   {getStatusIcon(getBuyerFieldStatus('name'))}
                   <label className="block text-sm font-medium text-gray-700">
-                    Nombre del persona *
+                    Nombre ficticio *
                   </label>
                 </div>
                 <Controller
@@ -312,7 +312,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                 <div className="flex items-center space-x-2 mb-2">
                   {getStatusIcon(getBuyerFieldStatus('motivations'))}
                   <label className="block text-sm font-medium text-gray-700">
-                    Motivaciones *
+                    Que lo motiva? *
                   </label>
                 </div>
                 <Controller
@@ -337,7 +337,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                 <div className="flex items-center space-x-2 mb-2">
                   {getStatusIcon(getBuyerFieldStatus('pains'))}
                   <label className="block text-sm font-medium text-gray-700">
-                    Frustraciones *
+                    Que lo frustra? *
                   </label>
                 </div>
                 <Controller
@@ -362,7 +362,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                 <div className="flex items-center space-x-2 mb-2">
                   {getStatusIcon(getBuyerFieldStatus('needs'))}
                   <label className="block text-sm font-medium text-gray-700">
-                    Necesidades *
+                    Que necesita? *
                   </label>
                 </div>
                 <Controller
@@ -388,11 +388,11 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
           {/* Value Proposition Canvas Section */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-full">
-                <Target className="h-5 w-5 text-green-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-md">
+                <Target className="h-5 w-5 text-gray-500" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">Canvas de Propuesta de Valor</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Propuesta de Valor</h3>
                 <p className="text-sm text-gray-600">
                   Estructura tu propuesta de valor en ambos lados del canvas
                 </p>
@@ -402,15 +402,15 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Customer Side */}
               <div className="space-y-6">
-                <h4 className="text-lg font-semibold text-blue-900 border-b border-blue-200 pb-2">
-                  👤 Perfil del Cliente
+                <h4 className="text-lg font-semibold text-gray-900 border-b border-primary-200 pb-2">
+                  Tu Cliente
                 </h4>
 
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('customer_jobs'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Trabajos del Cliente *
+                      Que intenta lograr? *
                     </label>
                   </div>
                   <Controller
@@ -435,7 +435,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('customer_pains'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Dolores del Cliente *
+                      Que problemas tiene? *
                     </label>
                   </div>
                   <Controller
@@ -460,7 +460,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('customer_gains'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Alegrías del Cliente *
+                      Que resultados desea? *
                     </label>
                   </div>
                   <Controller
@@ -485,14 +485,14 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
               {/* Value Proposition Side */}
               <div className="space-y-6">
                 <h4 className="text-lg font-semibold text-green-900 border-b border-green-200 pb-2">
-                  💎 Propuesta de Valor
+                  Tu Oferta
                 </h4>
 
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('products_services'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Productos y Servicios *
+                      Tu solucion *
                     </label>
                   </div>
                   <Controller
@@ -517,7 +517,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('pain_relievers'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Aliviadores de Dolor *
+                      Como resuelves sus problemas? *
                     </label>
                   </div>
                   <Controller
@@ -542,7 +542,7 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
                   <div className="flex items-center space-x-2 mb-2">
                     {getStatusIcon(getVPFieldStatus('gain_creators'))}
                     <label className="block text-sm font-medium text-gray-700">
-                      Generadores de Alegría *
+                      Como lo haces feliz? *
                     </label>
                   </div>
                   <Controller
@@ -572,39 +572,12 @@ export default function Step5UserValue({ onNext }: Step5UserValueProps) {
               disabled={!isBuyerValid || !isVPValid || saving}
               className="btn btn-primary"
             >
-              {saving ? 'Guardando...' : (onNext ? 'Continuar →' : 'Guardar')}
+              {saving ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
 
-          {isBuyerValid && isVPValid && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800 text-center">
-                <strong>🌱 Siguiente:</strong> Continúa con los módulos de emprendimiento sostenible (pasos 8-13)
-              </p>
-            </div>
-          )}
 
         </form>
-
-        <div className="mt-6 p-4 bg-orange-50 rounded-lg">
-          <h4 className="font-medium text-orange-900 mb-2">📋 Criterios de validación:</h4>
-          <ul className="text-sm text-orange-800 space-y-1">
-            <li>• Buyer Persona completo (todos los campos requeridos)</li>
-            <li>• Canvas de Propuesta de Valor completo (6 bloques llenos)</li>
-            <li>• Coherencia entre el buyer persona y el canvas</li>
-            <li>• Conexión clara con la idea seleccionada del paso anterior</li>
-          </ul>
-        </div>
-
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">💡 Consejos para el canvas:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Enfócate en los aspectos más importantes y específicos</li>
-            <li>• Usa el lenguaje que usaría tu cliente</li>
-            <li>• Sé concreto y evita generalidades</li>
-            <li>• Asegúrate de que hay match entre ambos lados del canvas</li>
-          </ul>
-        </div>
 
         {/* AI Analysis Panel - Show when effectual analysis (steps 1-5) is complete */}
         {overallProgress.effectualProgress === 100 && (

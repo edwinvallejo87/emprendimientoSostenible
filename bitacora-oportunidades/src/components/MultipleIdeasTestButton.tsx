@@ -49,23 +49,23 @@ export default function MultipleIdeasTestButton() {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200 shadow-sm">
+    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
       <div className="text-center">
-        <h3 className="text-purple-900 font-semibold mb-2 text-lg">🎯 Portfolio de Ideas</h3>
-        <p className="text-purple-800 text-sm mb-4">
+        <h3 className="text-gray-900 font-semibold mb-2 text-lg">Portfolio de Ideas</h3>
+        <p className="text-gray-600 text-sm mb-4">
           Crea una bitácora completa con múltiples ideas para probar la nueva estructura
         </p>
-        <div className="text-xs text-purple-700 mb-4 space-y-1">
-          <p>✨ <strong>Idea 1:</strong> EcoScore App (Sostenibilidad)</p>
-          <p>🚁 <strong>Idea 2:</strong> AgriDrone (AgriTech)</p> 
-          <p>🎓 <strong>Idea 3:</strong> EduConnect (EdTech)</p>
-          <p className="text-purple-600 font-medium mt-2">Cada una con medios, problema y tendencias específicas</p>
+        <div className="text-xs text-gray-600 mb-4 space-y-1">
+          <p><strong>Idea 1:</strong> EcoScore App (Sostenibilidad)</p>
+          <p><strong>Idea 2:</strong> AgriDrone (AgriTech)</p>
+          <p><strong>Idea 3:</strong> EduConnect (EdTech)</p>
+          <p className="text-gray-500 font-medium mt-2">Cada una con medios, problema y tendencias específicas</p>
         </div>
-        
+
         <button
           onClick={handleCreateMultipleIdeas}
           disabled={loading}
-          className="btn btn-primary text-base px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-transform bg-purple-600 hover:bg-purple-700"
+          className="btn btn-primary"
         >
           {loading ? '🚀 Creando Portfolio...' : '🎯 Crear Portfolio de Ideas'}
         </button>

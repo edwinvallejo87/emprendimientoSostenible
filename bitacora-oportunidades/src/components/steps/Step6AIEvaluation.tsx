@@ -67,11 +67,11 @@ export default function Step6AIEvaluation({ onNext }: Step6AIEvaluationProps) {
                   role: 'system',
                   content: `Eres un consultor senior en emprendimiento con PhD en Administración de Empresas, MBA de Stanford, y 20+ años de experiencia evaluando startups para fondos de inversión de serie A/B. Has evaluado más de 1000 emprendimientos y tienes expertise específico en:
 
-🎯 METODOLOGÍA EFECTUAL (Sarasvathy): Bird-in-Hand, Affordable Loss, Crazy Quilt, Lemonade, Pilot-in-the-Plane
-📊 ANÁLISIS CUANTITATIVO: Market sizing, unit economics, financial modeling, risk assessment
-🧠 EVALUACIÓN DE EQUIPOS: Team dynamics, capability gaps, founder-market fit
-💰 DUE DILIGENCE: Competitive analysis, IP assessment, regulatory risks
-🚀 STRATEGY: Go-to-market, scaling strategies, exit planning
+- Equipo y Recursos: Evaluacion de capacidades, gaps, founder-market fit
+- Evaluacion de Riesgo: Market sizing, unit economics, financial modeling, risk assessment
+- Tendencias de Mercado: Competitive analysis, market timing, trends
+- Analisis Estrategico: SWOT, adaptabilidad, contingencias
+- Cliente y Valor: Go-to-market, scaling strategies, product-market fit
 
 Tu misión es realizar un análisis EXHAUSTIVO, CRÍTICO y CUANTITATIVO que un inversor profesional usaría para decidir si invertir $500K-2M. Debes ser:
 
@@ -96,7 +96,7 @@ Evalúa con la mentalidad de: "¿Recomendaría a mi LP más exigente que inviert
 Título: ${currentIdea.title}
 Descripción: ${currentIdea.description}
 
-**ANÁLISIS BIRD-IN-HAND (Medios Disponibles):**
+**EQUIPO Y RECURSOS (Medios Disponibles):**
 ${step1Data.map((member, i) => `
 MIEMBRO ${i + 1}:
 • Identidad profesional: ${member.who_i_am || 'NO ESPECIFICADO - RED FLAG'}
@@ -105,14 +105,14 @@ MIEMBRO ${i + 1}:
 • Recursos materiales: ${member.what_i_have || 'NO ESPECIFICADO - RED FLAG'}
 `).join('\n')}
 
-**ANÁLISIS AFFORDABLE LOSS (Problema/Riesgo):**
+**EVALUACION DE RIESGO (Problema/Riesgo):**
 • Título del problema: ${step2Data?.title || 'NO DEFINIDO - CRITICAL GAP'}
 • Descripción detallada: ${step2Data?.description || 'NO DEFINIDO - CRITICAL GAP'}
 • Población afectada: ${step2Data?.affected || 'NO DEFINIDO - CRITICAL GAP'}
 • Relevancia económica/social: ${step2Data?.relevance || 'NO DEFINIDO - CRITICAL GAP'}
 • Conexión con medios del equipo: ${step2Data?.link_to_means || 'NO DEFINIDO - CRITICAL GAP'}
 
-**ANÁLISIS CRAZY QUILT (Tendencias/Alianzas):**
+**TENDENCIAS DE MERCADO (Tendencias/Alianzas):**
 Total de tendencias identificadas: ${step3Data?.length || 0}
 ${step3Data?.map((trend, i) => `
 TENDENCIA ${i + 1}: "${trend.name}" [Tipo: ${trend.type}]
@@ -122,7 +122,7 @@ TENDENCIA ${i + 1}: "${trend.name}" [Tipo: ${trend.type}]
 • Comentario estratégico: ${trend.comment || 'Sin análisis estratégico'}
 `).join('\n')}
 
-**ANÁLISIS LEMONADE (Evaluación/Pivoteo):**
+**ANALISIS ESTRATEGICO (Evaluación/Pivoteo):**
 Evaluación SWOT realizada: ${step4EvaluationData ? 'SÍ' : 'NO - CRITICAL GAP'}
 ${step4EvaluationData ? `
 • Fortalezas identificadas: ${step4EvaluationData.strengths?.length || 0}
@@ -131,7 +131,7 @@ ${step4EvaluationData ? `
 • Amenazas identificadas: ${step4EvaluationData.threats?.length || 0}
 ` : 'DATOS DE EVALUACIÓN FALTANTES - IMPOSIBLE EVALUAR CAPACIDAD DE ADAPTACIÓN'}
 
-**ANÁLISIS PILOT-IN-THE-PLANE (Usuario/Valor):**
+**CLIENTE Y VALOR (Usuario/Valor):**
 
 BUYER PERSONA:
 ${step5BuyerData ? `
@@ -283,37 +283,37 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
         risk_score: Math.floor(Math.random() * 30) + 40, // 40-69
         overall_recommendation: ['PROCEED_WITH_CAUTION', 'HIGHLY_RECOMMENDED'][Math.floor(Math.random() * 2)],
         key_insights: [
-          `ANÁLISIS BIRD-IN-HAND: Los medios personales identificados (${step1Data?.[0]?.who_i_am ? 'perfil profesional sólido' : 'perfil por definir'}, ${step1Data?.[0]?.what_i_know ? 'conocimientos especializados' : 'conocimientos básicos'}) proporcionan una base ${step1Data?.[0]?.who_i_know ? 'robusta' : 'limitada'} para la ejecución. La alineación entre recursos disponibles y requerimientos del proyecto es ${Math.random() > 0.5 ? 'óptima' : 'moderada'}.`,
+          `EQUIPO Y RECURSOS: Los medios personales identificados (${step1Data?.[0]?.who_i_am ? 'perfil profesional sólido' : 'perfil por definir'}, ${step1Data?.[0]?.what_i_know ? 'conocimientos especializados' : 'conocimientos básicos'}) proporcionan una base ${step1Data?.[0]?.who_i_know ? 'robusta' : 'limitada'} para la ejecución. La alineación entre recursos disponibles y requerimientos del proyecto es ${Math.random() > 0.5 ? 'óptima' : 'moderada'}.`,
           
-          `EVALUACIÓN AFFORDABLE LOSS: El problema identificado "${step2Data?.title || 'sin definir'}" presenta un nivel de riesgo ${step2Data?.relevance?.length > 300 ? 'calculado y manejable' : 'que requiere mayor análisis'}. La inversión emocional, temporal y financiera implícita sugiere un límite de pérdida aceptable de ${Math.floor(Math.random() * 50) + 20}% de los recursos totales.`,
+          `EVALUACION DE RIESGO: El problema identificado "${step2Data?.title || 'sin definir'}" presenta un nivel de riesgo ${step2Data?.relevance?.length > 300 ? 'calculado y manejable' : 'que requiere mayor análisis'}. La inversión emocional, temporal y financiera implícita sugiere un límite de pérdida aceptable de ${Math.floor(Math.random() * 50) + 20}% de los recursos totales.`,
           
-          `ANÁLISIS CRAZY QUILT: Las tendencias identificadas (${step3Data?.length || 0} tendencias analizadas) revelan oportunidades de partnership con ${Math.floor(Math.random() * 3) + 2} sectores complementarios. La capacidad de crear alianzas estratégicas es ${step1Data?.[0]?.who_i_know ? 'alta debido a la red de contactos' : 'limitada, requiere expansión de red'}.`,
+          `TENDENCIAS DE MERCADO: Las tendencias identificadas (${step3Data?.length || 0} tendencias analizadas) revelan oportunidades de partnership con ${Math.floor(Math.random() * 3) + 2} sectores complementarios. La capacidad de crear alianzas estratégicas es ${step1Data?.[0]?.who_i_know ? 'alta debido a la red de contactos' : 'limitada, requiere expansión de red'}.`,
           
-          `PRINCIPIO LEMONADE: La evaluación SWOT muestra ${step4EvaluationData?.strengths?.length || 0} fortalezas identificadas vs ${step4EvaluationData?.weaknesses?.length || 0} debilidades. La capacidad de transformar contingencias en oportunidades está valorada en ${Math.floor(Math.random() * 30) + 60}% basado en la experiencia previa y adaptabilidad del equipo.`,
+          `ANALISIS ESTRATEGICO: La evaluación SWOT muestra ${step4EvaluationData?.strengths?.length || 0} fortalezas identificadas vs ${step4EvaluationData?.weaknesses?.length || 0} debilidades. La capacidad de transformar contingencias en oportunidades está valorada en ${Math.floor(Math.random() * 30) + 60}% basado en la experiencia previa y adaptabilidad del equipo.`,
           
-          `PILOT-IN-THE-PLANE: El buyer persona definido (${step5BuyerData?.segment || 'sin segmentar'}) y la propuesta de valor (${step5VPData?.gains?.length || 0} beneficios identificados) indican un control del ${Math.floor(Math.random() * 25) + 65}% sobre las variables críticas del negocio. La capacidad de iteración y pivoteo es ${step5VPData?.pains?.length > 2 ? 'alta' : 'moderada'}.`
+          `CLIENTE Y VALOR: El buyer persona definido (${step5BuyerData?.segment || 'sin segmentar'}) y la propuesta de valor (${step5VPData?.gains?.length || 0} beneficios identificados) indican un control del ${Math.floor(Math.random() * 25) + 65}% sobre las variables críticas del negocio. La capacidad de iteración y pivoteo es ${step5VPData?.pains?.length > 2 ? 'alta' : 'moderada'}.`
         ],
         recommendations: [
-          `ESTRATEGIA BIRD-IN-HAND: Maximizar el uso de ${step1Data?.[0]?.what_i_have ? 'recursos materiales identificados' : 'recursos básicos disponibles'}. Priorizar actividades que apalanquen directamente ${step1Data?.[0]?.what_i_know ? 'el conocimiento especializado del equipo' : 'las competencias core existentes'}. Establecer métricas de utilización de recursos del 85%+.`,
+          `EQUIPO Y RECURSOS: Maximizar el uso de ${step1Data?.[0]?.what_i_have ? 'recursos materiales identificados' : 'recursos básicos disponibles'}. Priorizar actividades que apalanquen directamente ${step1Data?.[0]?.what_i_know ? 'el conocimiento especializado del equipo' : 'las competencias core existentes'}. Establecer métricas de utilización de recursos del 85%+.`,
           
-          `OPTIMIZACIÓN AFFORDABLE LOSS: Definir claramente el límite de inversión temporal (max. ${Math.floor(Math.random() * 6) + 6} meses), financiera (max. $${Math.floor(Math.random() * 50) + 25}K) y reputacional. Implementar gates de decisión cada ${Math.floor(Math.random() * 4) + 4} semanas para reevaluar viabilidad vs. pérdidas acumuladas.`,
+          `EVALUACION DE RIESGO: Definir claramente el límite de inversión temporal (max. ${Math.floor(Math.random() * 6) + 6} meses), financiera (max. $${Math.floor(Math.random() * 50) + 25}K) y reputacional. Implementar gates de decisión cada ${Math.floor(Math.random() * 4) + 4} semanas para reevaluar viabilidad vs. pérdidas acumuladas.`,
           
-          `DESARROLLO CRAZY QUILT: Identificar y contactar ${Math.floor(Math.random() * 3) + 3} partners potenciales en los próximos 30 días. Crear propuestas de valor específicas para cada stakeholder identificado. Establecer acuerdos de reciprocidad antes que contratos formales.`,
+          `TENDENCIAS DE MERCADO: Identificar y contactar ${Math.floor(Math.random() * 3) + 3} partners potenciales en los próximos 30 días. Crear propuestas de valor específicas para cada stakeholder identificado. Establecer acuerdos de reciprocidad antes que contratos formales.`,
           
-          `IMPLEMENTACIÓN LEMONADE: Crear un sistema de monitoreo de contingencias con ${Math.floor(Math.random() * 5) + 3} indicadores tempranos de cambio. Desarrollar ${Math.floor(Math.random() * 3) + 2} escenarios alternativos para cada riesgo identificado. Mantener ${Math.floor(Math.random() * 20) + 15}% del presupuesto como buffer para oportunidades imprevistas.`,
+          `ANALISIS ESTRATEGICO: Crear un sistema de monitoreo de contingencias con ${Math.floor(Math.random() * 5) + 3} indicadores tempranos de cambio. Desarrollar ${Math.floor(Math.random() * 3) + 2} escenarios alternativos para cada riesgo identificado. Mantener ${Math.floor(Math.random() * 20) + 15}% del presupuesto como buffer para oportunidades imprevistas.`,
           
-          `CONTROL PILOT-IN-THE-PLANE: Mantener control directo sobre ${step5VPData?.key_activities?.length || 2} actividades críticas. Evitar dependencias externas en más del ${Math.floor(Math.random() * 20) + 30}% de las operaciones core. Establecer ciclos de feedback de máximo ${Math.floor(Math.random() * 10) + 5} días con usuarios finales.`
+          `CLIENTE Y VALOR: Mantener control directo sobre ${step5VPData?.key_activities?.length || 2} actividades críticas. Evitar dependencias externas en más del ${Math.floor(Math.random() * 20) + 30}% de las operaciones core. Establecer ciclos de feedback de máximo ${Math.floor(Math.random() * 10) + 5} días con usuarios finales.`
         ],
         next_steps: [
-          `Semana 1-2: Validación Bird-in-Hand - Mapear exhaustivamente todos los recursos disponibles (${step1Data?.[0] ? 'ampliar análisis actual' : 'crear inventario completo'}). Identificar gaps críticos y recursos subutilizados. Establecer baseline de capacidades.`,
+          `Semana 1-2: Validación de Recursos - Mapear exhaustivamente todos los recursos disponibles (${step1Data?.[0] ? 'ampliar análisis actual' : 'crear inventario completo'}). Identificar gaps críticos y recursos subutilizados. Establecer baseline de capacidades.`,
           
-          `Semana 3-4: Definición Affordable Loss - Cuantificar límites específicos de pérdida en tiempo, dinero y reputación. Crear framework de decisión con triggers claros. Comunicar límites a stakeholders clave.`,
+          `Semana 3-4: Evaluación de Riesgo - Cuantificar límites específicos de pérdida en tiempo, dinero y reputación. Crear framework de decisión con triggers claros. Comunicar límites a stakeholders clave.`,
           
-          `Semana 5-8: Construcción Crazy Quilt - Ejecutar outreach sistemático a ${Math.floor(Math.random() * 5) + 5} partners potenciales. Crear primeras alianzas informales. Establecer métricas de valor compartido.`,
+          `Semana 5-8: Alianzas y Mercado - Ejecutar outreach sistemático a ${Math.floor(Math.random() * 5) + 5} partners potenciales. Crear primeras alianzas informales. Establecer métricas de valor compartido.`,
           
-          `Semana 9-12: Testing Lemonade - Implementar MVP con capacidad de pivoteo rápido. Crear ${Math.floor(Math.random() * 3) + 2} experimentos controlados para validar asunciones clave. Documentar learnings para iteración.`,
+          `Semana 9-12: Testing y Validación - Implementar MVP con capacidad de pivoteo rápido. Crear ${Math.floor(Math.random() * 3) + 2} experimentos controlados para validar asunciones clave. Documentar learnings para iteración.`,
           
-          `Semana 13-16: Consolidación Pilot-in-the-Plane - Analizar datos de validación y ajustar estrategia. Decidir escalamiento, pivot o terminación basado en evidencia acumulada. Preparar next phase o exit strategy.`
+          `Semana 13-16: Consolidación - Analizar datos de validación y ajustar estrategia. Decidir escalamiento, pivot o terminación basado en evidencia acumulada. Preparar next phase o exit strategy.`
         ]
       }
 
@@ -345,7 +345,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
       case 'NOT_RECOMMENDED':
         return 'bg-red-100 text-red-800 border border-red-200'
       default:
-        return 'bg-stone-100 text-stone-800 border border-stone-200'
+        return 'bg-gray-100 text-gray-800 border border-gray-200'
     }
   }
 
@@ -353,7 +353,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
     <div className="max-w-3xl mx-auto px-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-          Evaluación IA (Pilot-in-the-Plane)
+          Evaluacion con Inteligencia Artificial
         </h2>
         <p className="text-gray-600">
           Análisis de "{currentIdea.title}"
@@ -362,7 +362,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
 
       {!analysis ? (
         <>
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-white rounded-lg border border-gray-200">
             <div className="p-8 text-center">
               {loading ? (
                 <div className="flex flex-col items-center">
@@ -390,7 +390,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
           </div>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-700 font-medium">{error}</p>
             </div>
           )}
@@ -398,7 +398,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
       ) : (
         <div className="space-y-8">
           {/* AI Analysis Results Header */}
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -477,7 +477,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
           </div>
 
           {/* Recommendation Section */}
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">Dictamen</h3>
             </div>
@@ -493,7 +493,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
           {/* AI Insights Grid */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Key Insights */}
-            <div className="bg-white rounded-xl border border-gray-200">
+            <div className="bg-white rounded-lg border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">Insights Clave</h3>
               </div>
@@ -510,7 +510,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
             </div>
 
             {/* Recommendations */}
-            <div className="bg-white rounded-xl border border-gray-200">
+            <div className="bg-white rounded-lg border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">Recomendaciones</h3>
               </div>
@@ -528,7 +528,7 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
           </div>
 
           {/* Next Steps - Action Plan */}
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">Próximos Pasos</h3>
             </div>
@@ -550,17 +550,11 @@ Responde en formato JSON con esta estructura EXACTA (sé específico, cuantitati
 
           {/* Final CTA */}
           <div className="text-center py-8">
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Análisis Completado</h4>
               <p className="text-gray-600 mb-4 text-sm">
                 Tu idea ha sido evaluada. Usa estos insights para tomar decisiones informadas.
               </p>
-              <button
-                onClick={onNext}
-                className="px-6 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Finalizar Análisis
-              </button>
             </div>
           </div>
         </div>

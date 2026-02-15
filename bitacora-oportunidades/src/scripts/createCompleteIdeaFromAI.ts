@@ -16,22 +16,32 @@ export async function createCompleteIdeaFromAI(ideaDescription: string) {
     console.log('✅ Datos generados por IA:', completeData)
     console.log('📊 Estructura de datos:', Object.keys(completeData))
 
-    // 1. Crear equipo
-    console.log('🏗️ Creando equipo en base de datos...')
-    const { data: team, error: teamError } = await supabase
+    // 1. Reusar equipo existente o crear uno por defecto
+    console.log('🏗️ Buscando equipo existente...')
+    let team
+    const { data: existingTeams, error: teamsError } = await supabase
       .from('teams')
-      .insert({
-        name: `Equipo ${completeData.idea.title}`
-        // Solo insertar name, no description (no existe en el schema)
-      })
-      .select()
+      .select('*')
+      .limit(1)
       .single()
 
-    if (teamError) {
-      console.error('❌ Error creando equipo:', teamError)
-      throw teamError
+    if (teamsError || !existingTeams) {
+      console.log('📝 No hay equipos, creando uno por defecto...')
+      const { data: newTeam, error: createError } = await supabase
+        .from('teams')
+        .insert({ name: 'Mi Workspace' })
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('❌ Error creando equipo:', createError)
+        throw createError
+      }
+      team = newTeam
+    } else {
+      team = existingTeams
     }
-    console.log('✅ Equipo creado:', team)
+    console.log('✅ Equipo:', team)
 
     // 2. Crear bitácora
     console.log('📓 Creando bitácora en base de datos...')

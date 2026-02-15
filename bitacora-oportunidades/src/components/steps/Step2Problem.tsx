@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useJournalStore } from '../../store/journal'
 import { step2ProblemSchema, type Step2ProblemData } from '../../lib/validators/step2'
-import { AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react'
+import { CheckCircle, ArrowRight } from 'lucide-react'
 
 interface Step2ProblemProps {
   onNext?: () => void
@@ -54,19 +54,16 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
     return <div>No hay idea seleccionada</div>
   }
 
-  const getFieldStatus = (fieldName: keyof Step2ProblemData, minLength = 200) => {
+  const getFieldStatus = (fieldName: keyof Step2ProblemData) => {
     const value = watchedValues[fieldName]
-    if (!value) return 'empty'
-    if (fieldName === 'title') return value.trim().length > 0 ? 'complete' : 'empty'
-    return value.trim().length >= minLength ? 'complete' : 'incomplete'
+    if (!value || value.trim().length < 10) return 'empty'
+    return 'complete'
   }
 
   const getFieldIcon = (status: string) => {
     switch (status) {
       case 'complete':
         return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'incomplete':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />
       default:
         return <div className="h-4 w-4 border border-gray-300 rounded-full" />
     }
@@ -76,22 +73,22 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Problema o Necesidad (Affordable Loss)</h1>
-          <p className="text-stone-600 text-lg">
-            Identifica el problema que resuelve tu idea. ¿Cuánto puedes permitirte perder explorando esta oportunidad?
+          <h1 className="text-3xl text-gray-900 mb-3">El Problema que Resuelves</h1>
+          <p className="text-gray-600 text-lg">
+            Define con claridad el problema real que tu idea soluciona
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
           {saving && (
-            <div className="text-center py-2 text-stone-500 text-sm">
+            <div className="text-center py-2 text-gray-500 text-sm">
               Guardando...
             </div>
           )}
             {/* Title Field */}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                Título del problema
+              <label className="block text-gray-900 mb-6 text-lg">
+                Nombra el problema
               </label>
               <Controller
                 name="title"
@@ -102,7 +99,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                     value={field.value || ''}
                     type="text"
                     className="input"
-                    placeholder="Describe el problema en una frase clara"
+                    placeholder="Ej: Desperdicio de alimentos en restaurantes locales"
                   />
                 )}
               />
@@ -113,8 +110,8 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
 
             {/* Description Field */}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                Descripción del problema
+              <label className="block text-gray-900 mb-6 text-lg">
+                Describe el problema
               </label>
               <Controller
                 name="description"
@@ -125,7 +122,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                     value={field.value || ''}
                     rows={6}
                     className="textarea"
-                    placeholder="Describe en detalle las manifestaciones, frecuencia, contexto e impacto del problema..."
+                    placeholder="Ej: Los restaurantes desechan 30% de sus compras semanales. No hay forma eficiente de redistribuir excedentes..."
                   />
                 )}
               />
@@ -136,8 +133,8 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
 
             {/* Affected Field */}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿Quiénes se ven afectados?
+              <label className="block text-gray-900 mb-6 text-lg">
+                A quien afecta?
               </label>
               <Controller
                 name="affected"
@@ -148,7 +145,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Grupos de personas, organizaciones o sectores afectados..."
+                    placeholder="Ej: Restaurantes pequenos, familias de bajos ingresos, bancos de alimentos locales..."
                   />
                 )}
               />
@@ -159,8 +156,8 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
 
             {/* Relevance Field */}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿Por qué es relevante?
+              <label className="block text-gray-900 mb-6 text-lg">
+                Por que importa resolver esto?
               </label>
               <Controller
                 name="relevance"
@@ -171,7 +168,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Explica el impacto económico, social o ambiental..."
+                    placeholder="Ej: Genera $50M en perdidas anuales, contribuye a 15% de emisiones CO2 de la cadena alimentaria..."
                   />
                 )}
               />
@@ -182,8 +179,8 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
 
             {/* Link to Means Field */}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                Relación con tus medios personales
+              <label className="block text-gray-900 mb-6 text-lg">
+                Como conecta con tus recursos?
               </label>
               <Controller
                 name="link_to_means"
@@ -194,7 +191,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Conecta con tus conocimientos, contactos y recursos del Paso 1..."
+                    placeholder="Ej: Mi experiencia en logistica me da ventaja para optimizar rutas de recoleccion..."
                   />
                 )}
               />
@@ -210,7 +207,7 @@ export default function Step2Problem({ onNext }: Step2ProblemProps) {
                 disabled={!isValid || saving}
                 className="btn btn-primary disabled:opacity-50"
               >
-                {saving ? 'Guardando...' : 'Continuar al Paso 4'}
+                {saving ? 'Guardando...' : 'Guardar'}
               </button>
             </div>
         </form>

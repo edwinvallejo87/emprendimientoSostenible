@@ -69,21 +69,21 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Medios Personales</h1>
-          <p className="text-stone-600 text-lg">
-            Identifica tus recursos, conocimientos y contactos disponibles
+          <h1 className="text-3xl text-gray-900 mb-3">Tus Recursos como Emprendedor</h1>
+          <p className="text-gray-600 text-lg">
+            Haz un inventario de lo que ya tienes para arrancar
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
           {saving && (
-            <div className="text-center py-2 text-stone-500 text-sm">
+            <div className="text-center py-2 text-gray-500 text-sm">
               Guardando...
             </div>
           )}
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿Quién soy?
+              <label className="block text-gray-900 mb-6 text-lg">
+                Tu perfil profesional
               </label>
               <Controller
                 name="who_i_am"
@@ -94,7 +94,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Describe tu identidad profesional, formación académica, experiencia laboral..."
+                    placeholder="Ej: Ingeniero de software con 5 anos en startups, apasionado por la sostenibilidad..."
                   />
                 )}
               />
@@ -104,8 +104,8 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
             </div>
 
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿Qué sé?
+              <label className="block text-gray-900 mb-6 text-lg">
+                Tus habilidades y conocimientos
               </label>
               <Controller
                 name="what_i_know"
@@ -116,7 +116,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Lista tus conocimientos técnicos, habilidades blandas, expertise..."
+                    placeholder="Ej: Desarrollo web, marketing digital, gestion de proyectos agiles, analisis de datos..."
                   />
                 )}
               />
@@ -126,8 +126,8 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
             </div>
 
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿A quién conozco?
+              <label className="block text-gray-900 mb-6 text-lg">
+                Tu red de contactos
               </label>
               <Controller
                 name="who_i_know"
@@ -138,7 +138,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Describe tu red de contactos profesionales, mentores, colegas..."
+                    placeholder="Ej: 3 mentores en la industria, contacto en un fondo de inversion, comunidad de 200 emprendedores..."
                   />
                 )}
               />
@@ -148,8 +148,8 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
             </div>
 
             <div>
-              <label className="block text-stone-900 mb-6 text-lg">
-                ¿Qué tengo?
+              <label className="block text-gray-900 mb-6 text-lg">
+                Tus recursos disponibles
               </label>
               <Controller
                 name="what_i_have"
@@ -160,7 +160,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                     value={field.value || ''}
                     rows={5}
                     className="textarea"
-                    placeholder="Lista tus recursos disponibles: capital, equipos, herramientas, espacios, tiempo..."
+                    placeholder="Ej: Laptop, $2,000 de ahorro, acceso a coworking, 20 horas semanales libres..."
                   />
                 )}
               />
@@ -176,7 +176,7 @@ export default function Step1Means({ onNext }: Step1MeansProps) {
                 disabled={!isValid || saving}
                 className="btn btn-primary disabled:opacity-50"
               >
-                {saving ? 'Guardando...' : 'Continuar al Paso 3'}
+                {saving ? 'Guardando...' : 'Guardar'}
               </button>
             </div>
         </form>

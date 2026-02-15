@@ -103,23 +103,23 @@ export default function Step4Ideation({ onNext }: Step4IdeationProps) {
     <div className="max-w-3xl mx-auto px-6">
       <div className="mb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl text-stone-900 mb-3">Ideación</h1>
-          <p className="text-lg text-stone-600">
+          <h1 className="text-3xl text-gray-900 mb-3">Ideación</h1>
+          <p className="text-lg text-gray-600">
             Genera al menos 3 ideas de oportunidades emprendedoriales y selecciona la más prometedora
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
           {saving && (
-            <div className="text-center py-2 text-stone-500 text-sm">
+            <div className="text-center py-2 text-gray-500 text-sm">
               Guardando...
             </div>
           )}
 
           {fields.map((field, index) => (
-            <div key={field.id} className="space-y-8 p-6 bg-white border border-stone-200 rounded-lg">
+            <div key={field.id} className="space-y-8 p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl text-stone-900 flex items-center">
+                <h2 className="text-xl text-gray-900 flex items-center">
                   <Lightbulb className="h-5 w-5 mr-2" />
                   Idea {index + 1}
                 </h2>
@@ -127,7 +127,7 @@ export default function Step4Ideation({ onNext }: Step4IdeationProps) {
                   <button
                     type="button"
                     onClick={() => removeIdea(index)}
-                    className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     title="Eliminar idea"
                   >
                     <Trash2 size={16} />
@@ -239,7 +239,7 @@ export default function Step4Ideation({ onNext }: Step4IdeationProps) {
                             }
                             field.onChange(e.target.checked)
                           }}
-                          className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                         />
                       )}
                     />
@@ -257,7 +257,7 @@ export default function Step4Ideation({ onNext }: Step4IdeationProps) {
             <button
               type="button"
               onClick={addIdea}
-              className="flex items-center space-x-2 px-6 py-3 border-2 border-dashed border-stone-300 text-stone-600 rounded-lg hover:border-stone-400 hover:text-stone-900 transition-colors"
+              className="flex items-center space-x-2 px-6 py-3 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg hover:border-gray-400 hover:text-gray-900 transition-colors"
             >
               <Plus size={20} />
               <span>Agregar nueva idea</span>
@@ -311,9 +311,9 @@ export default function Step4Ideation({ onNext }: Step4IdeationProps) {
             </ul>
           </div>
 
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">💡 Consejos para idear:</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
+          <div className="p-4 bg-primary-50 rounded-lg">
+            <h4 className="font-medium text-primary-900 mb-2">💡 Consejos para idear:</h4>
+            <ul className="text-sm text-primary-800 space-y-1">
               <li>• Conecta las ideas con tus medios personales del Paso 1</li>
               <li>• Considera el problema identificado en el Paso 2</li>
               <li>• Aprovecha las tendencias del Paso 3</li>

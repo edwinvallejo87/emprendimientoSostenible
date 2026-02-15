@@ -169,7 +169,7 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
   if (!currentIdea) {
     return (
       <div className="text-center py-12">
-        <p className="text-stone-600">Selecciona una idea para trabajar en Estrategia de Validación</p>
+        <p className="text-gray-600">Selecciona una idea para trabajar en Estrategia de Validación</p>
       </div>
     )
   }
@@ -183,29 +183,29 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl text-stone-900 mb-2">✅ Estrategia de Validación</h2>
-            <p className="text-stone-600">
-              Define cómo validarás las hipótesis más críticas de tu modelo de negocio
+            <h2 className="text-2xl text-gray-900 mb-2">Plan de Validacion</h2>
+            <p className="text-gray-600">
+              Como vas a probar si tu idea funciona antes de invertir mas
             </p>
           </div>
           <div className="flex items-center space-x-4">
             {saving && (
-              <span className="text-stone-500 text-sm flex items-center">
+              <span className="text-gray-500 text-sm flex items-center">
                 <Save size={16} className="mr-1" />
                 Guardando...
               </span>
             )}
             <div className="text-right">
-              <div className="text-sm text-stone-600">Progreso</div>
-              <div className="text-lg font-semibold text-stone-900">{completion}%</div>
+              <div className="text-sm text-gray-600">Progreso</div>
+              <div className="text-lg font-semibold text-gray-900">{completion}%</div>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded">
+        <div className="w-full h-2 bg-gray-200 rounded">
           <div
-            className="h-2 bg-indigo-500 rounded transition-all duration-300"
+            className="h-2 bg-primary-500 rounded transition-all duration-300"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -213,15 +213,15 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
 
       <div className="space-y-8">
         {/* Hypothesis and Segments */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            🎯 Hipótesis Central y Segmentos
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Que quieres probar?
           </h3>
           
           <div className="space-y-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
-                Hipótesis Principal a Validar *
+              <label className="block text-gray-700 font-medium mb-2">
+                Tu hipotesis principal *
               </label>
               <textarea
                 value={strategy.hypothesis || ''}
@@ -230,14 +230,14 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
                 className="input w-full"
                 rows={3}
               />
-              <p className="text-xs text-stone-600 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 💡 Incluye quién, qué, cuándo y por qué de tu hipótesis principal
               </p>
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
-                Segmentos Target para Validación *
+              <label className="block text-gray-700 font-medium mb-2">
+                A quien vas a entrevistar o encuestar? *
               </label>
               <textarea
                 value={strategy.target_segments || ''}
@@ -251,9 +251,9 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
         </div>
 
         {/* Validation Methods */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            🔬 Métodos de Validación
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Como lo vas a probar?
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -264,21 +264,21 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
                   key={method.value}
                   className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                     isSelected
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'border-stone-300 bg-white hover:border-indigo-300'
+                      ? 'border-primary-500 bg-primary-50'
+                      : 'border-gray-300 bg-white hover:border-primary-300'
                   }`}
                   onClick={() => handleMethodToggle(method.value)}
                 >
                   <div className="flex items-start">
                     <div className={`w-5 h-5 rounded-full border-2 mr-3 mt-0.5 flex items-center justify-center ${
-                      isSelected ? 'border-indigo-500 bg-indigo-500' : 'border-stone-300'
+                      isSelected ? 'border-primary-500 bg-primary-500' : 'border-gray-300'
                     }`}>
                       {isSelected && <CheckCircle size={12} className="text-white" />}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-stone-900 mb-1">{method.label}</h4>
-                      <p className="text-sm text-stone-600 mb-2">{method.description}</p>
-                      <div className="flex justify-between text-xs text-stone-500">
+                      <h4 className="font-medium text-gray-900 mb-1">{method.label}</h4>
+                      <p className="text-sm text-gray-600 mb-2">{method.description}</p>
+                      <div className="flex justify-between text-xs text-gray-500">
                         <span>⏱️ {method.time}</span>
                         <span>💰 {method.cost}</span>
                         <span>📊 {method.reliability}</span>
@@ -292,20 +292,20 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
 
           {/* Methods Summary */}
           {methodsInfo.count > 0 && (
-            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-              <h4 className="font-medium text-indigo-900 mb-2">📊 Resumen de Métodos Seleccionados</h4>
+            <div className="bg-primary-50 p-4 rounded-lg border border-primary-200">
+              <h4 className="font-medium text-primary-900 mb-2">📊 Resumen de Métodos Seleccionados</h4>
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div className="text-center">
-                  <div className="text-indigo-700 font-semibold">{methodsInfo.count}</div>
-                  <div className="text-indigo-600">Métodos</div>
+                  <div className="text-primary-700 font-semibold">{methodsInfo.count}</div>
+                  <div className="text-primary-600">Métodos</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-indigo-700 font-semibold">~{methodsInfo.totalTime} sem</div>
-                  <div className="text-indigo-600">Tiempo est.</div>
+                  <div className="text-primary-700 font-semibold">~{methodsInfo.totalTime} sem</div>
+                  <div className="text-primary-600">Tiempo est.</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-indigo-700 font-semibold">${methodsInfo.totalCost}</div>
-                  <div className="text-indigo-600">Costo est.</div>
+                  <div className="text-primary-700 font-semibold">${methodsInfo.totalCost}</div>
+                  <div className="text-primary-600">Costo est.</div>
                 </div>
               </div>
             </div>
@@ -313,15 +313,15 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
         </div>
 
         {/* Learning and Success */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            📚 Aprendizajes y Éxito
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Que esperas aprender?
           </h3>
           
           <div className="space-y-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
-                Aprendizajes Esperados *
+              <label className="block text-gray-700 font-medium mb-2">
+                Que quieres aprender? *
               </label>
               <textarea
                 value={strategy.expected_learnings || ''}
@@ -333,8 +333,8 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2">
-                Criterios de Éxito
+              <label className="block text-gray-700 font-medium mb-2">
+                Como sabras si funciona?
               </label>
               <textarea
                 value={strategy.success_criteria || ''}
@@ -348,14 +348,14 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
         </div>
 
         {/* Timeline and Budget */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            ⏰ Planificación y Recursos
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Tiempo y Presupuesto
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <Clock size={16} className="mr-2" />
                 Timeline (semanas)
               </label>
@@ -371,7 +371,7 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <DollarSign size={16} className="mr-2" />
                 Presupuesto (USD)
               </label>
@@ -387,7 +387,7 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
             </div>
             
             <div>
-              <label className="block text-stone-700 font-medium mb-2 flex items-center">
+              <label className="block text-gray-700 font-medium mb-2 flex items-center">
                 <BarChart3 size={16} className="mr-2" />
                 Progreso Actual (%)
               </label>
@@ -404,13 +404,13 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
         </div>
 
         {/* Results Summary */}
-        <div className="bg-white p-6 rounded-lg border border-stone-300">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">
-            📈 Resumen de Resultados
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Resultados
           </h3>
           
           <div>
-            <label className="block text-stone-700 font-medium mb-2">
+            <label className="block text-gray-700 font-medium mb-2">
               Resumen de Resultados de Validación
             </label>
             <textarea
@@ -420,7 +420,7 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
               className="input w-full"
               rows={4}
             />
-            <p className="text-xs text-stone-600 mt-1">
+            <p className="text-xs text-gray-600 mt-1">
               💡 Este campo se completa durante y después de ejecutar la validación
             </p>
           </div>
@@ -436,14 +436,6 @@ export default function Step10ValidationStrategy({ onNext }: Props) {
         )}
       </div>
 
-      {/* Navigation */}
-      {onNext && completion >= 70 && (
-        <div className="flex justify-end mt-8">
-          <button onClick={onNext} className="btn btn-primary">
-            Continuar al siguiente paso →
-          </button>
-        </div>
-      )}
     </div>
   )
 }
