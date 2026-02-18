@@ -117,10 +117,10 @@ export default function IdeasManager({ onNext }: IdeasManagerProps) {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">
+                    <h3 className="text-sm font-medium text-gray-900">
                       {idea.title}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-0.5 truncate">
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-3">
                       {idea.description}
                     </p>
                   </div>
