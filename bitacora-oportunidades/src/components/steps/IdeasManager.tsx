@@ -101,45 +101,46 @@ export default function IdeasManager({ onNext }: IdeasManagerProps) {
               return (
                 <div
                   key={idea.id}
-                  className={`flex items-center px-5 py-4 cursor-pointer transition-colors group ${
+                  className={`px-5 py-4 cursor-pointer transition-colors group ${
                     isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
                   }`}
                   onClick={() => handleSelectIdea(idea)}
                 >
-                  {/* Selection indicator */}
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 transition-colors ${
-                    isSelected
-                      ? 'border-primary-600 bg-primary-600'
-                      : 'border-gray-300 group-hover:border-gray-400'
-                  }`}>
-                    {isSelected && <Check className="h-3 w-3 text-white" />}
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {idea.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-3">
-                      {idea.description}
-                    </p>
-                  </div>
-
-                  {/* Badges */}
-                  <div className="hidden sm:flex items-center gap-2 ml-4">
-                    <span className={`badge text-xs ${
-                      idea.market_potential === 'High' ? 'badge-success' :
-                      idea.market_potential === 'Medium' ? 'badge-warning' :
-                      'badge-error'
+                  <div className="flex items-start gap-3">
+                    {/* Selection indicator */}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
+                      isSelected
+                        ? 'border-primary-600 bg-primary-600'
+                        : 'border-gray-300 group-hover:border-gray-400'
                     }`}>
-                      {idea.market_potential}
-                    </span>
-                    <span className="text-xs text-gray-400 tabular-nums">
-                      {idea.alignment_score}%
-                    </span>
-                  </div>
+                      {isSelected && <Check className="h-3 w-3 text-white" />}
+                    </div>
 
-                  <ArrowRight className="h-4 w-4 text-gray-300 ml-3 flex-shrink-0" />
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <h3 className="text-sm font-medium text-gray-900">
+                          {idea.title}
+                        </h3>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className={`badge text-xs ${
+                            idea.market_potential === 'High' ? 'badge-success' :
+                            idea.market_potential === 'Medium' ? 'badge-warning' :
+                            'badge-error'
+                          }`}>
+                            {idea.market_potential}
+                          </span>
+                          <span className="text-xs text-gray-400 tabular-nums">
+                            {idea.alignment_score}%
+                          </span>
+                          <ArrowRight className="h-4 w-4 text-gray-300" />
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        {idea.description}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )
             })}
