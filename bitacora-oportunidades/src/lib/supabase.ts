@@ -4,11 +4,6 @@ import type { Database } from './database.types'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-console.log('🔍 ALL ENVIRONMENT VARIABLES:', import.meta.env)
-console.log('🔍 VITE VARIABLES:', Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')))
-console.log('🔍 SUPABASE_URL raw:', import.meta.env.VITE_SUPABASE_URL)
-console.log('🔍 SUPABASE_KEY raw:', import.meta.env.VITE_SUPABASE_ANON_KEY)
-
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Environment variables check:', {
     VITE_SUPABASE_URL: supabaseUrl ? 'SET' : 'MISSING',

@@ -138,15 +138,20 @@ export const useJournalStore = create<JournalState>()(
       ensureDefaultTeam: async () => {
         const { currentTeam, loadTeams, loadJournals, setCurrentTeam, createTeam } = get()
 
-        // If we already have a team selected, just load journals
-        if (currentTeam) {
-          await loadJournals(currentTeam.id)
-          return
-        }
-
-        // Load all teams
+        // Load all teams first to verify DB state
         await loadTeams()
         const { teams } = get()
+
+        // If we have a team selected, verify it still exists in DB
+        if (currentTeam) {
+          const teamExists = teams.some(t => t.id === currentTeam.id)
+          if (teamExists) {
+            await loadJournals(currentTeam.id)
+            return
+          }
+          // Team was deleted from DB — clear stale state
+          set({ currentTeam: null, currentJournal: null, currentIdea: null, journals: [], ideas: [] })
+        }
 
         if (teams.length > 0) {
           // Use the first team
